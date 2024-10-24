@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:second_project/screens/user%20side/forgotpassword/forgotpass_screen.dart';
+
 import 'package:second_project/screens/user%20side/user%20authentication/user_signup.dart';
 import 'package:second_project/widgets/login_textfield.dart';
 
@@ -96,7 +98,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Get.to(ScreenForgotpassword());
+                      },
                       child: const Text(
                         'Forgot Password?',
                         style: TextStyle(color: Colors.blue),
@@ -116,7 +120,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {}
+                    if (_formKey.currentState!.validate()) {
+                      // Get.to(ScreenHome());
+                  
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -134,7 +141,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   ),
                 ),
                 const SizedBox(height: 24),
-                Row(
+              const  Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: const [
                     Text(

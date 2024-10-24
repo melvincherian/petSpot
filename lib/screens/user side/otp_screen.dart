@@ -11,6 +11,9 @@ class _ScreenOtpState extends State<ScreenOtp> {
   final emailController = TextEditingController();
   final otpController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool otpSend=false;
+
+  // final authProvider = Provider.of<AuthotpProvider>(context);
 
   @override
   Widget build(BuildContext context) {
@@ -72,9 +75,9 @@ class _ScreenOtpState extends State<ScreenOtp> {
               const SizedBox(height: 16),
               // Send OTP Button
               ElevatedButton(
-                onPressed: () {
+                onPressed: ()async {
                   if (_formKey.currentState!.validate()) {
-                    // Send OTP logic here
+                    
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -130,6 +133,7 @@ class _ScreenOtpState extends State<ScreenOtp> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     // Verify OTP logic here
+                    
                   }
                 },
                 style: ElevatedButton.styleFrom(
