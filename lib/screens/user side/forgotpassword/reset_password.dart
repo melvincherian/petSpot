@@ -34,17 +34,8 @@ class _ResetPasswordState extends State<ResetPassword> {
                   fontWeight: FontWeight.bold,
                   color: Colors.black),
             ),
-         const   Text(
-              'Current Password',
-              style: TextStyle(fontSize: 16, color: Colors.black54),
-            ),
+        
           const  SizedBox(height: 10),
-            ResetTextfield(
-                obscureText: true,
-                labelText: 'Current Password',
-                hintText: 'Enter Current Password',
-                prefixIcon:const Icon(Icons.lock),
-                controller: currentpassController),
          const   SizedBox(height: 8),
          const   Text(
               'New Password',

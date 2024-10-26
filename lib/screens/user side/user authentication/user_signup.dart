@@ -1,12 +1,11 @@
 // ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:second_project/provider/user_auth.dart';
+import 'package:second_project/screens/user%20side/user%20authentication/otp_screen.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
 import 'package:second_project/widgets/signup_textfield.dart';
 import 'package:get/get.dart';
-import 'package:second_project/screens/user%20side/otp_screen.dart';
 import 'package:second_project/widgets/snackbar.dart';
 
 class UserSignup extends StatefulWidget {
@@ -21,6 +20,7 @@ class _UserSignupState extends State<UserSignup> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmPassword = TextEditingController();
+  final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -71,7 +71,8 @@ class _UserSignupState extends State<UserSignup> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please Enter username';
-                        } else if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
+                        } else if (!RegExp(r'^[a-zA-Z0-9_]+$')
+                            .hasMatch(value)) {
                           return 'Username can only contain letters, digits, and underscores';
                         }
                         return null;
@@ -86,8 +87,26 @@ class _UserSignupState extends State<UserSignup> {
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please Enter Email';
-                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                        } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+')
+                            .hasMatch(value)) {
                           return 'Please enter a valid email';
+                        }
+                        return null;
+                      },
+                    ),
+                 const   SizedBox(height: 10),
+                    SignupTextFormField(
+                      // labelText: 'Email',
+                      hintText: 'Phone number',
+                      prefixIcon: const Icon(Icons.phone),
+                      controller: _phoneController,
+                      
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please Enter Phone number';
+                        } else if (!RegExp(r'^\+?[0-9]{10,15}$')
+                            .hasMatch(value)) {
+                          return 'Please enter a valid phone number';
                         }
                         return null;
                       },
@@ -97,7 +116,7 @@ class _UserSignupState extends State<UserSignup> {
                       // labelText: 'Password',
                       hintText: 'Password',
                       obscureText: true,
-                      
+
                       prefixIcon: const Icon(Icons.lock),
                       controller: _password,
                       validator: (value) {
@@ -111,7 +130,6 @@ class _UserSignupState extends State<UserSignup> {
                     ),
                     const SizedBox(height: 10),
                     SignupTextFormField(
-                
                       hintText: 'Re-Enter your password',
                       obscureText: true,
                       prefixIcon: const Icon(Icons.lock_outline),
@@ -129,14 +147,29 @@ class _UserSignupState extends State<UserSignup> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          authProvider
-                              .SignupUser(
-                                name: _name.text,
-                                email: _email.text,
-                                password: _password.text,
-                              )
-                              .then((response) {
+                          // FirebaseAuth.instance.verifyPhoneNumber(
+                          //   phoneNumber: _phoneController.text,
+                          //   verificationCompleted: (PhoneAuthCredential){
+                          //          Get.to(ScreenOtp());
+                          //   },  
+                          //   verificationFailed:(error) {
+                          //     print(error.toString());
+                          //   }, 
+                          //   codeSent:(verificationId, forceResendingToken) {
+                            
+                          //   }, 
+                          //   codeAutoRetrievalTimeout:(verificationId) {
+                          //     print('Auto retrieval time out');
+                          //   },
+
+                          //   );
+                          authProvider.SignupUser(
+                            name: _name.text,
+                            email: _email.text,
+                            password: _password.text,
+                          ).then((response) {
                             if (response == 'Success') {
+
                               Get.to(const ScreenOtp());
                             } else {
                               showSnackbar(context, response);
@@ -174,7 +207,9 @@ class _UserSignupState extends State<UserSignup> {
                           },
                           child: const Text(
                             'Login',
-                            style: TextStyle(color: Color.fromARGB(255, 186, 255, 57),fontSize: 16),
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 186, 255, 57),
+                                fontSize: 16),
                           ),
                         ),
                       ],

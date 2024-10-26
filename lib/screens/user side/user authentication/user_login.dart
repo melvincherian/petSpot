@@ -22,9 +22,10 @@ class _ScreenLoginState extends State<ScreenLogin> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.blueAccent[400],
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.white),
+        
       ),
       body: SingleChildScrollView(
         child: Form(
@@ -99,7 +100,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   children: [
                     TextButton(
                       onPressed: () {
-                        Get.to(ScreenForgotpassword());
+                        Get.to(const ScreenForgotpassword());
                       },
                       child: const Text(
                         'Forgot Password?',
@@ -143,7 +144,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 const SizedBox(height: 24),
               const  Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children:  [
                     Text(
                       'Or Login with',
                       style: TextStyle(

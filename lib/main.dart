@@ -2,7 +2,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:second_project/provider/timer_otp.dart';
 import 'package:second_project/provider/user_auth.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_landing.dart';
 

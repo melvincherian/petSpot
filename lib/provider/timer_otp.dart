@@ -18,7 +18,7 @@ class TimerProvider with ChangeNotifier{
   void startTimer(){
     _isButtonDisabled=true;
     _start=30;
-    _timer=Timer.periodic(Duration(seconds: 1), (timer){
+    _timer=Timer.periodic(const Duration(seconds: 1), (timer){
        if(_start==0)  {
         _isButtonDisabled=false;
         _timer?.cancel();
@@ -35,7 +35,7 @@ class TimerProvider with ChangeNotifier{
     startTimer();
     notifyListeners();
   }
-
+  
   @override
   void dispose() {
     _timer?.cancel();

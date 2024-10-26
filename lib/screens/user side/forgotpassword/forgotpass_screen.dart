@@ -1,7 +1,12 @@
+// import 'dart:math';
+
+// ignore_for_file: avoid_print
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:second_project/screens/user%20side/forgotpassword/forgot_otp.dart';
-
+import 'package:second_project/widgets/resetpass_textfileds.dart';
 
 class ScreenForgotpassword extends StatefulWidget {
   const ScreenForgotpassword({super.key});
@@ -11,7 +16,30 @@ class ScreenForgotpassword extends StatefulWidget {
 }
 
 class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
-  final emailController = TextEditingController();
+  final phoneController = TextEditingController();
+
+ Future<void>submitPhonenumber(BuildContext context)async{
+  
+   FirebaseAuth auth=FirebaseAuth.instance;
+                      await auth.verifyPhoneNumber(
+                        phoneNumber: phoneController.text,
+                        verificationCompleted:(phoneAuthCredential)async {
+                          
+                        }, 
+                        verificationFailed:(FirebaseAuthException e){
+                          print(e.message.toString());
+                        }, 
+                        codeSent:(String verificationId, int? resenToken) {
+                           Get.to(ForgotOtp(verificationId: verificationId));
+                        },  
+                        codeAutoRetrievalTimeout:(String verificationId) {
+                          
+                        },
+                        );
+
+ }
+
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -21,109 +49,147 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
       //   elevation: 0,
       //   backgroundColor: Colors.deepPurple,
       // ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            // Lock Icon
-          const  Icon(
-              Icons.lock_outline,
-              size: 100,
-              color: Colors.deepPurple,
-            ),
-            const SizedBox(height: 20),
-
-            // Title: Forgot Password
-         const   Center(
-              child: Text(
-                'Forgot Password',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
+      body: Form(
+        key: _formKey,
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Lock Icon
+              const Icon(
+                Icons.lock_outline,
+                size: 100,
+                color: Colors.deepPurple,
               ),
-            ),
-            const SizedBox(height: 10),
+              const SizedBox(height: 20),
 
-            // Subtitle: Description text
-            Center(
-              child: Text(
-                'Enter your email address and we\'ll send \nyou a link to reset your password.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
-              ),
-            ),
-            const SizedBox(height: 30),
-
-            // Email Input Field
-            TextField(
-              controller: emailController,
-              decoration: InputDecoration(
-                labelText: 'Email Address',
-                labelStyle:const TextStyle(color: Colors.deepPurple),
-                prefixIcon:
-                 const   Icon(Icons.email_outlined, color: Colors.deepPurple),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide:const BorderSide(color: Colors.deepPurple, width: 2),
-                ),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 20),
-
-            // Reset Password Button
-            SizedBox(
-              height: 50,
-              child: ElevatedButton(
-                onPressed: () {
-                  // Your action here
-                  Get.to(ForgotOtp());
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.deepPurple,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+              // Title: Forgot Password
+              const Center(
+                child: Text(
+                  'Forgot Password',
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
-                child:const Text(
-                  'Send OTP',
+              ),
+              const SizedBox(height: 10),
+
+              // Subtitle: Description text
+              Center(
+                child: Text(
+                  'Enter your phone number  and we\'ll send \nyou a link to reset your password.',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
+                    fontSize: 16,
+                    color: Colors.grey[700],
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(height: 30),
 
-            const SizedBox(height: 20),
+              // Email Input Field
+              ForgotpassTextfiels(
+                labelText: 'Phone number',
+                hintText: 'Phone',
+                prefixIcon: const Icon(Icons.phone),
+                controller: phoneController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please Enter phonenumber';
+                  } else if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
+                    return 'Please enter a valid phone number';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 20),
 
-            // Go Back Button
-            TextButton(
-              onPressed: () {
-                Get.back();
-              },
-              child:const Text(
-                'Go Back',
-                style: TextStyle(
-                  color: Colors.deepPurple,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+              // Reset Password Button
+              SizedBox(
+                height: 50,
+                child: ElevatedButton(
+                  onPressed: ()async {
+                    if (_formKey.currentState!.validate()) {
+                      submitPhonenumber(context);
+                     
+                      // FirebaseAuth.instance.verifyPhoneNumber(
+                      //   phoneNumber: phoneController.text,
+                      //   verificationCompleted:(phoneAuthCredential) {
+                       
+                      //   }, 
+                      //   verificationFailed:(error) {
+                      //     print(error.toString());
+                      //   }, 
+                      //   codeSent:(verificationId, forceResendingToken) {
+                      //     Get.to(ForgotOtp(verificationId: verificationId,));
+                      //   }, 
+                      //   codeAutoRetrievalTimeout:(verificationId) {
+                      //     print('Auto retrieval time out');
+                      //   },);
+                    
+
+                      // sendOtp();
+                      // Get.to(const ForgotOtp());
+                    }
+                    // Your action here
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    'Send OTP',
+                    style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                  ),
                 ),
               ),
-            ),
-          ],
+
+              const SizedBox(height: 20),
+
+              // Go Back Button
+              TextButton(
+                onPressed: () {
+                  Get.back();
+                },
+                child: const Text(
+                  'Go Back',
+                  style: TextStyle(
+                    color: Colors.deepPurple,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+// void sendOtp() async {
+//   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+//   if (emailController.text.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
+//     Get.snackbar("Invalid email", "Please enter a valid email address.");
+//     return;
+//   }
+
+//   try {
+//     await _auth.sendPasswordResetEmail(email: emailController.text);
+//     Get.snackbar("OTP Sent", "Password reset email has been sent to ${emailController.text}. Please check your inbox.");
+//     // Navigate to OTP screen (optional)
+//     Get.to(const ForgotOtp());
+//   } catch (e) {
+//     Get.snackbar("Error", "Failed to send OTP: ${e.toString()}");
+//   }
+// }
 }
