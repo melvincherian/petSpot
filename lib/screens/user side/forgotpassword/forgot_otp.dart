@@ -1,5 +1,4 @@
-// ignore_for_file: non_constant_identifier_names
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: non_constant_identifier_names, avoid_print
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -7,10 +6,11 @@ import 'package:second_project/provider/timer_otp.dart';
 import 'package:second_project/screens/user%20side/forgotpassword/reset_password.dart';
 
 
-class ForgotOtp extends StatefulWidget {
-  const ForgotOtp({super.key,required this.verificationId});
 
-  final String verificationId;
+class ForgotOtp extends StatefulWidget {
+  const ForgotOtp({super.key,});
+
+  // final String verificationId;
 
   @override
   State<ForgotOtp> createState() => _ForgotOtpState();
@@ -18,25 +18,35 @@ class ForgotOtp extends StatefulWidget {
 
 class _ForgotOtpState extends State<ForgotOtp> {
   
+  final List<TextEditingController>otpControllers=List.generate(4, (index)=>TextEditingController());
 
-  final otpController=TextEditingController();
+  bool _isValidOtp(){
+    for(var controller in otpControllers){
+      if(controller.text.isEmpty || controller.text.length!=1){
+        return false;
+      }
+    }
+    return true;
+  }
 
-  Future<void>submitOTP(BuildContext context)async{
-    String otp=otpController.text.trim();
-   FirebaseAuth auth=FirebaseAuth.instance;
-   try{
-   PhoneAuthCredential credential=PhoneAuthProvider.credential(
-    verificationId: widget.verificationId, 
-    smsCode: otp);
+  // final otpController=TextEditingController();
+
+//   Future<void>submitOTP(BuildContext context)async{
+//     String otp=otpController.text.trim();
+//    FirebaseAuth auth=FirebaseAuth.instance;
+//    try{
+//    PhoneAuthCredential credential=PhoneAuthProvider.credential(
+//     verificationId: widget.verificationId, 
+//     smsCode: otp);
     
-    await auth.signInWithCredential(credential);
-    Get.to(const ResetPassword());
+//     await auth.signInWithCredential(credential);
+//     Get.to(const ResetPassword());
 
-   }catch(e) {
-    print(e.toString());
-   }           
+//    }catch(e) {
+//     print(e.toString());
+//    }           
 
- }
+//  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +72,7 @@ class _ForgotOtpState extends State<ForgotOtp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: List.generate(4, (index) {
-                  return _OtpInputField();
+                  return _OtpInputField(index);
                 }),
               ),
            const  SizedBox(height: 20),
@@ -74,7 +84,7 @@ class _ForgotOtpState extends State<ForgotOtp> {
                           
                   },
                   child: Text(
-                    timerProvider.isButtonDisabled?'Resend OTP in${timerProvider.start}seconds':'Resend OTP',
+                    timerProvider.isButtonDisabled?'Resend OTP in  ${timerProvider.start}seconds':'Resend OTP',
                     style:const TextStyle(color: Colors.purple),
                   ));
                 }),
@@ -82,7 +92,19 @@ class _ForgotOtpState extends State<ForgotOtp> {
            const   SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  submitOTP(context);
+                  if(_isValidOtp()){
+                        Get.to(const ResetPassword());
+                  }
+                  else{
+                     ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please enter a valid 4-digit OTP"),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
+                  
+                  // submitOTP(context);
 
 
 
@@ -122,12 +144,13 @@ class _ForgotOtpState extends State<ForgotOtp> {
     );
   }
 
-  Widget _OtpInputField() {
+  Widget _OtpInputField(int index) {
     return SizedBox(
       width: 60,
       child: TextField(
         autofocus: true,
         textAlign: TextAlign.center,
+        controller: otpControllers[index],
         style: const TextStyle(fontSize: 20),
         keyboardType: TextInputType.number,
         maxLength: 1,

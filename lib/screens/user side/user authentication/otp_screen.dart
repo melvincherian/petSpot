@@ -20,8 +20,7 @@ class _ScreenOtpState extends State<ScreenOtp> {
   final otpController4 = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
-  bool otpSend = false;
-
+  
   @override
   void dispose() {
     otpController1.dispose();
@@ -39,13 +38,21 @@ class _ScreenOtpState extends State<ScreenOtp> {
   }
 
   bool isOtpValid() {
-    return getOTP().length == 4;
+    return getOTP().length == 4 &&
+           otpController1.text.isNotEmpty &&
+           otpController2.text.isNotEmpty &&
+           otpController3.text.isNotEmpty &&
+           otpController4.text.isNotEmpty;
   }
 
-  // final authProvider = Provider.of<AuthotpProvider>(context);
+  void onFieldChange(String value, BuildContext context) {
+    if (value.isNotEmpty) {
+      FocusScope.of(context).nextFocus();
+    }
+  }
 
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -66,7 +73,7 @@ class _ScreenOtpState extends State<ScreenOtp> {
             children: [
               const Spacer(),
               Text(
-                'We have send an OTP to your phone\nplease Verify',
+                'We have sent an OTP to your phone\nplease Verify',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w600,
@@ -78,23 +85,39 @@ class _ScreenOtpState extends State<ScreenOtp> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _OtpInputField(controller: otpController1),
-                  _OtpInputField(controller: otpController2),
-                  _OtpInputField(controller: otpController3),
-                  _OtpInputField(controller: otpController4),
+                  _OtpInputField(
+                    controller: otpController1,
+                    onChanged: (value) => onFieldChange(value, context),
+                  ),
+                  _OtpInputField(
+                    controller: otpController2,
+                    onChanged: (value) => onFieldChange(value, context),
+                  ),
+                  _OtpInputField(
+                    controller: otpController3,
+                    onChanged: (value) => onFieldChange(value, context),
+                  ),
+                  _OtpInputField(
+                    controller: otpController4,
+                    onChanged: (value) {
+                      // if (value.isNotEmpty && isOtpValid()) {
+                       
+                      // }
+                    }
+                  ),
                 ],
               ),
-
               const SizedBox(height: 16),
               // Send OTP Button
               ElevatedButton(
-                onPressed: () async {
+                onPressed: () {
                   if (isOtpValid()) {
                     Get.to(const ScreenHome());
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        backgroundColor: Colors.red,
-                        content: Text('Please enter a valid 4-digit OTP.')));
+                      backgroundColor: Colors.red,
+                      content: Text('Please enter a valid 4-digit OTP.'),
+                    ));
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -105,12 +128,11 @@ class _ScreenOtpState extends State<ScreenOtp> {
                   ),
                 ),
                 child: const Text(
-                  'verify OTP',
+                  'Verify OTP',
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
               ),
               const SizedBox(height: 32),
-
               const Spacer(),
             ],
           ),
@@ -120,10 +142,12 @@ class _ScreenOtpState extends State<ScreenOtp> {
     );
   }
 
-  Widget _OtpInputField({required TextEditingController controller}) {
+  Widget _OtpInputField({required TextEditingController controller, required ValueChanged<String> onChanged}) {
     return SizedBox(
       width: 60,
       child: TextField(
+        controller: controller,
+        onChanged: onChanged,
         autofocus: true,
         textAlign: TextAlign.center,
         style: const TextStyle(fontSize: 20),

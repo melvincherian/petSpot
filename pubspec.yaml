@@ -47,6 +47,10 @@ dependencies:
   cloud_firestore: ^5.4.4
   provider: ^6.1.2
   email_auth: ^2.0.0
+  http: ^1.2.2
+  alarm: ^4.0.8
+  curved_navigation_bar: ^1.0.6
+  image_picker: ^1.1.2
   
 
  

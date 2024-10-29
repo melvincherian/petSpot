@@ -1,6 +1,10 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:second_project/provider/loginwith_google.dart';
 import 'package:second_project/screens/user%20side/forgotpassword/forgotpass_screen.dart';
+import 'package:second_project/screens/user%20side/home_screen.dart';
 
 import 'package:second_project/screens/user%20side/user%20authentication/user_signup.dart';
 import 'package:second_project/widgets/login_textfield.dart';
@@ -16,13 +20,19 @@ class _ScreenLoginState extends State<ScreenLogin> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
+  final _auth=GoogleAuth();
+
+  
+
+// final authProvider = Provider.of<GoogleAuthProvider>();
+
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.blueAccent[400],
+        backgroundColor: const Color.fromARGB(255, 97, 155, 255),
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.white),
         
@@ -87,7 +97,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   controller: passwordController,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please Password';
+                      return 'Please Enter Password';
                     } else if (value.length < 8) {
                       return 'Password must be at least 8 characters long';
                     }
@@ -122,7 +132,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 ElevatedButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      // Get.to(ScreenHome());
+                      Get.to(const ScreenHome());
                   
                     }
                   },
@@ -156,7 +166,17 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 ),
                 const SizedBox(height: 16),
                 TextButton.icon(
-                  onPressed: () {},
+                  onPressed: ()async {
+                    bool isLoggedIn=await _auth.loginWithGoogle();
+                     if(isLoggedIn){
+                      Get.to(const ScreenHome());
+                     }
+                     else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+      const  SnackBar(content: Text('Google login failed. Please try again.')),
+      );
+                     }
+                  },
                   icon: Image.network(
                     'https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg',
                     height: 24,

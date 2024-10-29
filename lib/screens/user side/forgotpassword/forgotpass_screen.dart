@@ -30,12 +30,12 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                           print(e.message.toString());
                         }, 
                         codeSent:(String verificationId, int? resenToken) {
-                           Get.to(ForgotOtp(verificationId: verificationId));
+                           Get.to(ForgotOtp());
                         },  
                         codeAutoRetrievalTimeout:(String verificationId) {
                           
                         },
-                        );
+     );
 
  }
 
@@ -114,7 +114,8 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                 child: ElevatedButton(
                   onPressed: ()async {
                     if (_formKey.currentState!.validate()) {
-                      submitPhonenumber(context);
+                      Get.to(ForgotOtp());
+                      // submitPhonenumber(context);
                      
                       // FirebaseAuth.instance.verifyPhoneNumber(
                       //   phoneNumber: phoneController.text,

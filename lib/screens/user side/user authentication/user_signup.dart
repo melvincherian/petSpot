@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:second_project/provider/user_auth.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/otp_screen.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
+import 'package:second_project/widgets/elevatedbuttonsignup.dart';
 import 'package:second_project/widgets/signup_textfield.dart';
 import 'package:get/get.dart';
 import 'package:second_project/widgets/snackbar.dart';
@@ -47,6 +48,7 @@ class _UserSignupState extends State<UserSignup> {
                 color: Colors.black.withOpacity(0.6),
               ),
             ),
+           
             Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -55,7 +57,7 @@ class _UserSignupState extends State<UserSignup> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const Text(
-                      'Create Account',
+                      'Sign Up',
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -63,6 +65,15 @@ class _UserSignupState extends State<UserSignup> {
                       ),
                       textAlign: TextAlign.center,
                     ),
+                  const  Row(
+                      children: [
+                       SizedBox(width: 115),
+                       Text('Create Account',
+                       style: TextStyle(color: Colors.white,fontSize: 17),
+                       )
+                      ],
+                    ),
+                const   SizedBox(height: 16),
                     SignupTextFormField(
                       // labelText: 'Username',
                       hintText: 'Username',
@@ -131,7 +142,7 @@ class _UserSignupState extends State<UserSignup> {
                     const SizedBox(height: 10),
                     SignupTextFormField(
                       hintText: 'Re-Enter your password',
-                      obscureText: true,
+                      obscureText: true, 
                       prefixIcon: const Icon(Icons.lock_outline),
                       controller: _confirmPassword,
                       validator: (value) {
@@ -144,55 +155,47 @@ class _UserSignupState extends State<UserSignup> {
                       },
                     ),
                     const SizedBox(height: 24.0),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          // FirebaseAuth.instance.verifyPhoneNumber(
-                          //   phoneNumber: _phoneController.text,
-                          //   verificationCompleted: (PhoneAuthCredential){
-                          //          Get.to(ScreenOtp());
-                          //   },  
-                          //   verificationFailed:(error) {
-                          //     print(error.toString());
-                          //   }, 
-                          //   codeSent:(verificationId, forceResendingToken) {
-                            
-                          //   }, 
-                          //   codeAutoRetrievalTimeout:(verificationId) {
-                          //     print('Auto retrieval time out');
-                          //   },
-
-                          //   );
-                          authProvider.SignupUser(
-                            name: _name.text,
-                            email: _email.text,
-                            password: _password.text,
-                          ).then((response) {
-                            if (response == 'Success') {
-
-                              Get.to(const ScreenOtp());
-                            } else {
+                    CustomElevatedButton(label: 'Sign Up', 
+                    isLoading: authProvider.isLoading,
+                    
+                    onPressed: (){
+                      if(_formKey.currentState!.validate()){
+                        authProvider.SignupUser(
+                          name: _name.text, 
+                          email: _email.text, 
+                          password: _password.text
+                          ).then((response){
+                            if(response=='Success'){
+                              Get.to(ScreenOtp());
+                            }
+                            else{
                               showSnackbar(context, response);
                             }
-                          });
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue,
-                        padding: const EdgeInsets.symmetric(vertical: 16.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                      ),
-                      child: authProvider.isLoading
-                          ? const CircularProgressIndicator(
-                              color: Colors.white,
-                            )
-                          : const Text(
-                              'Sign Up',
-                              style: TextStyle(color: Colors.white),
-                            ),
-                    ),
+                          }
+                          );
+                          
+                          
+                      }
+                    }),
+                    
+                    //       // FirebaseAuth.instance.verifyPhoneNumber(
+                    //       //   phoneNumber: _phoneController.text,
+                    //       //   verificationCompleted: (PhoneAuthCredential){
+                    //       //          Get.to(ScreenOtp());
+                    //       //   },  
+                    //       //   verificationFailed:(error) {
+                    //       //     print(error.toString());
+                    //       //   }, 
+                    //       //   codeSent:(verificationId, forceResendingToken) {
+                            
+                    //       //   }, 
+                    //       //   codeAutoRetrievalTimeout:(verificationId) {
+                    //       //     print('Auto retrieval time out');
+                    //       //   },
+
+                    //       //   );
+                    //      
+                    //  
                     const SizedBox(height: 16),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
