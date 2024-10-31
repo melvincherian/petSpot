@@ -1,5 +1,6 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unused_local_variable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:second_project/provider/loginwith_google.dart';
@@ -20,23 +21,35 @@ class _ScreenLoginState extends State<ScreenLogin> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  final _auth=GoogleAuth();
+  final _auth = GoogleAuth();
 
-  
-
-// final authProvider = Provider.of<GoogleAuthProvider>();
-
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  Future<void> _loginUser() async {
+    if (_formKey.currentState!.validate()) {
+      try {
+        UserCredential userCredential = await auth.signInWithEmailAndPassword(
+            email: emailController.text.trim(),
+            password: passwordController.text.trim());
+        Get.to(const ScreenHome());
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Invalid email or password.Please try again'),
+          backgroundColor: Colors.red,
+        ));
+      }
+    }
+  }
+ 
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 97, 155, 255),
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.white),
-        
-      ),
+      // appBar: AppBar(
+      //   backgroundColor: const Color.fromARGB(255, 97, 155, 255),
+      //   elevation: 0,
+      //   iconTheme: const IconThemeData(color: Colors.white),
+      // ),
       body: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -45,12 +58,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
                 const Image(
                   image: NetworkImage(
                       'https://m.media-amazon.com/images/I/61fJefies-L._AC_SL1200_.jpg'),
-                  height: 150,
-                  width: 150,
+                  height: 170,
+                  width: 170,
                   fit: BoxFit.contain,
                 ),
                 const SizedBox(height: 32),
@@ -131,10 +144,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 const SizedBox(height: 24),
                 ElevatedButton(
                   onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Get.to(const ScreenHome());
-                  
-                    }
+                    _loginUser();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.blue,
@@ -152,9 +162,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
                   ),
                 ),
                 const SizedBox(height: 24),
-              const  Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children:  [
+                  children: [
                     Text(
                       'Or Login with',
                       style: TextStyle(
@@ -166,16 +176,17 @@ class _ScreenLoginState extends State<ScreenLogin> {
                 ),
                 const SizedBox(height: 16),
                 TextButton.icon(
-                  onPressed: ()async {
-                    bool isLoggedIn=await _auth.loginWithGoogle();
-                     if(isLoggedIn){
+                  onPressed: () async {
+                    bool isLoggedIn = await _auth.loginWithGoogle();
+                    if (isLoggedIn) {
                       Get.to(const ScreenHome());
-                     }
-                     else{
+                    } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-      const  SnackBar(content: Text('Google login failed. Please try again.')),
-      );
-                     }
+                        const SnackBar(
+                            content:
+                                Text('Google login failed. Please try again.')),
+                      );
+                    }
                   },
                   icon: Image.network(
                     'https://53.fs1.hubspotusercontent-na1.net/hub/53/hubfs/image8-2.jpg?width=595&height=400&name=image8-2.jpg',

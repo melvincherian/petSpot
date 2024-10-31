@@ -58,12 +58,17 @@ class Authprovider with ChangeNotifier{
     }
    return res;
 
-    // catch(e){
-    //   res=e.toString();
-    // }finally{
-    //   setLoading(false);
-    // }
-    // return res;
+   
+  }
+
+  Future<void>logoutUser()async{
+    try{
+      await _auth.signOut();
+      notifyListeners();
+    }
+    catch(e){
+      print('Error during logout $e');
+    }
   }
 
 }

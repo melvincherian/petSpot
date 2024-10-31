@@ -44,11 +44,6 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-
-      //   elevation: 0,
-      //   backgroundColor: Colors.deepPurple,
-      // ),
       body: Form(
         key: _formKey,
         child: Padding(
@@ -64,8 +59,6 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                 color: Colors.deepPurple,
               ),
               const SizedBox(height: 20),
-
-              // Title: Forgot Password
               const Center(
                 child: Text(
                   'Forgot Password',
@@ -77,11 +70,9 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                 ),
               ),
               const SizedBox(height: 10),
-
-              // Subtitle: Description text
               Center(
                 child: Text(
-                  'Enter your phone number  and we\'ll send \nyou a link to reset your password.',
+                  'Enter your phone number  and we\'ll send \nyou an OTP to your phone.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -133,8 +124,8 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                       //   },);
                     
 
-                      // sendOtp();
-                      // Get.to(const ForgotOtp());
+                   
+                      // Get.to(const ForgotOtp(verificationId: 'verificationId',));
                     }
                     // Your action here
                   },
@@ -176,21 +167,5 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
       ),
     );
   }
-// void sendOtp() async {
-//   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-//   if (emailController.text.isEmpty || !RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(emailController.text)) {
-//     Get.snackbar("Invalid email", "Please enter a valid email address.");
-//     return;
-//   }
-
-//   try {
-//     await _auth.sendPasswordResetEmail(email: emailController.text);
-//     Get.snackbar("OTP Sent", "Password reset email has been sent to ${emailController.text}. Please check your inbox.");
-//     // Navigate to OTP screen (optional)
-//     Get.to(const ForgotOtp());
-//   } catch (e) {
-//     Get.snackbar("Error", "Failed to send OTP: ${e.toString()}");
-//   }
-// }
 }

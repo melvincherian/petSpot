@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:second_project/provider/bottom_navbar.dart';
 import 'package:second_project/provider/user_auth.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_landing.dart';
 
@@ -20,6 +21,8 @@ class MyApp extends StatelessWidget {
    return MultiProvider(
     providers: [
       ChangeNotifierProvider<Authprovider>(create: (_)=>Authprovider()),
+      ChangeNotifierProvider<BottomNavprovider>(create: (_)=>BottomNavprovider())
+      // ChangeNotifierProvider<Authproviderfetch>(create: (_)=>Authproviderfetch())
       // ChangeNotifierProvider<TimerProvider>(create: (_)=>TimerProvider()),
     ],
       child:const GetMaterialApp(

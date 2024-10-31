@@ -27,8 +27,7 @@ class _ScreenSplashState extends State<ScreenSplash> with SingleTickerProviderSt
         setState(() {});
       });
 
-    _controller.forward();
-    checkUserLoginStatus();
+    _controller.forward().whenComplete(checkUserLoginStatus);
   }
 
   @override
@@ -84,7 +83,6 @@ class _ScreenSplashState extends State<ScreenSplash> with SingleTickerProviderSt
   }
 
   Future<void> navigateToScreen(Widget screen) async {
-    await Future.delayed(const Duration(seconds: 3));
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => screen),
@@ -96,9 +94,9 @@ class _ScreenSplashState extends State<ScreenSplash> with SingleTickerProviderSt
     final userLogged = prefs.getBool('userLogged') ?? false;
 
     if (userLogged) {
-      navigateToScreen(const ScreenHome()); // Replace with your home screen widget
+      navigateToScreen(const ScreenHome());
     } else {
-      navigateToScreen(const UserLanding()); // Replace with your login screen widget
+      navigateToScreen(const UserLanding());
     }
   }
 }

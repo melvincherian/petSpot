@@ -148,12 +148,20 @@ class _ForgotOtpState extends State<ForgotOtp> {
     return SizedBox(
       width: 60,
       child: TextField(
-        autofocus: true,
+        autofocus: index==0,
         textAlign: TextAlign.center,
         controller: otpControllers[index],
         style: const TextStyle(fontSize: 20),
         keyboardType: TextInputType.number,
         maxLength: 1,
+        onChanged: (value){
+           if (value.isNotEmpty && index < otpControllers.length - 1) {
+          FocusScope.of(context).nextFocus(); // Move focus to the next TextField
+        } else if (value.isEmpty && index > 0) {
+          FocusScope.of(context).previousFocus(); // Move focus to the previous TextField if backspacing
+        }
+      
+        },
         decoration: InputDecoration(
           counterText: "",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),

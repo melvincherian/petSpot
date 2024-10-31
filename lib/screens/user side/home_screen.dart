@@ -1,66 +1,51 @@
+// ignore_for_file: prefer_const_constructors_in_immutables, use_super_parameters, avoid_print
+
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:second_project/provider/bottom_navbar.dart';
 import 'package:second_project/screens/user%20side/cart_screen.dart';
 import 'package:second_project/screens/user%20side/category_screen.dart';
+import 'package:second_project/screens/user%20side/favourite_screen.dart';
 import 'package:second_project/screens/user%20side/profile_screen.dart';
+import 'package:second_project/widgets/pet_images.dart';
 
-class ScreenHome extends StatefulWidget {
-  const ScreenHome({super.key});
-
-  @override
-  State<ScreenHome> createState() => _ScreenHomeState();
-}
-
-class _ScreenHomeState extends State<ScreenHome> {
-  int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    HomeScreen(),
-    const CategoriesScreen(),
-    const CartScreen(),
-    const ProfileScreen(),
-  ];
+class ScreenHome extends StatelessWidget {
+  const ScreenHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final bottomNavProvider = Provider.of<BottomNavprovider>(context);
+    final pages = [
+      HomeScreen(),
+      const CategoriesScreen(),
+      const CartScreen(),
+      const ScreenFavourite(),
+      const ProfileScreen(),
+    ];
+
     return Scaffold(
-      // appBar: AppBar(
-      //   backgroundColor: Colors.teal,
-      //   title: const Text('PetSpot',
-      //   style: TextStyle(color: Colors.white),
-      //   ),
-      //   centerTitle: true,
-      // ),
-      body: _pages[_currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
+      backgroundColor: const Color.fromARGB(255, 159, 186, 183),
+      body: pages[bottomNavProvider.currentIndex],
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: Colors.white,
+        color: Colors.teal,
+        buttonBackgroundColor: Colors.tealAccent,
+        height: 60,
+        index: bottomNavProvider.currentIndex,
         onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
+          bottomNavProvider.setIndex(index); // Using provider's setIndex
         },
         items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.category),
-            label: 'Categories',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.shopping_cart),
-            label: 'Cart',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          Icon(Icons.home, size: 30, color: Colors.white),
+          Icon(Icons.category, size: 30, color: Colors.white),
+          Icon(Icons.shopping_cart, size: 30, color: Colors.white),
+          Icon(Icons.favorite_outline, size: 30, color: Colors.white),
+          Icon(Icons.person, size: 30, color: Colors.white),
         ],
-        selectedItemColor: Colors.teal,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        type: BottomNavigationBarType.fixed,
+        animationDuration: const Duration(milliseconds: 300),
+        animationCurve: Curves.easeInOut,
       ),
     );
   }
@@ -68,40 +53,6 @@ class _ScreenHomeState extends State<ScreenHome> {
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-
-  final List<Map<String, String>> pets = [
-    {
-      'name': 'Golden Retriever',
-      'price': '\$500',
-      'image':
-          'https://images.squarespace-cdn.com/content/v1/54822a56e4b0b30bd821480c/45ed8ecf-0bb2-4e34-8fcf-624db47c43c8/Golden+Retrievers+dans+pet+care.jpeg',
-    },
-    {
-      'name': 'German Shepherd',
-      'price': '\$600',
-      'image':
-          'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074_1280.jpg',
-    },
-    {
-      'name': 'Beagle',
-      'price': '\$450',
-      'image':
-          'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074_1280.jpg',
-    },
-    {
-      'name': 'Bulldog',
-      'price': '\$550',
-      'image':
-          'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074_1280.jpg',
-    },
-  ];
-
-  final List<String> sliderImages = [
-    'https://images.unsplash.com/photo-1560807707-8cc77767d783',
-    'https://images.squarespace-cdn.com/content/v1/54822a56e4b0b30bd821480c/45ed8ecf-0bb2-4e34-8fcf-624db47c43c8/Golden+Retrievers+dans+pet+care.jpeg',
-    'https://cdn.pixabay.com/photo/2017/09/25/13/12/dog-2785074_1280.jpg',
-  ];
-
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -109,8 +60,8 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(height: 50),
-            Text(
+         const   SizedBox(height: 50),
+         const   Text(
               'PetSpot',
               style: TextStyle(
                   fontSize: 28,
@@ -118,19 +69,19 @@ class HomeScreen extends StatelessWidget {
                   fontWeight: FontWeight.bold),
             ),
             Padding(
-              padding: EdgeInsets.all(16.0),
+              padding:const EdgeInsets.all(16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 8),
+               const   SizedBox(height: 8),
                   TextFormField(
                     decoration: InputDecoration(
                       hintText: 'Search for pets, food, accessories...',
-                      prefixIcon: Icon(Icons.search, color: Colors.teal),
+                      prefixIcon:const Icon(Icons.search, color: Colors.teal),
                       filled: true,
                       fillColor: Colors.grey[200],
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(25),
                         borderSide: BorderSide.none,
                       ),
                     ),
@@ -139,7 +90,7 @@ class HomeScreen extends StatelessWidget {
                       print("Searching for: $value");
                     },
                   ),
-                  SizedBox(height: 15),
+               const   SizedBox(height: 15),
                   CarouselSlider(
                     items: sliderImages.map((image) {
                       return ClipRRect(
@@ -160,7 +111,7 @@ class HomeScreen extends StatelessWidget {
                       autoPlayInterval: const Duration(seconds: 3),
                     ),
                   ),
-                
+
                   const SizedBox(height: 24),
 
                   // Popular Pets Section with image loop and overlay
@@ -258,21 +209,59 @@ class HomeScreen extends StatelessWidget {
                     height: 120,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) => Container(
-                        width: 100,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.teal[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Food ${index + 1}',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                      itemCount: popularFoods.length,
+                      itemBuilder: (context, index) {
+                        final food = popularFoods[index];
+                        return Container(
+                          width: 100,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  topRight: Radius.circular(8),
+                                ),
+                                child: Image.network(
+                                  food['image']!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 70,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                food['name']!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                food['price']!,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -286,21 +275,59 @@ class HomeScreen extends StatelessWidget {
                     height: 120,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: 5,
-                      itemBuilder: (context, index) => Container(
-                        width: 100,
-                        margin: const EdgeInsets.only(right: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.teal[50],
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Accessory ${index + 1}',
-                            style: const TextStyle(fontWeight: FontWeight.w500),
+                      itemCount: petAccesories.length,
+                      itemBuilder: (context, index) {
+                        final food = petAccesories[index];
+                        return Container(
+                          width: 100,
+                          margin: const EdgeInsets.only(right: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.3),
+                                spreadRadius: 2,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
                           ),
-                        ),
-                      ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(8),
+                                  topRight: Radius.circular(8),
+                                ),
+                                child: Image.network(
+                                  food['image']!,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 70,
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              Text(
+                                food['name']!,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                food['price']!,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
                     ),
                   ),
                 ],
