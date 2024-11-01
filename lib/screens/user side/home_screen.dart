@@ -26,7 +26,7 @@ class ScreenHome extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 159, 186, 183),
+      // backgroundColor: const Color.fromARGB(255, 159, 186, 183),
       body: pages[bottomNavProvider.currentIndex],
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Colors.white,
@@ -39,7 +39,7 @@ class ScreenHome extends StatelessWidget {
         },
         items: const [
           Icon(Icons.home, size: 30, color: Colors.white),
-          Icon(Icons.category, size: 30, color: Colors.white),
+          Icon(Icons.category_rounded, size: 30, color: Colors.white),
           Icon(Icons.shopping_cart, size: 30, color: Colors.white),
           Icon(Icons.favorite_outline, size: 30, color: Colors.white),
           Icon(Icons.person, size: 30, color: Colors.white),

@@ -36,7 +36,7 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,14 +45,14 @@ class ProfileScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is AuthenticationLoggedOut) {
             // Navigate to login screen when the user is logged out
-            Get.offAll(() => ScreenLogin());
+            Get.offAll(() =>const ScreenLogin());
           }
         },
         child: SingleChildScrollView(
           child: Center(
             child: Column(
               children: [
-                const SizedBox(height: 70),
+                const SizedBox(height: 65),
                 const Text(
                   'My Account',
                   style: TextStyle(
@@ -180,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
                   ],
                 ),
                 const Divider(),
-                const SizedBox(height: 20),
+                // const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

@@ -1,6 +1,6 @@
 // import 'dart:math';
 
-// ignore_for_file: avoid_print
+// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +30,7 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                           print(e.message.toString());
                         }, 
                         codeSent:(String verificationId, int? resenToken) {
-                           Get.to(ForgotOtp());
+                           Get.to(const ForgotOtp());
                         },  
                         codeAutoRetrievalTimeout:(String verificationId) {
                           
@@ -105,8 +105,8 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                 child: ElevatedButton(
                   onPressed: ()async {
                     if (_formKey.currentState!.validate()) {
-                      Get.to(ForgotOtp());
-                      // submitPhonenumber(context);
+                      Get.to(const ForgotOtp());
+                      submitPhonenumber(context);
                      
                       // FirebaseAuth.instance.verifyPhoneNumber(
                       //   phoneNumber: phoneController.text,

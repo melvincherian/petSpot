@@ -166,6 +166,7 @@ class _UserSignupState extends State<UserSignup> {
                                 name: _name.text,
                                 email: _email.text,
                                 password: _password.text,
+                                source: 'signup'
                               ),
                             );
                           }

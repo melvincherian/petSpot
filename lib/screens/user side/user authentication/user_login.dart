@@ -8,6 +8,7 @@ import 'package:second_project/screens/user side/forgotpassword/forgotpass_scree
 import 'package:second_project/screens/user side/home_screen.dart';
 import 'package:second_project/screens/user side/user authentication/user_signup.dart';
 import 'package:second_project/widgets/login_textfield.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ScreenLogin extends StatefulWidget {
   const ScreenLogin({super.key});
@@ -31,9 +32,9 @@ class _ScreenLoginState extends State<ScreenLogin> {
           if (state is AuthenticationLoading) {
             // Show loading indicator if necessary
           }
-          if (state is AuthenticationSuccess) {
-            Get.to(const ScreenHome());
-          }
+          // if (state is AuthenticationSuccess) {
+          //   Get.to(const ScreenHome());
+          // }
            if (state is AuthenticationSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -215,7 +216,15 @@ class _ScreenLoginState extends State<ScreenLogin> {
       context.read<AuthenticationBloc>().add(LoginRequested(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
+        source: 'login'
       ));
+ context.read<AuthenticationBloc>().stream.listen((state) async {
+      if (state is AuthenticationSuccess) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool('userLogged', true); // Save login status
+      }
+    });
+      
     }
   }
 

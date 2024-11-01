@@ -14,7 +14,6 @@ class ResetPassword extends StatefulWidget {
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
-  final currentpassController = TextEditingController();
   final newpassController = TextEditingController();
   final confirmnewPassController = TextEditingController();
 

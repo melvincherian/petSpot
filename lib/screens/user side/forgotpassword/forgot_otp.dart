@@ -8,7 +8,7 @@ import 'package:second_project/screens/user%20side/forgotpassword/reset_password
 
 
 class ForgotOtp extends StatefulWidget {
-  const ForgotOtp({super.key,});
+  const ForgotOtp({super.key});
 
   // final String verificationId;
 

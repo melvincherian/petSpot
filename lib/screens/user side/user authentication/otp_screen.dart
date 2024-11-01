@@ -54,16 +54,20 @@ class _ScreenOtpState extends State<ScreenOtp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'OTP Verification',
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        iconTheme: const IconThemeData(color: Colors.black),
-      ),
+      // appBar: AppBar(
+      //   leading: IconButton(onPressed: (){
+      //     Get.back();
+      //   }, icon: Icon(Icons.arrow_back)),
+      //   title: const Text(
+      //     'OTP Verification',
+      //     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      //   ),
+      //   centerTitle: true,
+      //   elevation: 0,
+      //   backgroundColor: Colors.transparent,
+
+      //   iconTheme: const IconThemeData(color: Colors.black),
+      // ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
         child: Form(
@@ -71,8 +75,18 @@ class _ScreenOtpState extends State<ScreenOtp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Spacer(),
-              Text(
+           const Spacer(),
+           const   Text(
+                'Verify OTP',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+           const   SizedBox(height: 90),
+                Text(
                 'We have sent an OTP to your phone\nplease Verify',
                 style: TextStyle(
                   fontSize: 18,
@@ -112,7 +126,7 @@ class _ScreenOtpState extends State<ScreenOtp> {
               ElevatedButton(
                 onPressed: () {
                   if (isOtpValid()) {
-                    Get.to(const ScreenHome());
+                    Get.off(const ScreenHome());
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       backgroundColor: Colors.red,
