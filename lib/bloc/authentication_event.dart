@@ -12,7 +12,10 @@ class SignupRequested extends AuthenticationEvent{
   final String password;
   final String source;
 
-  SignupRequested({required this.name,required this.email,required this.password,required this.source});
+  SignupRequested({required this.name,
+  required this.email,
+  required this.password,
+  required this.source});
   
   @override
   
@@ -22,7 +25,7 @@ class SignupRequested extends AuthenticationEvent{
 
 class LogoutRequested extends AuthenticationEvent{}
 
-
+class AppStarted extends AuthenticationEvent {}
 
 class LoginRequested extends AuthenticationEvent{
   final String email;
@@ -32,7 +35,17 @@ class LoginRequested extends AuthenticationEvent{
   LoginRequested({required this.email,required this.password,required this.source});
 }
 
-class GoogleLoginRequested extends AuthenticationEvent {}
+class GoogleLoginRequested extends AuthenticationEvent {
+
+}
+
+class PasswordResetRequested extends AuthenticationEvent {
+  
+  final String newPassword;
+  
+  PasswordResetRequested({required this.newPassword});
+}
+
 
 class CheckAuthenticationStatus extends AuthenticationEvent {}
 

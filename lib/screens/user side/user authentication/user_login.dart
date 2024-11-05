@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
 import 'package:second_project/screens/user side/forgotpassword/forgotpass_screen.dart';
 import 'package:second_project/screens/user side/home_screen.dart';
@@ -32,23 +31,24 @@ class _ScreenLoginState extends State<ScreenLogin> {
           if (state is AuthenticationLoading) {
             // Show loading indicator if necessary
           }
-          // if (state is AuthenticationSuccess) {
-          //   Get.to(const ScreenHome());
-          // }
+          if (state is AuthenticationSuccess) {
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenHome()));
+          }
            if (state is AuthenticationSuccess) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Login Successful",
-                style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Colors.green,
-              ),
-            );
-            Get.to(const ScreenHome());
+            // ScaffoldMessenger.of(context).showSnackBar(
+            //   const SnackBar(
+            //     content: Text("Login Successful",
+            //     style: TextStyle(color: Colors.white),
+            //     ),
+            //     backgroundColor: Colors.green,
+            //   ),
+            // );
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenHome()));
+            
           }
           if (state is AuthenticationFailure) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Invalid username and password'),
+              content: Text('Invalid Email and password'),
               backgroundColor: Colors.red,
             ));
           }
@@ -125,7 +125,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                     children: [
                       TextButton(
                         onPressed: () {
-                          Get.to(const ScreenForgotpassword());
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenForgotpassword()));
+                          // Get.to(const ScreenForgotpassword());
                         },
                         child: const Text(
                           'Forgot Password?',
@@ -134,7 +135,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       ),
                       TextButton(
                         onPressed: () {
-                          Get.to(const UserSignup());
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserSignup()));
+                        
                         },
                         child: const Text(
                           'Sign Up',

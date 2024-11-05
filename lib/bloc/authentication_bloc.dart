@@ -13,10 +13,25 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   AuthenticationBloc({required AuthRepository authRepository, required AuthRepository authrepository})
     : _authRepository = authRepository,
     super(AuthenticationInitial()) {
+    on<AppStarted>(_onAppStarted);  
     on<SignupRequested>(_onSignupRequested);
     on<LoginRequested>(_onLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<GoogleLoginRequested>(_onGoogleLoginRequested);
+    on<PasswordResetRequested>(_onPasswordResetRequested);
+  }
+  
+// app start request
+   Future<void> _onAppStarted(
+    AppStarted event,
+    Emitter<AuthenticationState> emit,
+  ) async {
+    final isLoggedIn = await _authRepository.isUserLoggedIn();
+    if (isLoggedIn) {
+      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid));
+    } else {
+      emit(AuthenticationLoggedOut());
+    }
   }
 
   // Signup request
@@ -63,11 +78,38 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     emit(AuthenticationLoading());
     final result = await _authRepository.loginWithGoogle();
     if (result == "Success") {
+      
       emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid));
     } else {
       emit(AuthenticationFailure(error: result));
     }
   }
+ 
+
+ // password reset
+
+ Future<void>_onPasswordResetRequested(
+  PasswordResetRequested event,
+  Emitter<AuthenticationState>emit,
+ )async{
+  emit(AuthenticationLoading());
+  try{
+    final result=await _authRepository.resetPassword(
+    
+      newPassword: event.newPassword
+      );
+
+      if(result=="Success"){
+        emit(PasswordResetSuccess());
+      }
+      else{
+        emit(PasswordResetFailure(error: result));
+      }
+  }catch(e){
+    emit(PasswordResetFailure(error: e.toString()));
+  }
+ }
+  
 
   // Logout request
   Future<void> _onLogoutRequested(
@@ -77,6 +119,6 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     await _authRepository.logoutUser();
     emit(AuthenticationLoggedOut());
   }
-
+  
   
 }

@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:second_project/Firebase/user_authentication.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
-import 'package:second_project/screens/user%20side/user%20authentication/otp_screen.dart';
+// import 'package:second_project/screens/user%20side/user%20authentication/otp_screen.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
 import 'package:second_project/widgets/elevatedbuttonsignup.dart';
 import 'package:second_project/widgets/signup_textfield.dart';
-import 'package:get/get.dart';
 import 'package:second_project/widgets/snackbar.dart';
+// import 'package:second_project/widgets/snackbar.dart';
 // import 'authentication_bloc.dart'; // Import your AuthenticationBloc here
 
 class UserSignup extends StatefulWidget {
@@ -22,7 +22,7 @@ class _UserSignupState extends State<UserSignup> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmPassword = TextEditingController();
-  final _phoneController = TextEditingController();
+  // final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -31,7 +31,8 @@ class _UserSignupState extends State<UserSignup> {
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is AuthenticationSuccess) {
-            Get.to(ScreenOtp());
+        
+            // Navigator.push(context, MaterialPageRoute(builder: (context)=>ScreenOtp());
           } else if (state is AuthenticationFailure) {
             showSnackbar(context, state.error);
           }
@@ -100,6 +101,7 @@ class _UserSignupState extends State<UserSignup> {
                         hintText: 'Email',
                         prefixIcon: const Icon(Icons.email),
                         controller: _email,
+                        keyboardType: TextInputType.emailAddress,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please Enter Email';
@@ -110,21 +112,21 @@ class _UserSignupState extends State<UserSignup> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 10),
-                      SignupTextFormField(
-                        hintText: 'Phone number',
-                        prefixIcon: const Icon(Icons.phone),
-                        controller: _phoneController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please Enter Phone number';
-                          } else if (!RegExp(r'^\+?[0-9]{10,15}$')
-                              .hasMatch(value)) {
-                            return 'Please enter a valid phone number';
-                          }
-                          return null;
-                        },
-                      ),
+                      // const SizedBox(height: 10),
+                      // SignupTextFormField(
+                      //   hintText: 'Phone number',
+                      //   prefixIcon: const Icon(Icons.phone),
+                      //   controller: _phoneController,
+                      //   validator: (value) {
+                      //     if (value == null || value.isEmpty) {
+                      //       return 'Please Enter Phone number';
+                      //     } else if (!RegExp(r'^\+?[0-9]{10,15}$')
+                      //         .hasMatch(value)) {
+                      //       return 'Please enter a valid phone number';
+                      //     }
+                      //     return null;
+                      //   },
+                      // ),
                       const SizedBox(height: 10),
                       SignupTextFormField(
                         hintText: 'Password',
@@ -182,7 +184,8 @@ class _UserSignupState extends State<UserSignup> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Get.to(const ScreenLogin());
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenLogin()));
+                             
                             },
                             child: const Text(
                               'Login',

@@ -41,11 +41,16 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
     await Future.delayed(const Duration(seconds: 3)); // Show splash for 3 seconds
 
     if (userLogged) {
-      Get.offAll(() => ScreenHome()); // Replace with your HomeScreen widget
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ScreenHome()));
+      // Get.offAll(() => ScreenHome()); // Replace with your HomeScreen widget
     } else {
-      setState(() {
-        showSplash = false; // Show the landing screen content
-      });
+       Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const ScreenLogin()),
+    );
+      // setState(() {
+      //   showSplash = false; // Show the landing screen content
+      // });
     }
   }
 
@@ -147,11 +152,13 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.03),
+              const    SizedBox(height: 20),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
                     child: ElevatedButton(
                       onPressed: () {
-                        Get.to(const ScreenLogin());
+                        Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenLogin()));
+                        // Get.to(const ScreenLogin());
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
@@ -162,7 +169,7 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
                         minimumSize: Size(double.infinity, screenHeight * 0.07),
                       ),
                       child: const Text(
-                        'Login',
+                        'Lets Go!',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -176,7 +183,7 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
                     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
                     child: ElevatedButton(
                       onPressed: () {
-                        Get.to(ScreenHome());
+                        Get.to(const ScreenHome());
                       },
                       style: ElevatedButton.styleFrom(
                         padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),

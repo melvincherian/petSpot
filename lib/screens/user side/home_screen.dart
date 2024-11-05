@@ -74,22 +74,22 @@ class HomeScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                const   SizedBox(height: 8),
-                  TextFormField(
-                    decoration: InputDecoration(
-                      hintText: 'Search for pets, food, accessories...',
-                      prefixIcon:const Icon(Icons.search, color: Colors.teal),
-                      filled: true,
-                      fillColor: Colors.grey[200],
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                    onFieldSubmitted: (value) {
-                      // Add search logic here
-                      print("Searching for: $value");
-                    },
-                  ),
+                  // TextFormField(
+                  //   decoration: InputDecoration(
+                  //     hintText: 'Search for pets, food, accessories...',
+                  //     prefixIcon:const Icon(Icons.search, color: Colors.teal),
+                  //     filled: true,
+                  //     fillColor: Colors.grey[200],
+                  //     border: OutlineInputBorder(
+                  //       borderRadius: BorderRadius.circular(25),
+                  //       borderSide: BorderSide.none,
+                  //     ),
+                  //   ),
+                  //   onFieldSubmitted: (value) {
+                  //     // Add search logic here
+                  //     print("Searching for: $value");
+                  //   },
+                  // ),
                const   SizedBox(height: 15),
                   CarouselSlider(
                     items: sliderImages.map((image) {
@@ -121,7 +121,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   SizedBox(
-                    height: 180,
+                    height: 140,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: pets.length,

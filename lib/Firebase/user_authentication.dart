@@ -20,6 +20,10 @@ class AuthRepository{
 
   User? get currentUser => _auth.currentUser;
 
+   Future<bool> isUserLoggedIn() async {
+    return _auth.currentUser != null;
+  }
+
   Future<String>signupUser({
     required String name,
     required String email,
@@ -89,6 +93,18 @@ class AuthRepository{
       return e.toString();
     }
   }
+
+//forgot password 
+
+  Future<String> resetPassword({required String newPassword}) async {
+  try {
+    // Update password logic here, for example:
+    // Fetch the user by email, update their password to newPassword.
+    return "Success";
+  } catch (e) {
+    return e.toString();
+  }
+}
 
   
   Future<void> logoutUser() async {

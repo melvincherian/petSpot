@@ -1,7 +1,6 @@
 // ignore_for_file: non_constant_identifier_names
 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:second_project/screens/user%20side/home_screen.dart';
 
 class ScreenOtp extends StatefulWidget {
@@ -126,7 +125,8 @@ class _ScreenOtpState extends State<ScreenOtp> {
               ElevatedButton(
                 onPressed: () {
                   if (isOtpValid()) {
-                    Get.off(const ScreenHome());
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>ScreenHome()));
+                    // Get.off(const ScreenHome());
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       backgroundColor: Colors.red,

@@ -1,4 +1,4 @@
-// ignore_for_file: use_super_parameters, library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, use_super_parameters
 
 import 'package:flutter/material.dart';
 
@@ -8,6 +8,7 @@ class SignupTextFormField extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final bool obscureText;
+  final TextInputType keyboardType;
 
   const SignupTextFormField({
     Key? key,
@@ -16,6 +17,7 @@ class SignupTextFormField extends StatefulWidget {
     required this.controller,
     this.validator,
     this.obscureText = false,
+    this.keyboardType = TextInputType.text,
   }) : super(key: key);
 
   @override
@@ -23,43 +25,53 @@ class SignupTextFormField extends StatefulWidget {
 }
 
 class _SignupTextFormFieldState extends State<SignupTextFormField> {
-  late bool _obscureText;
+  late ValueNotifier<bool> _obscureTextNotifier;
 
   @override
   void initState() {
     super.initState();
-    _obscureText = widget.obscureText;
+    _obscureTextNotifier = ValueNotifier(widget.obscureText);
+  }
+
+  @override
+  void dispose() {
+    _obscureTextNotifier.dispose();
+    super.dispose();
   }
 
   void _togglePasswordVisibility() {
-    setState(() {
-      _obscureText = !_obscureText;
-    });
+    _obscureTextNotifier.value = !_obscureTextNotifier.value;
   }
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      controller: widget.controller,
-      obscureText: _obscureText,
-      validator: widget.validator,
-      decoration: InputDecoration(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
-        hintText: widget.hintText,
-        prefixIcon: widget.prefixIcon,
-        filled: true,
-        fillColor: Colors.grey[100],
-        suffixIcon: widget.obscureText
-            ? IconButton(
-                icon: Icon(
-                  _obscureText ? Icons.visibility_off : Icons.visibility,
-                ),
-                onPressed: _togglePasswordVisibility,
-              )
-            : null,
-      ),
+    return ValueListenableBuilder<bool>(
+      valueListenable: _obscureTextNotifier,
+      builder: (context, obscureText, child) {
+        return TextFormField(
+          controller: widget.controller,
+          obscureText: obscureText,
+          validator: widget.validator,
+          keyboardType: widget.keyboardType,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            hintText: widget.hintText,
+            prefixIcon: widget.prefixIcon,
+            filled: true,
+            fillColor: Colors.grey[100],
+            suffixIcon: widget.obscureText
+                ? IconButton(
+                    icon: Icon(
+                      obscureText ? Icons.visibility_off : Icons.visibility,
+                    ),
+                    onPressed: _togglePasswordVisibility,
+                  )
+                : null,
+          ),
+        );
+      },
     );
   }
 }

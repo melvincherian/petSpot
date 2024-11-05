@@ -22,4 +22,14 @@ final class AuthenticationFailure extends AuthenticationState {
 }
 
 
+class PasswordResetFailure extends AuthenticationState {
+  final String error;
+  PasswordResetFailure({required this.error});
+}
+
+class PasswordResetSuccess extends AuthenticationState {}
+
+
+
+
 final class AuthenticationLoggedOut extends AuthenticationState {}

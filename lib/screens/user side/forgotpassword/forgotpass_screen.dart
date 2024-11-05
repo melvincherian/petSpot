@@ -1,11 +1,10 @@
 // import 'dart:math';
 
-// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings
-
-import 'package:firebase_auth/firebase_auth.dart';
+// ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:second_project/screens/user%20side/forgotpassword/forgot_otp.dart';
+import 'package:second_project/Firebase/email_auth.dart';
+import 'package:second_project/screens/user%20side/forgotpassword/reset_password.dart';
+import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
 import 'package:second_project/widgets/resetpass_textfileds.dart';
 
 class ScreenForgotpassword extends StatefulWidget {
@@ -16,29 +15,8 @@ class ScreenForgotpassword extends StatefulWidget {
 }
 
 class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
-  final phoneController = TextEditingController();
-
- Future<void>submitPhonenumber(BuildContext context)async{
-  
-   FirebaseAuth auth=FirebaseAuth.instance;
-                      await auth.verifyPhoneNumber(
-                        phoneNumber: phoneController.text,
-                        verificationCompleted:(phoneAuthCredential)async {
-                          
-                        }, 
-                        verificationFailed:(FirebaseAuthException e){
-                          print(e.message.toString());
-                        }, 
-                        codeSent:(String verificationId, int? resenToken) {
-                           Get.to(const ForgotOtp());
-                        },  
-                        codeAutoRetrievalTimeout:(String verificationId) {
-                          
-                        },
-     );
-
- }
-
+  final _auth = Authservice();
+  final emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -72,7 +50,7 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
               const SizedBox(height: 10),
               Center(
                 child: Text(
-                  'Enter your phone number  and we\'ll send \nyou an OTP to your phone.',
+                  'Enter your email  and we\'ll send \nyou an link to your phone.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 16,
@@ -84,15 +62,15 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
 
               // Email Input Field
               ForgotpassTextfiels(
-                labelText: 'Phone number',
-                hintText: 'Phone',
-                prefixIcon: const Icon(Icons.phone),
-                controller: phoneController,
+                labelText: 'Email',
+                hintText: 'Please Enter email',
+                prefixIcon: const Icon(Icons.email),
+                controller: emailController,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please Enter phonenumber';
-                  } else if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
-                    return 'Please enter a valid phone number';
+                    return 'Please Enter Email';
+                  } else if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                    return 'Please enter a valid email';
                   }
                   return null;
                 },
@@ -103,29 +81,29 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
               SizedBox(
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: ()async {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      Get.to(const ForgotOtp());
-                      submitPhonenumber(context);
-                     
-                      // FirebaseAuth.instance.verifyPhoneNumber(
-                      //   phoneNumber: phoneController.text,
-                      //   verificationCompleted:(phoneAuthCredential) {
-                       
-                      //   }, 
-                      //   verificationFailed:(error) {
-                      //     print(error.toString());
-                      //   }, 
-                      //   codeSent:(verificationId, forceResendingToken) {
-                      //     Get.to(ForgotOtp(verificationId: verificationId,));
-                      //   }, 
-                      //   codeAutoRetrievalTimeout:(verificationId) {
-                      //     print('Auto retrieval time out');
-                      //   },);
-                    
+                      try {
+                        await _auth
+                            .sendPasswordResetemail(emailController.text);
 
-                   
-                      // Get.to(const ForgotOtp(verificationId: 'verificationId',));
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text(
+                            'Reset email sent successfully.',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          backgroundColor: Colors.green,
+                        ));
+
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const ResetPassword()));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text('Failed to send reset email $e')));
+                      }
                     }
                     // Your action here
                   },
@@ -136,7 +114,7 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                     ),
                   ),
                   child: const Text(
-                    'Send OTP',
+                    'Verify Email',
                     style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -150,7 +128,10 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
               // Go Back Button
               TextButton(
                 onPressed: () {
-                  Get.back();
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ScreenLogin()));
                 },
                 child: const Text(
                   'Go Back',
@@ -167,5 +148,4 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
       ),
     );
   }
-
 }

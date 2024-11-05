@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:get/get.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
+import 'package:second_project/screens/user%20side/user%20authentication/user_landing.dart';
 // import 'package:second_project/bloc/authentication_bloc/authentication_bloc.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
@@ -25,8 +28,10 @@ class ProfileScreen extends StatelessWidget {
             ),
             TextButton(
               child: const Text('Yes'),
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await logout(context);
+                // Close the dialog
                 // Dispatch the logout event to the bloc
                 context.read<AuthenticationBloc>().add(LogoutRequested());
               },
@@ -36,7 +41,7 @@ class ProfileScreen extends StatelessWidget {
       },
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +50,12 @@ class ProfileScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is AuthenticationLoggedOut) {
             // Navigate to login screen when the user is logged out
-            Get.offAll(() =>const ScreenLogin());
+            // Get.offAll(() =>const ScreenLogin());
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const ScreenLogin()),
+              (Route<dynamic> route) => false,
+            );
           }
         },
         child: SingleChildScrollView(
@@ -203,6 +213,16 @@ class ProfileScreen extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Future<void> logout(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('userLogged', false); // Set login state to false
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const UserLanding()),
+      (route) => false,
     );
   }
 }
