@@ -1,15 +1,44 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, unnecessary_null_comparison
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
+import 'package:second_project/bloc/imagepicker_bloc.dart';
+import 'package:second_project/screens/edit_profile.dart';
+import 'package:second_project/screens/terms_service.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_landing.dart';
-// import 'package:second_project/bloc/authentication_bloc/authentication_bloc.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
+import 'package:second_project/services/shared_pref.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  String _username = '';
+  String _email = '';
+  String _imageUrl = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserInfo();
+  }
+
+  // Load user information from SharedPreferences
+  Future<void> _loadUserInfo() async {
+    final prefHelper = SharedPrefHelper();
+    _username = await prefHelper.getUserName() ?? 'No username set';
+    _email = await prefHelper.getUserEmail() ?? 'No email set';
+    _imageUrl = await prefHelper.getUserImage() ?? ''; // Empty if no image is saved
+
+    
+  }
 
   Future<void> _showLogoutDialog(BuildContext context) async {
     return showDialog<void>(
@@ -31,7 +60,6 @@ class ProfileScreen extends StatelessWidget {
               onPressed: () async {
                 Navigator.of(context).pop();
                 await logout(context);
-                // Close the dialog
                 // Dispatch the logout event to the bloc
                 context.read<AuthenticationBloc>().add(LogoutRequested());
               },
@@ -50,7 +78,6 @@ class ProfileScreen extends StatelessWidget {
         listener: (context, state) {
           if (state is AuthenticationLoggedOut) {
             // Navigate to login screen when the user is logged out
-            // Get.offAll(() =>const ScreenLogin());
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (context) => const ScreenLogin()),
@@ -71,30 +98,55 @@ class ProfileScreen extends StatelessWidget {
                       fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 16),
-                const Row(
+                Row(
                   children: [
-                    SizedBox(width: 162),
+                    const SizedBox(width: 162),
                     SizedBox(
                       width: 100,
                       height: 100,
-                      child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                            'https://www.pngall.com/wp-content/uploads/5/Profile-Avatar-PNG.png'),
+                      child: GestureDetector(
+                        onTap: () => context
+                            .read<ImagepickerBloc>()
+                            .add(PickImageEvent()),
+                        child: BlocBuilder<ImagepickerBloc, ImagepickerState>(
+                            builder: (context, state) {
+                          if (state is ImagePickerSuccess && state.imageFile != null) {
+                            return Image.file(
+                              state.imageFile,
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                            );
+                          } else if (_imageUrl.isNotEmpty) {
+                            return Image.network(
+                              _imageUrl,
+                              height: 120,
+                              width: 120,
+                              fit: BoxFit.cover,
+                            );
+                          } else {
+                            return const CircleAvatar(
+                              radius: 50,
+                              backgroundImage: NetworkImage(
+                                  'https://st3.depositphotos.com/15648834/17930/v/450/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg'),
+                            );
+                          }
+                        }),
                       ),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Melvin Cherian',
-                  style: TextStyle(
+                Text(
+                  _username,
+                  style: const TextStyle(
                       fontSize: 23,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87),
                 ),
-                const Text(
-                  'melvincherian0190@gmail.com',
-                  style: TextStyle(
+                Text(
+                  _email,
+                  style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87),
@@ -103,7 +155,12 @@ class ProfileScreen extends StatelessWidget {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFA8E6CF)),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const EditProfile()));
+                  },
                   child: const Text(
                     'Edit Profile',
                     style: TextStyle(
@@ -131,9 +188,15 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(width: 40),
-                    const Icon(Icons.note),
+                    const Icon(Icons.note_add_outlined),
                     TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) =>
+                                    const ScreenTermsAndConditions()));
+                      },
                       child: const Text(
                         'Terms and Conditions',
                         style: TextStyle(fontSize: 18, color: Colors.black),
@@ -179,18 +242,17 @@ class ProfileScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     const SizedBox(width: 40),
-                    const Icon(Icons.favorite_outline_outlined),
+                    const Icon(Icons.wallet),
                     TextButton(
                       onPressed: () {},
                       child: const Text(
-                        'Wish List',
+                        'My Wallet',
                         style: TextStyle(fontSize: 18, color: Colors.black),
                       ),
                     )
                   ],
                 ),
                 const Divider(),
-                // const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

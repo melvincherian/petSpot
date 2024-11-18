@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart'; 
 import 'package:second_project/Firebase/user_authentication.dart';
-import 'package:second_project/bloc/authentication_bloc.dart'; 
+import 'package:second_project/bloc/authentication_bloc.dart';
+import 'package:second_project/bloc/imagepicker_bloc.dart'; 
 import 'package:second_project/provider/bottom_navbar.dart';
 import 'package:second_project/screens/user side/user authentication/user_landing.dart';
 
@@ -24,8 +25,15 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider<BottomNavprovider>(create: (_) => BottomNavprovider()),
       
       ],
-      child: BlocProvider(
-        create: (context) => AuthenticationBloc(authrepository: AuthRepository(), authRepository: AuthRepository()),
+      child: MultiBlocProvider(
+        providers: [
+          BlocProvider<AuthenticationBloc>(
+                   create: (context) => AuthenticationBloc(authrepository: AuthRepository(), authRepository: AuthRepository()),
+          ),
+          BlocProvider<ImagepickerBloc>
+          (create: (context)=>ImagepickerBloc())
+        ],
+ 
         child:const MaterialApp(
           debugShowCheckedModeBanner: false,
           home: UserLanding(),

@@ -3,7 +3,6 @@
 // ignore_for_file: avoid_print, prefer_interpolation_to_compose_strings, use_build_context_synchronously
 import 'package:flutter/material.dart';
 import 'package:second_project/Firebase/email_auth.dart';
-import 'package:second_project/screens/user%20side/forgotpassword/reset_password.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
 import 'package:second_project/widgets/resetpass_textfileds.dart';
 
@@ -96,13 +95,13 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                           backgroundColor: Colors.green,
                         ));
 
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const ResetPassword()));
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => const ResetPassword()));
                       } catch (e) {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text('Failed to send reset email $e')));
+                        content: Text('Failed to send reset email $e')));
                       }
                     }
                     // Your action here

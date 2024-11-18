@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:second_project/screens/user%20side/home_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
@@ -34,25 +33,27 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
     checkUserLoginStatus();
   }
 
-  Future<void> checkUserLoginStatus() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userLogged = prefs.getBool('userLogged') ?? false;
+ Future<void> checkUserLoginStatus() async {
+  final prefs = await SharedPreferences.getInstance();
+  final userLogged = prefs.getBool('userLogged') ?? false;
 
-    await Future.delayed(const Duration(seconds: 3)); // Show splash for 3 seconds
+  // Ensure splash screen is shown for a few seconds
+  await Future.delayed(const Duration(seconds: 3));
 
-    if (userLogged) {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ScreenHome()));
-      // Get.offAll(() => ScreenHome()); // Replace with your HomeScreen widget
-    } else {
-       Navigator.pushReplacement(
+  setState(() {
+    showSplash = false; // Hide the splash screen
+  });
+
+  if (userLogged) {
+    Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => const ScreenLogin()),
+      MaterialPageRoute(builder: (context) => ScreenHome()),
     );
-      // setState(() {
-      //   showSplash = false; // Show the landing screen content
-      // });
-    }
   }
+  // else{
+  //   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>ScreenLogin()));
+  // }
+}
 
   @override
   void dispose() {
@@ -152,7 +153,7 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
                     ),
                   ),
                   SizedBox(height: screenHeight * 0.03),
-              const    SizedBox(height: 20),
+              const    SizedBox(height: 50),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
                     child: ElevatedButton(
@@ -178,31 +179,31 @@ class _UserLandingState extends State<UserLanding> with SingleTickerProviderStat
                       ),
                     ),
                   ),
-                  SizedBox(height: screenHeight * 0.02),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Get.to(const ScreenHome());
-                      },
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
-                        backgroundColor: const Color.fromARGB(255, 244, 246, 117),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        minimumSize: Size(double.infinity, screenHeight * 0.07),
-                      ),
-                      child: const Text(
-                        'Maybe later',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(height: screenHeight * 0.02),
+                  // Padding(
+                  //   padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.06),
+                  //   child: ElevatedButton(
+                  //     onPressed: () {
+                  //       Get.to(const ScreenHome());
+                  //     },
+                  //     style: ElevatedButton.styleFrom(
+                  //       padding: EdgeInsets.symmetric(vertical: screenHeight * 0.02),
+                  //       backgroundColor: const Color.fromARGB(255, 244, 246, 117),
+                  //       shape: RoundedRectangleBorder(
+                  //         borderRadius: BorderRadius.circular(25),
+                  //       ),
+                  //       minimumSize: Size(double.infinity, screenHeight * 0.07),
+                  //     ),
+                  //     child: const Text(
+                  //       'Maybe later',
+                  //       style: TextStyle(
+                  //         fontSize: 20,
+                  //         fontWeight: FontWeight.bold,
+                  //         color: Colors.black,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                 ],
               ),
             ),

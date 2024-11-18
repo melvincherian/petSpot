@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:second_project/Firebase/user_authentication.dart';
@@ -10,6 +11,8 @@ part 'authentication_state.dart';
 class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
   final AuthRepository _authRepository;
 
+  // final ImagePicker _imagePicker = ImagePicker(); 
+
   AuthenticationBloc({required AuthRepository authRepository, required AuthRepository authrepository})
     : _authRepository = authRepository,
     super(AuthenticationInitial()) {
@@ -18,7 +21,8 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     on<LoginRequested>(_onLoginRequested);
     on<LogoutRequested>(_onLogoutRequested);
     on<GoogleLoginRequested>(_onGoogleLoginRequested);
-    on<PasswordResetRequested>(_onPasswordResetRequested);
+    // on<PickImageRequested>(_onPickImageRequested);
+  
   }
   
 // app start request
@@ -28,7 +32,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
   ) async {
     final isLoggedIn = await _authRepository.isUserLoggedIn();
     if (isLoggedIn) {
-      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid));
+      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid,source: 'appstarted'));
     } else {
       emit(AuthenticationLoggedOut());
     }
@@ -47,12 +51,12 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     );
 
     if (result == "Success") {
-      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid));
+      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid,source: 'signup'));
     } else {
-      emit(AuthenticationFailure(error: result));
+      emit(AuthenticationFailure(error: result,source: 'signup'));
     }
   }
-
+  
   // Login request
   Future<void> _onLoginRequested(
     LoginRequested event,
@@ -64,12 +68,12 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       password: event.password,
     );
     if (result == "Success") {
-      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid));
+      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid,source: 'login'));
     } else {
-      emit(AuthenticationFailure(error: result));
+      emit(AuthenticationFailure(error: result,source: 'login'));
     }
   }
-
+  
   // Google login request
   Future<void> _onGoogleLoginRequested(
     GoogleLoginRequested event,
@@ -79,37 +83,12 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     final result = await _authRepository.loginWithGoogle();
     if (result == "Success") {
       
-      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid));
+      emit(AuthenticationSuccess(userId: _authRepository.currentUser!.uid,source: 'google'));
     } else {
-      emit(AuthenticationFailure(error: result));
+      emit(AuthenticationFailure(error: result,source: 'google'));
     }
   }
  
-
- // password reset
-
- Future<void>_onPasswordResetRequested(
-  PasswordResetRequested event,
-  Emitter<AuthenticationState>emit,
- )async{
-  emit(AuthenticationLoading());
-  try{
-    final result=await _authRepository.resetPassword(
-    
-      newPassword: event.newPassword
-      );
-
-      if(result=="Success"){
-        emit(PasswordResetSuccess());
-      }
-      else{
-        emit(PasswordResetFailure(error: result));
-      }
-  }catch(e){
-    emit(PasswordResetFailure(error: e.toString()));
-  }
- }
-  
 
   // Logout request
   Future<void> _onLogoutRequested(
@@ -119,6 +98,7 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
     await _authRepository.logoutUser();
     emit(AuthenticationLoggedOut());
   }
-  
+
+
   
 }

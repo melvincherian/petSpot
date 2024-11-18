@@ -10,26 +10,28 @@ final class AuthenticationLoading extends AuthenticationState {}
 
 final class AuthenticationSuccess extends AuthenticationState{
   final String userId;
+  final String source;
 
-AuthenticationSuccess({required this.userId});
+AuthenticationSuccess({required this.userId,required this.source});
+
+
+
 
 }
+
+
 
 final class AuthenticationFailure extends AuthenticationState {
   final String error;
-
-  AuthenticationFailure({required this.error});
+  final String source;
+  AuthenticationFailure({required this.error,required this.source});
 }
-
-
-class PasswordResetFailure extends AuthenticationState {
-  final String error;
-  PasswordResetFailure({required this.error});
-}
-
-class PasswordResetSuccess extends AuthenticationState {}
-
-
-
 
 final class AuthenticationLoggedOut extends AuthenticationState {}
+
+
+
+
+
+
+

@@ -39,13 +39,6 @@ class GoogleLoginRequested extends AuthenticationEvent {
 
 }
 
-class PasswordResetRequested extends AuthenticationEvent {
-  
-  final String newPassword;
-  
-  PasswordResetRequested({required this.newPassword});
-}
-
 
 class CheckAuthenticationStatus extends AuthenticationEvent {}
 
@@ -55,3 +48,8 @@ final bool isAuthenticated;
   
   AuthenticationStatusChanged({required this.isAuthenticated});
 }
+
+class PickImageRequested extends AuthenticationEvent {}
+
+
+

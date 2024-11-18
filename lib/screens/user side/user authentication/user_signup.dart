@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
 // import 'package:second_project/screens/user%20side/user%20authentication/otp_screen.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
+import 'package:second_project/services/shared_pref.dart';
 import 'package:second_project/widgets/elevatedbuttonsignup.dart';
 import 'package:second_project/widgets/signup_textfield.dart';
 import 'package:second_project/widgets/snackbar.dart';
@@ -29,11 +30,24 @@ class _UserSignupState extends State<UserSignup> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
-          if (state is AuthenticationSuccess) {
-        
-            // Navigator.push(context, MaterialPageRoute(builder: (context)=>ScreenOtp());
-          } else if (state is AuthenticationFailure) {
+        listener: (context, state)async {
+          if (state is AuthenticationSuccess &&state.source=='signup' ) {
+
+            await SharedPrefHelper().saveUserEmail(_email.text);
+            await SharedPrefHelper().saveUserName(_name.text);
+            
+              ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Signup Successfully",
+                style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.green,
+              ),
+              );
+            Navigator.push(context, MaterialPageRoute(builder: (context)=> ScreenLogin()));
+          } 
+          else if (state is AuthenticationFailure) {
+            
             showSnackbar(context, state.error);
           }
         },
@@ -163,6 +177,7 @@ class _UserSignupState extends State<UserSignup> {
                         isLoading: context.watch<AuthenticationBloc>().state is AuthenticationLoading,
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
+                            
                             context.read<AuthenticationBloc>().add(
                               SignupRequested(
                                 name: _name.text,

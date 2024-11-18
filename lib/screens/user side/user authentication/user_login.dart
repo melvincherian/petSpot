@@ -29,24 +29,25 @@ class _ScreenLoginState extends State<ScreenLogin> {
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
           if (state is AuthenticationLoading) {
+           
             // Show loading indicator if necessary
           }
           if (state is AuthenticationSuccess) {
            Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenHome()));
           }
-           if (state is AuthenticationSuccess) {
-            // ScaffoldMessenger.of(context).showSnackBar(
-            //   const SnackBar(
-            //     content: Text("Login Successful",
-            //     style: TextStyle(color: Colors.white),
-            //     ),
-            //     backgroundColor: Colors.green,
-            //   ),
-            // );
+           if (state is AuthenticationSuccess && state.source=='login') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Login Successfully",
+                style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.green,
+              ),
+            );
             Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenHome()));
             
           }
-          if (state is AuthenticationFailure) {
+          if (state is AuthenticationFailure && state.source=='login') {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
               content: Text('Invalid Email and password'),
               backgroundColor: Colors.red,
@@ -126,7 +127,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       TextButton(
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenForgotpassword()));
-                          // Get.to(const ScreenForgotpassword());
+                          
                         },
                         child: const Text(
                           'Forgot Password?',
@@ -136,7 +137,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
                       TextButton(
                         onPressed: () {
                           Navigator.push(context, MaterialPageRoute(builder: (context)=>const UserSignup()));
-                        
+                         
                         },
                         child: const Text(
                           'Sign Up',
@@ -223,7 +224,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
  context.read<AuthenticationBloc>().stream.listen((state) async {
       if (state is AuthenticationSuccess) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setBool('userLogged', true); // Save login status
+        await prefs.setBool('userLogged', true);
+         print("Login state saved: ${prefs.getBool('userLogged')}"); // Save login status
       }
     });
       
