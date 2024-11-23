@@ -26,7 +26,8 @@ class EditTextfield extends StatelessWidget {
       validator: validator,
       decoration: InputDecoration(
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(5),
+          borderSide: BorderSide(color: Colors.black)
         ),
         labelText: labelText,
         hintText: hintText,

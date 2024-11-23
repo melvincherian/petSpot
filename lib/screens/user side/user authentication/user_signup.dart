@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 // import 'package:second_project/Firebase/user_authentication.dart';
@@ -23,7 +25,7 @@ class _UserSignupState extends State<UserSignup> {
   final _email = TextEditingController();
   final _password = TextEditingController();
   final _confirmPassword = TextEditingController();
-  // final _phoneController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -32,9 +34,10 @@ class _UserSignupState extends State<UserSignup> {
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state)async {
           if (state is AuthenticationSuccess &&state.source=='signup' ) {
-
+            
             await SharedPrefHelper().saveUserEmail(_email.text);
             await SharedPrefHelper().saveUserName(_name.text);
+            await SharedPrefHelper().saveUserphone(_phoneController.text);
             
               ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
@@ -126,21 +129,21 @@ class _UserSignupState extends State<UserSignup> {
                           return null;
                         },
                       ),
-                      // const SizedBox(height: 10),
-                      // SignupTextFormField(
-                      //   hintText: 'Phone number',
-                      //   prefixIcon: const Icon(Icons.phone),
-                      //   controller: _phoneController,
-                      //   validator: (value) {
-                      //     if (value == null || value.isEmpty) {
-                      //       return 'Please Enter Phone number';
-                      //     } else if (!RegExp(r'^\+?[0-9]{10,15}$')
-                      //         .hasMatch(value)) {
-                      //       return 'Please enter a valid phone number';
-                      //     }
-                      //     return null;
-                      //   },
-                      // ),
+                      const SizedBox(height: 10),
+                      SignupTextFormField(
+                        hintText: 'Phone number',
+                        prefixIcon: const Icon(Icons.phone),
+                        controller: _phoneController,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please Enter Phone number';
+                          } else if (!RegExp(r'^\+?[0-9]{10,15}$')
+                              .hasMatch(value)) {
+                            return 'Please enter a valid phone number';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 10),
                       SignupTextFormField(
                         hintText: 'Password',
