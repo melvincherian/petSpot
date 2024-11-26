@@ -4,11 +4,13 @@ class CategoryModel {
   final String id;
   final String name;
   final String description;
+   final String? image;
 
   CategoryModel({
     required this.id,
     required this.name,
     required this.description,
+     this.image,
   });
 
   // Factory constructor to create an instance from JSON
@@ -27,6 +29,7 @@ class CategoryModel {
       id: data['id'] ?? snapshot.id,
       name: data['name'] ?? '',
       description: data['description'] ?? '',
+       image: data['image'],
     );
   }
 
@@ -36,6 +39,7 @@ class CategoryModel {
       'id': id,
       'name': name,
       'description': description,
+      'image':image
     };
   }
 }

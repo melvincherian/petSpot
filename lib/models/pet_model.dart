@@ -6,7 +6,8 @@ class PetproductModel {
   final String category;
   final String color;
   final String description;
-  final String? imageUrl;
+  // final String? imageUrl;
+   final List<String> imageUrls;
   final double price;
   final int stock;
   final String weight;
@@ -17,7 +18,8 @@ class PetproductModel {
     required this.category,
     required this.color,
     required this.description,
-    this.imageUrl,
+    // this.imageUrl,
+     this.imageUrls = const [],
     required this.price,
     required this.stock,
     required this.weight,
@@ -31,7 +33,8 @@ class PetproductModel {
       category: json['category'] ?? '',
       color: json['color'] ?? '',
       description: json['description'] ?? '',
-      imageUrl: json['imageUrl'],
+      // imageUrl: json['imageUrl'],
+       imageUrls: List<String>.from(json['imageUrls'] ?? []),
       price: (json['price'] ?? 0).toDouble(),
       stock: (json['stock'] ?? 0).toInt(),
       weight: json['weight'] ?? '',
@@ -47,7 +50,8 @@ class PetproductModel {
       category: data['category'] ?? '',
       color: data['color'] ?? '',
       description: data['description'] ?? '',
-      imageUrl: data['imageUrl'],
+      // imageUrl: data['imageUrl'],
+       imageUrls: List<String>.from(data['imageUrls'] ?? []),
       price: (data['price'] ?? 0).toDouble(),
       stock: (data['stock'] ?? 0).toInt(),
       weight: data['weight'] ?? '',
@@ -61,7 +65,8 @@ class PetproductModel {
       'category': category,
       'color': color,
       'description': description,
-      'imageUrl': imageUrl,
+      // 'imageUrl': imageUrl,
+         'imageUrls': imageUrls,
       'price': price,
       'stock': stock,
       'weight': weight,

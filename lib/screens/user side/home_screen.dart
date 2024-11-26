@@ -61,7 +61,6 @@ class HomeScreen extends StatelessWidget {
     Future<List<AccessoryModel>> models = fetchAccessories();
     Future<List<PetproductModel>> pet = fetchpetproduct();
     Future<List<FoodProductModel>> food = fetchfoodproduct();
-    
 
     return SingleChildScrollView(
       child: Padding(
@@ -82,7 +81,7 @@ class HomeScreen extends StatelessWidget {
             _buildSectionTitle('Popular Pets'),
             _buildPetproduct(pet),
             const SizedBox(height: 24),
-            _buildSectionTitle('Pet Foods'),
+            _buildSectionTitle('Popular Foods'),
             buildFoodProductGrid(food),
             const SizedBox(height: 30),
           ],
@@ -208,9 +207,9 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: item.image != null
+                      child: item.imageUrls.isNotEmpty
                           ? Image.network(
-                              item.image!,
+                              item.imageUrls[0], // Display the first image
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: 110,
@@ -225,6 +224,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -312,9 +312,9 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: item.imageUrl != null
+                      child: item.imageUrls.isNotEmpty
                           ? Image.network(
-                              item.imageUrl!,
+                              item.imageUrls[0], // Display the first image
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: 110,
@@ -329,6 +329,7 @@ class HomeScreen extends StatelessWidget {
                               ),
                             ),
                     ),
+
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
@@ -408,6 +409,8 @@ class HomeScreen extends StatelessWidget {
             itemCount: items.length,
             itemBuilder: (context, index) {
               final item = items[index];
+              final imageUrl =
+                  (item.imageUrls.isNotEmpty) ? item.imageUrls[0] : null;
               return Card(
                 elevation: 5,
                 shape: RoundedRectangleBorder(
@@ -418,9 +421,9 @@ class HomeScreen extends StatelessWidget {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(12),
-                      child: item.image != null
+                      child: item.imageUrls.isNotEmpty
                           ? Image.network(
-                              item.image!,
+                              item.imageUrls[0], // Display the first image
                               fit: BoxFit.cover,
                               width: double.infinity,
                               height: 110,
@@ -459,26 +462,6 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                     const Spacer(),
-                    // Align(
-                    //   alignment: Alignment.center,
-                    //   child: ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.teal,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(20),
-                    //       ),
-                    //       padding: const EdgeInsets.symmetric(
-                    //           horizontal: 16, vertical: 8),
-                    //     ),
-                    //     onPressed: () {
-                    //       // Handle Add to Cart action
-                    //     },
-                    //     child: const Text(
-                    //       'Add to Cart',
-                    //       style: TextStyle(fontSize: 14),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               );
@@ -517,7 +500,7 @@ class HomeScreen extends StatelessWidget {
     }
   }
 
-  Future<List<FoodProductModel>>fetchfoodproduct() async {
+  Future<List<FoodProductModel>> fetchfoodproduct() async {
     try {
       final querySnapshot =
           await FirebaseFirestore.instance.collection('foodproducts').get();
@@ -527,7 +510,7 @@ class HomeScreen extends StatelessWidget {
       }).toList();
     } catch (e) {
       print('Error fetching foodproduct: $e');
-      return []; 
+      return []; // Return an empty list on error
     }
   }
 }

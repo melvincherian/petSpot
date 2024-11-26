@@ -32,25 +32,24 @@ class _UserSignupState extends State<UserSignup> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state)async {
-          if (state is AuthenticationSuccess &&state.source=='signup' ) {
-            
+        listener: (context, state) async {
+          if (state is AuthenticationSuccess && state.source == 'signup') {
             await SharedPrefHelper().saveUserEmail(_email.text);
             await SharedPrefHelper().saveUserName(_name.text);
             await SharedPrefHelper().saveUserphone(_phoneController.text);
-            
-              ScaffoldMessenger.of(context).showSnackBar(
+
+            ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
-                content: Text("Signup Successfully",
-                style: TextStyle(color: Colors.white),
+                content: Text(
+                  "Signup Successfully",
+                  style: TextStyle(color: Colors.white),
                 ),
                 backgroundColor: Colors.green,
               ),
-              );
-            Navigator.push(context, MaterialPageRoute(builder: (context)=> ScreenLogin()));
-          } 
-          else if (state is AuthenticationFailure) {
-            
+            );
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const ScreenLogin()));
+          } else if (state is AuthenticationFailure) {
             showSnackbar(context, state.error);
           }
         },
@@ -177,18 +176,17 @@ class _UserSignupState extends State<UserSignup> {
                       const SizedBox(height: 24.0),
                       CustomElevatedButton(
                         label: 'Sign Up',
-                        isLoading: context.watch<AuthenticationBloc>().state is AuthenticationLoading,
+                        isLoading: context.watch<AuthenticationBloc>().state
+                            is AuthenticationLoading,
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
-                            
                             context.read<AuthenticationBloc>().add(
-                              SignupRequested(
-                                name: _name.text,
-                                email: _email.text,
-                                password: _password.text,
-                                source: 'signup'
-                              ),
-                            );
+                                  SignupRequested(
+                                      name: _name.text,
+                                      email: _email.text,
+                                      password: _password.text,
+                                      source: 'signup'),
+                                );
                           }
                         },
                       ),
@@ -202,8 +200,11 @@ class _UserSignupState extends State<UserSignup> {
                           ),
                           TextButton(
                             onPressed: () {
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenLogin()));
-                             
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ScreenLogin()));
                             },
                             child: const Text(
                               'Login',

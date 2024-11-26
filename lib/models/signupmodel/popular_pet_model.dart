@@ -7,7 +7,8 @@ class AccessoryModel {
   final String description;
   final String petType;
   final double price;
-  final String? image;
+  // final String? image;
+   final List<String> imageUrls;
   final String size;
   final int stock;
 
@@ -18,7 +19,8 @@ class AccessoryModel {
     required this.description,
     required this.petType,
     required this.price,
-    this.image,
+     this.imageUrls = const [],
+    // this.image,
     required this.size,
     required this.stock,
   });
@@ -32,7 +34,8 @@ class AccessoryModel {
       description: json['description'] ?? '',
       petType: json['petType'] ?? '',
       price: (json['price'] ?? 0).toDouble(),
-      image: json['image'],
+      // image: json['image'],
+      imageUrls: List<String>.from(json['imageUrls'] ?? []),
       size: json['size'] ?? '',
       stock: (json['stock'] ?? 0).toInt(),
     );
@@ -48,7 +51,8 @@ class AccessoryModel {
       description: data['description'] ?? '',
       petType: data['petType'] ?? '',
       price: (data['price'] ?? 0).toDouble(),
-      image: data['image'],
+      // image: data['image'],
+      imageUrls: List<String>.from(data['imageUrls'] ?? []),
       size: data['size'] ?? '',
       stock: (data['stock'] ?? 0).toInt(),
     );
@@ -62,9 +66,10 @@ class AccessoryModel {
       'description': description,
       'petType': petType,
       'price': price,
-      'image': image,
+       'imageUrls': imageUrls,
       'size': size,
       'stock': stock,
     };
   }
 }
+
