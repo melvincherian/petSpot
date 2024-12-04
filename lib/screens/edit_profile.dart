@@ -155,6 +155,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                   ),
                   onTap: () async {
+                    
                     DateTime? selectedDate = await showDatePicker(
                       context: context,
                       initialDate: DateTime.now(),
@@ -162,6 +163,7 @@ class _EditProfileState extends State<EditProfile> {
                       lastDate: DateTime.now(),
                     );
                     if (selectedDate != null) {
+                      
                       dobController.text =
                           "${selectedDate.toLocal()}".split(' ')[0];
                     }

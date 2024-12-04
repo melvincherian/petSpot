@@ -1,9 +1,10 @@
-// ignore_for_file: unnecessary_null_comparison
+// ignore_for_file: unnecessary_null_comparison, prefer_const_constructors, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
 import 'package:second_project/bloc/imagepicker_bloc.dart';
+import 'package:second_project/screens/my_address.dart';
 import 'package:second_project/screens/edit_profile.dart';
 import 'package:second_project/screens/terms_service.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
@@ -201,7 +202,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             MaterialPageRoute(builder: (context) => const EditProfile()),
             
           ).then((_){
-                  _loadUserInfo();
+           _loadUserInfo();
           })
         ),
         _buildOptionItem(
@@ -222,8 +223,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         _buildOptionItem(
           context,
           icon: Icons.location_on,
-          title: "Edit Address",
-          onTap: () {},
+          title: "My Address",
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>Myaddress()));
+          },
         ),
         _buildOptionItem(
           context,
@@ -277,7 +280,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> logout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('userLogged', false); // Set login state to false
+    await prefs.setBool('userLogged', false); 
+     ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.green,
+      content: const Text('You have been logged out.'),
+      duration: const Duration(seconds: 2),
+    ),
+  );// Set login state to false
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const ScreenLogin()),

@@ -53,9 +53,14 @@ class ScreenHome extends StatelessWidget {
   }
 }
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Future<List<AccessoryModel>> models = fetchAccessories();
@@ -105,20 +110,22 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildSearchField() {
-    return TextField(
-      decoration: InputDecoration(
-        hintText: 'Search for pets, food, accessories...',
-        prefixIcon: const Icon(Icons.search, color: Colors.teal),
-        filled: true,
-        fillColor: Colors.grey[200],
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-          borderSide: BorderSide.none,
+    return GestureDetector(
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search for pets, food, accessories...',
+          prefixIcon: const Icon(Icons.search, color: Colors.teal),
+          filled: true,
+          fillColor: Colors.grey[200],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none,
+          ),
         ),
+        onSubmitted: (value) {
+          print("Searching for: $value");
+        },
       ),
-      onSubmitted: (value) {
-        print("Searching for: $value");
-      },
     );
   }
 
@@ -129,25 +136,25 @@ class HomeScreen extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              // child: Image.network(
-              //   image,
-              //   fit: BoxFit.cover,
-              //   width: double.infinity,
-              // ),
-            ),
-            Positioned(
-              bottom: 10,
-              left: 10,
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                color: Colors.black.withOpacity(0.5),
-                // child: Text(
-                //   "Special Offer!",
-                //   style: TextStyle(color: Colors.white, fontSize: 18),
-                // ),
+              child: Image.network(
+                image,
+                fit: BoxFit.cover,
+                width: double.infinity,
               ),
             ),
+            // Positioned(
+            //   bottom: 10,
+            //   left: 10,
+            //   child: Container(
+            //     padding:
+            //         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            //     color: Colors.black.withOpacity(0.5),
+            //     // child: Text(
+            //     //   "Special Offer!",
+            //     //   style: TextStyle(color: Colors.white, fontSize: 18),
+            //     // ),
+            //   ),
+            // ),
           ],
         );
       }).toList(),
@@ -173,304 +180,366 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
-    return FutureBuilder<List<AccessoryModel>>(
-      future: futureAccessories,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No accessories found'));
-        } else {
-          final items = snapshot.data!;
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
-            ),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: item.imageUrls.isNotEmpty
-                          ? Image.network(
-                              item.imageUrls[0], // Display the first image
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 110,
-                            )
-                          : const SizedBox(
-                              height: 110,
-                              child: Center(
-                                child: Text(
-                                  'No Image',
-                                  style: TextStyle(color: Colors.grey),
+Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
+  return FutureBuilder<List<AccessoryModel>>(
+    future: futureAccessories,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No accessories found'));
+      } else {
+        final items = snapshot.data!;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Stack(
+              children: [
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0], // Display the first image
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 110,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ),
                               ),
-                            ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        item.accesoryname,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal[800],
-                        ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        '\$${item.price.toString()}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal[600],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.accesoryname,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                    // Align(
-                    //   alignment: Alignment.center,
-                    //   child: ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.teal,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(20),
-                    //       ),
-                    //       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    //     ),
-                    //     onPressed: () {
-                    //       // Handle add to cart action
-                    //     },
-                    //     child: const Text(
-                    //       'Add to Cart',
-                    //       style: TextStyle(fontSize: 14),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toString()}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
-              );
-            },
-          );
-        }
-      },
-    );
-  }
+                // Plus button
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                     
+                      // Handle plus button action, e.g., add to cart
+                      print("Add to Cart for ${item.accesoryname}");
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.teal,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    },
+  );
+}
 
   Widget _buildPetproduct(Future<List<PetproductModel>> futureProducts) {
-    return FutureBuilder<List<PetproductModel>>(
-      future: futureProducts,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No products found'));
-        } else {
-          final items = snapshot.data!;
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
-            ),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              return Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: item.imageUrls.isNotEmpty
-                          ? Image.network(
-                              item.imageUrls[0], // Display the first image
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 110,
-                            )
-                          : const SizedBox(
-                              height: 110,
-                              child: Center(
-                                child: Text(
-                                  'No Image',
-                                  style: TextStyle(color: Colors.grey),
+  return FutureBuilder<List<PetproductModel>>(
+    future: futureProducts,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No products found'));
+      } else {
+        final items = snapshot.data!;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Stack(
+              children: [
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0], // Display the first image
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 110,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ),
                               ),
-                            ),
-                    ),
-
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        item.breed,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal[800],
-                        ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        '\$${item.price.toString()}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal[600],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.breed,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toString()}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+                // Plus button
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      // Handle plus button action, e.g., add to cart
+                      // print("Add to Cart for ${item.breed}");
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.teal,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                       padding: const EdgeInsets.all(8.0),
+                      child: const Icon(
+                        
+                        Icons.add,
+                        color: Colors.white,
+                        
+                        size: 25,
+                      ),
                     ),
-                    const Spacer(),
-                    // Align(
-                    //   alignment: Alignment.center,
-                    //   child: ElevatedButton(
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.teal,
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(20),
-                    //       ),
-                    //       padding: const EdgeInsets.symmetric(
-                    //           horizontal: 16, vertical: 8),
-                    //     ),
-                    //     onPressed: () {
-                    //       // Handle add to cart action
-                    //     },
-                    //     child: const Text(
-                    //       'Add to Cart',
-                    //       style: TextStyle(fontSize: 14),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
+                  ),
                 ),
-              );
-            },
-          );
-        }
-      },
-    );
-  }
+              ],
+            );
+          },
+        );
+      }
+    },
+  );
+}
 
-  Widget buildFoodProductGrid(
-      Future<List<FoodProductModel>> futureFoodProducts) {
-    return FutureBuilder<List<FoodProductModel>>(
-      future: futureFoodProducts,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(child: Text('No food products found'));
-        } else {
-          final items = snapshot.data!;
-          return GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
-            ),
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final imageUrl =
-                  (item.imageUrls.isNotEmpty) ? item.imageUrls[0] : null;
-              return Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: item.imageUrls.isNotEmpty
-                          ? Image.network(
-                              item.imageUrls[0], // Display the first image
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: 110,
-                            )
-                          : const SizedBox(
-                              height: 110,
-                              child: Center(
-                                child: Text(
-                                  'No Image',
-                                  style: TextStyle(color: Colors.grey),
+Widget buildFoodProductGrid(
+    Future<List<FoodProductModel>> futureFoodProducts) {
+  return FutureBuilder<List<FoodProductModel>>(
+    future: futureFoodProducts,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No food products found'));
+      } else {
+        final items = snapshot.data!;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Stack(
+              children: [
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0], // Display the first image
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 110,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
                                 ),
                               ),
-                            ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text(
-                        item.foodname,
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.teal[800],
-                        ),
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Text(
-                        '\$${item.price.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.teal[600],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.foodname,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
-                    ),
-                    const Spacer(),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
-              );
-            },
-          );
-        }
-      },
-    );
-  }
+                // Plus button
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () {
+                      // Handle plus button action, e.g., add to cart
+                      print("Add to Cart for ${item.foodname}");
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.teal,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(8.0),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 24,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    },
+  );
+}
 
   Future<List<AccessoryModel>> fetchAccessories() async {
     try {
@@ -513,4 +582,6 @@ class HomeScreen extends StatelessWidget {
       return []; // Return an empty list on error
     }
   }
+
+  
 }

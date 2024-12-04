@@ -76,8 +76,8 @@ final List<Map<String, String>> pets = [
     },
   ];
   final List<String> sliderImages = [
-    // 'https://www.shutterstock.com/image-photo/set-dog-toys-isolated-on-600nw-2327832511.jpg',
-    // 'https://images.squarespace-cdn.com/content/v1/54822a56e4b0b30bd821480c/45ed8ecf-0bb2-4e34-8fcf-624db47c43c8/Golden+Retrievers+dans+pet+care.jpeg',
-    // 'https://static.vecteezy.com/system/resources/thumbnails/024/646/930/small_2x/ai-generated-stray-cat-in-danger-background-animal-background-photo.jpg',
-    // 'https://portlandpetfoodcompany.com/cdn/shop/files/hi_res-1f-Portland_Pet_Food_Company_r1_01E_0303_1.jpg?v=1721069477&width=4000'
+    'https://www.shutterstock.com/image-photo/set-dog-toys-isolated-on-600nw-2327832511.jpg',
+    'https://images.squarespace-cdn.com/content/v1/54822a56e4b0b30bd821480c/45ed8ecf-0bb2-4e34-8fcf-624db47c43c8/Golden+Retrievers+dans+pet+care.jpeg',
+    'https://static.vecteezy.com/system/resources/thumbnails/024/646/930/small_2x/ai-generated-stray-cat-in-danger-background-animal-background-photo.jpg',
+    'https://portlandpetfoodcompany.com/cdn/shop/files/hi_res-1f-Portland_Pet_Food_Company_r1_01E_0303_1.jpg?v=1721069477&width=4000'
   ];
