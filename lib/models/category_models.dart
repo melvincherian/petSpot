@@ -13,12 +13,12 @@ class CategoryModel {
      this.image,
   });
 
-  // Factory constructor to create an instance from JSON
-  factory CategoryModel.fromJson(Map<String, dynamic> json) {
+ 
+  factory CategoryModel.fromMap(Map<String, dynamic> map,String id) {
     return CategoryModel(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
+      id: id,
+      name: map['name'] ?? '',
+      description: map['description'] ?? '',
     );
   }
 

@@ -1,5 +1,5 @@
 class AddressModel {
-  final String?id;
+  final String id;
   final String name;
   final int phone;
   final int pincode;
@@ -10,7 +10,7 @@ class AddressModel {
   final String location;
 
   AddressModel({
-    this.id,
+    required this.id,
     required this.name,
     required this.phone,
     required this.pincode,
@@ -24,7 +24,7 @@ class AddressModel {
   // Factory constructor to create an AddressModel from a JSON map
   factory AddressModel.fromMap(Map<String, dynamic> map,String id) {
     return AddressModel(
-      id: map['id'],
+      id: id,
       name: map['name'] as String,
       phone: map['phone'] as int,
       pincode: map['pincode'] as int,

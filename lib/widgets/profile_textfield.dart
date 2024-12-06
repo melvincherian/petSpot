@@ -7,6 +7,7 @@ class EditTextfield extends StatelessWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final bool obscureText;
+  final bool readOnly; // Add readOnly property
 
   const EditTextfield({
     super.key,
@@ -16,6 +17,7 @@ class EditTextfield extends StatelessWidget {
     required this.controller,
     this.validator,
     this.obscureText = false,
+    this.readOnly = false, // Default value is false
   });
 
   @override
@@ -24,16 +26,20 @@ class EditTextfield extends StatelessWidget {
       controller: controller,
       obscureText: obscureText,
       validator: validator,
+      readOnly: readOnly, // Use the readOnly property
+      style: readOnly
+          ? TextStyle(color: Colors.grey[600]) // Optional: Style for read-only field
+          : null,
       decoration: InputDecoration(
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(5),
-          borderSide: BorderSide(color: Colors.black)
+          borderSide: BorderSide(color: Colors.black),
         ),
         labelText: labelText,
         hintText: hintText,
         prefixIcon: prefixIcon,
         filled: true,
-        fillColor: Colors.grey[100],
+        fillColor: readOnly ? Colors.grey[200] : Colors.grey[100], // Change background for read-only
       ),
     );
   }

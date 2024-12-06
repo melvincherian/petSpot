@@ -96,6 +96,7 @@ class CategoriesScreen extends StatelessWidget {
                                     categoryId: category.id,
                                     categoryImage: category.image,
                                     categoryName: category.name,
+                                    
                                   ),
                                 ),
                               );

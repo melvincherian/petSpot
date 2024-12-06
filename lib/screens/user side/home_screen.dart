@@ -8,11 +8,13 @@ import 'package:second_project/models/food_model.dart';
 import 'package:second_project/models/pet_model.dart';
 import 'package:second_project/models/signupmodel/popular_pet_model.dart';
 import 'package:second_project/provider/bottom_navbar.dart';
+import 'package:second_project/screens/seacrh_page.dart';
 import 'package:second_project/screens/user%20side/cart_screen.dart';
 import 'package:second_project/screens/user%20side/category_screen.dart';
 import 'package:second_project/screens/user%20side/favourite_screen.dart';
 import 'package:second_project/screens/user%20side/profile_screen.dart';
 import 'package:second_project/widgets/pet_images.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ScreenHome extends StatelessWidget {
   const ScreenHome({Key? key}) : super(key: key);
@@ -111,20 +113,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildSearchField() {
     return GestureDetector(
+     onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>SearchScreen()));
+     },
       child: TextField(
         decoration: InputDecoration(
           hintText: 'Search for pets, food, accessories...',
           prefixIcon: const Icon(Icons.search, color: Colors.teal),
           filled: true,
+          
           fillColor: Colors.grey[200],
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(30),
             borderSide: BorderSide.none,
           ),
         ),
-        onSubmitted: (value) {
-          print("Searching for: $value");
-        },
+        enabled: false,
+        // onSubmitted: (value) {
+         
+        //   // print("Searching for: $value");
+        // },
       ),
     );
   }
@@ -159,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       }).toList(),
       options: CarouselOptions(
-        height: 160,
+        height: 150,
         autoPlay: true,
         enlargeCenterPage: true,
         viewportFraction: 0.9,
@@ -185,7 +193,62 @@ Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
     future: futureAccessories,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CircularProgressIndicator());
+        // Shimmer effect during loading
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          // itemCount: 6, // Display shimmer placeholders
+          itemBuilder: (context, index) {
+            return Shimmer.fromColors(
+              
+              baseColor: Colors.grey[300]!,
+              
+              highlightColor: Colors.grey[100]!,
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 110,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 16,
+                        width: 100,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Container(
+                        height: 16,
+                        width: 60,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
       } else if (snapshot.hasError) {
         return Center(child: Text('Error: ${snapshot.error}'));
       } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -258,37 +321,6 @@ Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
                       ),
                       const Spacer(),
                     ],
-                  ),
-                ),
-                // Plus button
-                Positioned(
-                  bottom: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: () {
-                     
-                      // Handle plus button action, e.g., add to cart
-                      print("Add to Cart for ${item.accesoryname}");
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.teal,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(8.0),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
                   ),
                 ),
               ],
@@ -381,37 +413,37 @@ Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
                   ),
                 ),
                 // Plus button
-                Positioned(
-                  bottom: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: () {
-                      // Handle plus button action, e.g., add to cart
-                      // print("Add to Cart for ${item.breed}");
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.teal,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                       padding: const EdgeInsets.all(8.0),
-                      child: const Icon(
+                // Positioned(
+                //   bottom: 8,
+                //   right: 8,
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       // Handle plus button action, e.g., add to cart
+                //       // print("Add to Cart for ${item.breed}");
+                //     },
+                //     child: Container(
+                //       decoration: BoxDecoration(
+                //         shape: BoxShape.circle,
+                //         color: Colors.teal,
+                //         boxShadow: [
+                //           BoxShadow(
+                //             color: Colors.black.withOpacity(0.2),
+                //             blurRadius: 5,
+                //             offset: const Offset(0, 2),
+                //           ),
+                //         ],
+                //       ),
+                //        padding: const EdgeInsets.all(8.0),
+                //       child: const Icon(
                         
-                        Icons.add,
-                        color: Colors.white,
+                //         Icons.add,
+                //         color: Colors.white,
                         
-                        size: 25,
-                      ),
-                    ),
-                  ),
-                ),
+                //         size: 25,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             );
           },
@@ -452,6 +484,7 @@ Widget buildFoodProductGrid(
                   elevation: 5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
+                    
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -503,35 +536,35 @@ Widget buildFoodProductGrid(
                   ),
                 ),
                 // Plus button
-                Positioned(
-                  bottom: 8,
-                  right: 8,
-                  child: GestureDetector(
-                    onTap: () {
-                      // Handle plus button action, e.g., add to cart
-                      print("Add to Cart for ${item.foodname}");
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.teal,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.2),
-                            blurRadius: 5,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      padding: const EdgeInsets.all(8.0),
-                      child: const Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                ),
+                // Positioned(
+                //   bottom: 8,
+                //   right: 8,
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       // Handle plus button action, e.g., add to cart
+                //       print("Add to Cart for ${item.foodname}");
+                //     },
+                //     child: Container(
+                //       decoration: BoxDecoration(
+                //         shape: BoxShape.circle,
+                //         color: Colors.teal,
+                //         boxShadow: [
+                //           BoxShadow(
+                //             color: Colors.black.withOpacity(0.2),
+                //             blurRadius: 5,
+                //             offset: const Offset(0, 2),
+                //           ),
+                //         ],
+                //       ),
+                //       padding: const EdgeInsets.all(8.0),
+                //       child: const Icon(
+                //         Icons.add,
+                //         color: Colors.white,
+                //         size: 24,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             );
           },

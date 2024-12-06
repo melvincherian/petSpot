@@ -131,6 +131,7 @@ class _EditProfileState extends State<EditProfile> {
                   hintText: 'Enter your Email',
                   prefixIcon: const Icon(Icons.email),
                   controller: emailController,
+                  readOnly: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please Enter Email';

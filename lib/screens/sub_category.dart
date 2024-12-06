@@ -32,7 +32,7 @@ class BreedSession extends StatelessWidget {
             // Combined Container: Category Image and Name
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetails( breedId: categoryId)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetails(breedId: categoryId,)));
               },
               child: Container(
                 decoration: BoxDecoration(

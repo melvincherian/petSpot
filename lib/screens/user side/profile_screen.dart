@@ -29,17 +29,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadUserInfo();
   }
 
-  // Load user information from SharedPreferences
-  // Future<void> _loadUserInfo() async {
-  //   final prefHelper = SharedPrefHelper();
-  //   _username = await prefHelper.getUserName() ?? 'No username set';
-  //   _email = await prefHelper.getUserEmail() ?? 'No email set';
-  //   _imageUrl = await prefHelper.getUserImage() ?? '';
-  //    // Empty if no image is saved
-  //   // setState(() {
-      
-  //   // });
-  // }
      Future<void> _loadUserInfo() async {
   final prefHelper = SharedPrefHelper();
   final username = await prefHelper.getUserName() ?? 'No username set';
@@ -225,7 +214,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           icon: Icons.location_on,
           title: "My Address",
           onTap: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>Myaddress()));
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyAddress()));
           },
         ),
         _buildOptionItem(

@@ -1,49 +1,35 @@
-// ignore_for_file: unnecessary_import, no_leading_underscores_for_local_identifiers
+// ignore_for_file: no_leading_underscores_for_local_identifiers
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:second_project/bloc/address_bloc.dart';
 import 'package:second_project/models/address_model.dart';
+import 'package:second_project/widgets/edit_address_textfield.dart';
 
-class AddAddress extends StatelessWidget {
-  const AddAddress({super.key});
+class EditAddress extends StatelessWidget {
+  final AddressModel address;
+  const EditAddress({super.key, required this.address});
 
   @override
   Widget build(BuildContext context) {
-    final nameController = TextEditingController();
-    final phoneController = TextEditingController();
-    final pincodeController = TextEditingController();
-    final stateController = TextEditingController();
-    final cityController = TextEditingController();
-    final buildingController = TextEditingController();
-    final roadNameController = TextEditingController();
-    final locationController = TextEditingController();
+    final nameController = TextEditingController(text: address.name);
+    final phoneController =
+        TextEditingController(text: address.phone.toString());
+    final pincodeController =
+        TextEditingController(text: address.pincode.toString());
+    final stateController = TextEditingController(text: address.state);
+    final cityController = TextEditingController(text: address.city);
+    final buildingController =
+        TextEditingController(text: address.buildingName);
+    final roadNameController = TextEditingController(text: address.roadName);
+    final locationController = TextEditingController(text: address.location);
 
     final _formKey = GlobalKey<FormState>();
-
-    InputDecoration professionalInputDecoration(String label, String hint) {
-      return InputDecoration(
-        labelText: label,
-        hintText: hint,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        focusedBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.teal, width: 2.0),
-        ),
-        errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(color: Colors.red, width: 2.0),
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      );
-    }
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Add Address',
+          'Edit Address',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -68,7 +54,7 @@ class AddAddress extends StatelessWidget {
               const SnackBar(
                   backgroundColor: Colors.green,
                   content: Text(
-                    'Address saved successfully',
+                    'Address updated successfully',
                   )),
             );
           }
@@ -81,10 +67,10 @@ class AddAddress extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextFormField(
+                  CustomadrressTextFormField(
                     controller: nameController,
-                    decoration: professionalInputDecoration(
-                        'Full Name', 'Enter your full name'),
+                    label: 'Full Name',
+                    hint: 'Enter your full name',
                     keyboardType: TextInputType.name,
                     textInputAction: TextInputAction.next,
                     validator: (value) {
@@ -92,34 +78,25 @@ class AddAddress extends StatelessWidget {
                         return 'Please enter your name';
                       }
                       if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                        return 'Location can only contain letters and spaces';
+                        return 'Name can only contain letters and spaces';
                       }
                       return null;
                     },
                   ),
                   const SizedBox(height: 15),
-                  TextFormField(
+                  CustomadrressTextFormField(
                     controller: phoneController,
-                    decoration: professionalInputDecoration(
-                        'Phone Number', 'Enter your phone number'),
+                    label: 'Phone Number',
+                    hint: 'Enter your phone number',
                     keyboardType: TextInputType.phone,
                     textInputAction: TextInputAction.next,
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your phone number';
                       }
-
-                      if (int.tryParse(value) == null) {
-                        return 'Phone number must contain only digits';
-                      }
-
-                      if (value.length != 10) {
-                        return 'Phone number must be 10 digits';
-                      }
                       if (!RegExp(r'^[789]\d{9}$').hasMatch(value)) {
-                        return 'Phone number must start with 7, 8, or 9';
+                        return 'Phone number must start with 7, 8, or 9 and be 10 digits';
                       }
-
                       return null;
                     },
                   ),
@@ -140,106 +117,59 @@ class AddAddress extends StatelessWidget {
                       childAspectRatio: 3,
                     ),
                     children: [
-                      TextFormField(
+                      CustomadrressTextFormField(
                         controller: pincodeController,
-                        decoration: professionalInputDecoration(
-                            'Pincode', 'Enter your pincode'),
+                        label: 'Pincode',
+                        hint: 'Enter your pincode',
                         keyboardType: TextInputType.number,
                         textInputAction: TextInputAction.next,
                         validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your pincode';
-                          } else if (value.length != 6 ||
-                              int.tryParse(value) == null) {
+                          if (value == null ||
+                              value.isEmpty ||
+                              value.length != 6) {
                             return 'Pincode must be 6 digits';
                           }
                           return null;
                         },
                       ),
-                      TextFormField(
+                      CustomadrressTextFormField(
                         controller: locationController,
-                        decoration: professionalInputDecoration(
-                            'Your Location', 'Enter your location'),
+                        label: 'Location',
+                        hint: 'Enter your location',
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your location';
-                          }
-                          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                            return 'Location can only contain letters and spaces';
-                          }
-
-                          return null;
-                        },
                       ),
-                      TextFormField(
+                      CustomadrressTextFormField(
                         controller: stateController,
-                        decoration: professionalInputDecoration(
-                            'State', 'Enter your state'),
+                        label: 'State',
+                        hint: 'Enter your state',
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your state';
-                          }
-                          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                            return 'Location can only contain letters and spaces';
-                          }
-                          return null;
-                        },
                       ),
-                      TextFormField(
+                      CustomadrressTextFormField(
                         controller: cityController,
-                        decoration: professionalInputDecoration(
-                            'City', 'Enter your city'),
+                        label: 'City',
+                        hint: 'Enter your city',
                         keyboardType: TextInputType.text,
                         textInputAction: TextInputAction.next,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your city';
-                          }
-                          if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                            return 'Location can only contain letters and spaces';
-                          }
-                          return null;
-                        },
                       ),
                     ],
                   ),
                   const SizedBox(height: 15),
-                  TextFormField(
+                  CustomadrressTextFormField(
                     controller: buildingController,
-                    decoration: professionalInputDecoration(
-                        'Building Name', 'Enter your building name'),
+                    label: 'Building Name',
+                    hint: 'Enter your building name',
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.next,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your building name';
-                      }
-                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                        return 'Location can only contain letters and spaces';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 15),
-                  TextFormField(
+                  CustomadrressTextFormField(
                     controller: roadNameController,
-                    decoration: professionalInputDecoration(
-                        'Road Name', 'Enter your road name'),
+                    label: 'Road Name',
+                    hint: 'Enter your road name',
                     keyboardType: TextInputType.text,
                     textInputAction: TextInputAction.done,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your road name';
-                      }
-                      if (!RegExp(r'^[a-zA-Z\s]+$').hasMatch(value)) {
-                        return 'Location can only contain letters and spaces';
-                      }
-                      return null;
-                    },
                   ),
                   const SizedBox(height: 20),
                   SizedBox(
@@ -247,11 +177,9 @@ class AddAddress extends StatelessWidget {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          final address = AddressModel(
-                              id: DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString(),
-                              name: nameController.text,
+                          final updateaddress = AddressModel(
+                              id: address.id,
+                              name: nameController.text.trim(),
                               phone: int.parse(phoneController.text),
                               pincode: int.parse(pincodeController.text),
                               state: stateController.text,
@@ -259,7 +187,6 @@ class AddAddress extends StatelessWidget {
                               buildingName: buildingController.text,
                               roadName: roadNameController.text,
                               location: locationController.text);
-
                           nameController.clear();
                           phoneController.clear();
                           pincodeController.clear();
@@ -268,17 +195,16 @@ class AddAddress extends StatelessWidget {
                           cityController.clear();
                           buildingController.clear();
                           roadNameController.clear();
-
                           context
                               .read<AddressBloc>()
-                              .add(AddAddressEvent(address));
+                              .add(UpdateAddressEvent(updateaddress));
 
                           Navigator.pop(context);
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 backgroundColor: Colors.green,
-                                content: Text('Address saved successfully')),
+                                content: Text('Address updated successfully')),
                           );
                         }
                       },
@@ -290,7 +216,7 @@ class AddAddress extends StatelessWidget {
                         ),
                       ),
                       child: const Text(
-                        'Save Address',
+                        'Update Address',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,

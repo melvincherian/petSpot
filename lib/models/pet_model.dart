@@ -4,7 +4,7 @@ class PetproductModel {
   final String id;
   final String breed;
   final String category;
-  final String color;
+  // final String color;
   final String description;
   // final String? imageUrl;
    final List<String> imageUrls;
@@ -16,7 +16,7 @@ class PetproductModel {
     required this.id,
     required this.breed,
     required this.category,
-    required this.color,
+    // required this.color,
     required this.description,
     // this.imageUrl,
      this.imageUrls = const [],
@@ -31,7 +31,7 @@ class PetproductModel {
       id: id,
       breed: json['breed'] ?? '',
       category: json['category'] ?? '',
-      color: json['color'] ?? '',
+      // color: json['color'] ?? '',
       description: json['description'] ?? '',
       // imageUrl: json['imageUrl'],
        imageUrls: List<String>.from(json['imageUrls'] ?? []),
@@ -48,7 +48,7 @@ class PetproductModel {
       id: snapshot.id,
       breed: data['breed'] ?? '',
       category: data['category'] ?? '',
-      color: data['color'] ?? '',
+      // color: data['color'] ?? '',
       description: data['description'] ?? '',
       // imageUrl: data['imageUrl'],
        imageUrls: List<String>.from(data['imageUrls'] ?? []),
@@ -63,7 +63,7 @@ class PetproductModel {
     return {
       'breed': breed,
       'category': category,
-      'color': color,
+      // 'color': color,
       'description': description,
       // 'imageUrl': imageUrl,
          'imageUrls': imageUrls,
