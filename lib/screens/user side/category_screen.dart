@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:second_project/bloc/searchcategory_bloc.dart';
 import 'package:second_project/screens/sub_category.dart';
 
@@ -56,7 +57,62 @@ class CategoriesScreen extends StatelessWidget {
               child: BlocBuilder<SearchcategoryBloc, SearchcategoryState>(
                 builder: (context, state) {
                   if (state is Searchcategoryloading) {
-                    return const Center(child: CircularProgressIndicator());
+                    // Shimmer effect during loading
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.8,
+                        ),
+                        itemCount: 6, // Show 6 shimmer placeholders
+                        itemBuilder: (context, index) {
+                          return Shimmer.fromColors(
+                            baseColor: Colors.grey[300]!,
+                            highlightColor: Colors.grey[100]!,
+                            child: Card(
+                              elevation: 4,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              clipBehavior: Clip.antiAlias,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      color: Colors.grey[300],
+                                      width: double.infinity,
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          height: 16,
+                                          width: 120,
+                                          color: Colors.grey[300],
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Container(
+                                          height: 14,
+                                          width: 160,
+                                          color: Colors.grey[300],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    );
                   } else if (state is Searchcategoryerror) {
                     return Center(
                       child: Text(
@@ -167,7 +223,7 @@ class CategoriesScreen extends StatelessWidget {
                     );
                   }
                   return const Center(
-                    child: Text('Unexpected State'),
+                    // child: Text('Unexpected State'),
                   );
                 },
               ),

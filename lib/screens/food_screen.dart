@@ -1,28 +1,27 @@
-// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, prefer_const_declarations
+// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:second_project/bloc/breedsearch_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:second_project/screens/product_details.dart';
+import 'package:second_project/bloc/foodsearch_bloc.dart';
+import 'package:second_project/screens/food_details.dart';
 
-class BreedDetails extends StatelessWidget {
+class FoodScreen extends StatelessWidget {
   final String categoryId;
 
-  const BreedDetails({
+  const FoodScreen({
     super.key,
     required this.categoryId,
   });
 
   @override
   Widget build(BuildContext context) {
-   
-    context.read<BreedsearchBloc>().add(FetchBreedsEvent(categoryid: categoryId));
+    context.read<FoodsearchBloc>().add(FetchFoods(categoryId: categoryId));
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Breed Details',
+          'Food Details',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
@@ -31,27 +30,27 @@ class BreedDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
             onPressed: () {
-              context.read<BreedsearchBloc>().add(FilterBreeds(filter: 'Large'));
+              context.read<FoodsearchBloc>().add(FilterFoods(filter: 'Large'));
             },
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort, color: Colors.black),
             onSelected: (value) {
               if (value == 'Sort by Price Ascending') {
-                context.read<BreedsearchBloc>().add(SortBreeds(ascending: true));
+                context.read<FoodsearchBloc>().add(SortFoods(ascending: true));
               } else if (value == 'Sort by Price Descending') {
-                context.read<BreedsearchBloc>().add(SortBreeds(ascending: false));
+                context.read<FoodsearchBloc>().add(SortFoods(ascending: false));
               }
             },
             itemBuilder: (BuildContext context) {
               return [
                 const PopupMenuItem<String>(
                   value: 'Sort by Price Ascending',
-                  child: Text('Sort by Price Ascending'),
+                  child: Text('Sort by Price Ascending(Low to High)'),
                 ),
                 const PopupMenuItem<String>(
                   value: 'Sort by Price Descending',
-                  child: Text('Sort by Price Descending'),
+                  child: Text('Sort by Price Descending(High to Low)'),
                 ),
               ];
             },
@@ -64,7 +63,7 @@ class BreedDetails extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: TextField(
               onChanged: (value) {
-                context.read<BreedsearchBloc>().add(SerchBreeds(query: value));
+                context.read<FoodsearchBloc>().add(SearchFoods(query: value));
               },
               decoration: InputDecoration(
                 hintText: 'Search breeds..',
@@ -76,39 +75,56 @@ class BreedDetails extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<BreedsearchBloc, BreedsearchState>(
+            child: BlocBuilder<FoodsearchBloc, FoodsearchState>(
               builder: (context, state) {
-                if (state is BreedLoading) {
+                if (state is FoodLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (state is BreedError) {
+                } else if (state is FoodError) {
                   return Center(child: Text('Error: ${state.error}'));
-                } else if (state is BreedLoaded) {
-                  final breeds = state.breeds;
-                  if (breeds.isEmpty) {
-                    return const Center(child: Text('No breeds available.'));
+                } else if (state is FoodLoaded) {
+                  final food = state.foods;
+                  if (food.isEmpty) {
+                    return const Center(child: Text('No Foods available.'));
                   }
                   return GridView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
                       childAspectRatio: 0.7,
                     ),
-                    itemCount: breeds.length,
+                    itemCount: food.length,
                     itemBuilder: (context, index) {
-                      final breed = breeds[index];
+                      final foods = food[index];
                       final double offerPercentage = ((50) / 100) * 100;
 
                       final arrivalDate = DateTime.now().add(
-                        Duration(days: breed.arrivalDays),
+                        Duration(days: foods.arrivalDays),
                       );
                       final formattedArrivalDate =
                           DateFormat('dd MMM yyyy').format(arrivalDate);
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetails(name: breed.name,price: breed.price.toInt(),description: breed.descriptions.toString(),imageUrls: breed.imageUrls,gender: breed.gender,stock: breed.stock,)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => FoodDetails(
+                                        name: foods.foodname,
+                                        description: foods.description,
+                                        price: foods.price.toInt(),
+                                        imageUrls: foods.imageUrls,
+                                        foodweight: foods.foodweight,
+                                        packedDate: foods.packedDate,
+                                        endDate: foods.endDate,
+                                        offerprice: foods.originalPrice.toInt(),
+                                        rating: foods.rating.toInt(),
+                                        arrivalDate: foods.arrivalDays,
+                                        isLiked: foods.isLiked,
+                                        stock: foods.stock,
+                                      )));
                         },
                         child: Card(
                           elevation: 5,
@@ -124,15 +140,16 @@ class BreedDetails extends StatelessWidget {
                                     borderRadius: const BorderRadius.vertical(
                                       top: Radius.circular(10),
                                     ),
-                                    child: breed.imageUrls.isNotEmpty
+                                    child: foods.imageUrls.isNotEmpty
                                         ? Image.network(
-                                            breed.imageUrls.first,
+                                            foods.imageUrls.first,
                                             width: double.infinity,
                                             height: 102,
                                             fit: BoxFit.cover,
                                             loadingBuilder:
                                                 (context, child, progress) {
-                                              if (progress == null) return child;
+                                              if (progress == null)
+                                                return child;
                                               return const Center(
                                                   child:
                                                       CircularProgressIndicator());
@@ -157,15 +174,15 @@ class BreedDetails extends StatelessWidget {
                                     right: 8,
                                     child: IconButton(
                                       icon: Icon(
-                                        breed.isLiked
+                                        foods.isLiked
                                             ? Icons.favorite
                                             : Icons.favorite_border,
-                                        color: breed.isLiked
+                                        color: foods.isLiked
                                             ? Colors.red
                                             : Colors.red,
                                       ),
                                       onPressed: () {
-                                       
+                                        // Handle like button toggle
                                       },
                                     ),
                                   ),
@@ -175,7 +192,8 @@ class BreedDetails extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -183,7 +201,7 @@ class BreedDetails extends StatelessWidget {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              breed.name,
+                                              foods.foodname,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -195,11 +213,7 @@ class BreedDetails extends StatelessWidget {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                          //  final item=CartModel(
-                                          //   name: breed.name, imageUrls: breed.imageUrls, price: breed.price, descriptions: breed.descriptions, id: breed.id, rating: breed.rating, arrivalDays: breed.arrivalDays,);
-                                          //   context.read<CartBloc>().add(AddToCart(item: item));
-                                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${breed.name}added to cart!')));
-
+                                              // Handle Add to Cart action
                                             },
                                             icon: const Icon(
                                               Icons.add_shopping_cart,
@@ -215,16 +229,15 @@ class BreedDetails extends StatelessWidget {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '₹${breed.price.toStringAsFixed(2)}',
+                                            '₹${foods.price.toStringAsFixed(2)}',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.teal,
                                             ),
                                           ),
-                                          
                                           Text(
-                                            '₹${breed.originalPrice.toStringAsFixed(2)}',
+                                            '₹${foods.originalPrice.toStringAsFixed(2)}',
                                             style: const TextStyle(
                                               fontSize: 14,
                                               decoration:
@@ -232,7 +245,6 @@ class BreedDetails extends StatelessWidget {
                                               color: Colors.grey,
                                             ),
                                           ),
-                                        
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -253,7 +265,7 @@ class BreedDetails extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            '${breed.rating.toStringAsFixed(1)}',
+                                            '${foods.rating.toStringAsFixed(1)}',
                                             style: const TextStyle(
                                               fontSize: 14,
                                               color: Colors.black54,
@@ -269,7 +281,6 @@ class BreedDetails extends StatelessWidget {
                                           color: Colors.black54,
                                         ),
                                       ),
-                                      
                                     ],
                                   ),
                                 ),

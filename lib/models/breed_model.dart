@@ -2,31 +2,39 @@ class BreedModel {
   final String id;
   final String name;
   final String category;
-  // final String? popularity;
-  // final String? ratings;
-  // final String?reviews;
-    final List<String> imageUrls;
-  // final String? description;
-    final List<String> descriptions;
-  final String  size;
-  final String  careRequirements;
- final double price;
-  // final bool? isAvailable;
+  final List<String> imageUrls;
+  final List<String> descriptions;
+  final String size;
+  final String careRequirements;
+  final double price;
+  final double originalPrice; 
+  final double rating;
+  final int arrivalDays;
+  final bool isLiked; 
+  final Map<String, dynamic>? categoryDetails;
+  final int month;
+  final int year;
+  final String gender;
+  final int stock;
 
   BreedModel({
     required this.id,
     required this.name,
     required this.category,
-    // this.popularity,
-    // this.reviews,
-    // this.ratings,
-     required this.imageUrls,
-    // this.description,
+    required this.imageUrls,
     required this.descriptions,
     required this.size,
-     required this.careRequirements,
-     required this.price,
-    // this.isAvailable,
+    required this.careRequirements,
+    required this.price,
+    required this.originalPrice, 
+    required this.rating, 
+    required this.arrivalDays,
+    required this.year,
+    required this.month,
+    required this.gender,
+    required this.stock,
+    this.isLiked = false, 
+    this.categoryDetails,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,16 +42,21 @@ class BreedModel {
       'id': id,
       'name': name,
       'category': category,
-      // 'popularity': popularity,
-      // 'ratings': ratings,
-        'imageUrls': imageUrls,
-      // 'description': description,
-       'descriptions': descriptions,
+      'imageUrls': imageUrls,
+      'descriptions': descriptions,
       'size': size,
       'careRequirements': careRequirements,
-       'price':price,
-      // 'isAvailable': isAvailable,
-      // 'reviews': reviews
+      'price': price,
+      'originalPrice': originalPrice, 
+      'rating': rating, 
+      'arrivalDays': arrivalDays, 
+      'isLiked': isLiked, 
+      'categoryDetails': categoryDetails,
+      'gender': gender,
+      'month': month,
+      'year': year,
+      'stock':stock,
+
     };
   }
 
@@ -52,16 +65,21 @@ class BreedModel {
       id: id,
       name: map['name'] as String,
       category: map['category'] as String,
-      // popularity: map['popularity'] as String,
-      // ratings: map['ratings'] as String,
-       imageUrls: List<String>.from(map['imageUrls'] ?? []),
-      // description: json['description'] as String?,
-         descriptions: List<String>.from(map['descriptions'] ?? []),
+      imageUrls: List<String>.from(map['imageUrls'] ?? []),
+      descriptions: List<String>.from(map['descriptions'] ?? []),
       size: map['size'] as String,
       careRequirements: map['careRequirements'] as String,
       price: (map['price'] as num?)?.toDouble() ?? 0.0,
-      // isAvailable: map['isAvailable'] as bool?,
-      // reviews: map['review'] as String,
+      originalPrice:
+          (map['originalPrice'] as num?)?.toDouble() ?? 0.0, 
+      rating: (map['rating'] as num?)?.toDouble() ?? 0.0,
+      arrivalDays: map['arrivalDays'] as int? ?? 0, 
+      isLiked: map['isLiked'] as bool? ?? false, 
+      categoryDetails: map['categoryDetails'] as Map<String, dynamic>?,
+      gender: map['gender'] as String? ?? '',
+      month: map['month'] as int? ?? 0,
+      year: map['year'] as int? ?? 0,
+      stock: map['stock']as int? ??0,
     );
   }
 }

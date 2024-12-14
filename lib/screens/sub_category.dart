@@ -1,5 +1,9 @@
+
 import 'package:flutter/material.dart';
+import 'package:second_project/screens/accessory_page.dart';
+
 import 'package:second_project/screens/breed_details.dart';
+import 'package:second_project/screens/food_screen.dart';
 
 
 class BreedSession extends StatelessWidget {
@@ -7,11 +11,13 @@ class BreedSession extends StatelessWidget {
   final String? categoryImage;
   final String? categoryName;
 
+
   const BreedSession({
     super.key,
     required this.categoryId,
     this.categoryImage,
     required this.categoryName,
+   
   });
 
   @override
@@ -32,7 +38,7 @@ class BreedSession extends StatelessWidget {
             // Combined Container: Category Image and Name
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetails(breedId: categoryId,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>BreedDetails(categoryId: categoryId,)));
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -144,7 +150,7 @@ class BreedSession extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      // Handle accessories navigation
+                     Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryPage(categoryid: categoryId)));
                     },
                     icon: const Icon(
                       Icons.arrow_forward_ios,
@@ -203,7 +209,7 @@ class BreedSession extends StatelessWidget {
                   ),
                   IconButton(
                     onPressed: () {
-                      // Handle food navigation
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=>FoodScreen(categoryId: categoryId)));
                     },
                     icon: const Icon(
                       Icons.arrow_forward_ios,

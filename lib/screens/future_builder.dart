@@ -1,0 +1,682 @@
+import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:second_project/models/food_model.dart';
+import 'package:second_project/models/pet_model.dart';
+import 'package:second_project/models/signupmodel/popular_pet_model.dart';
+import 'package:second_project/screens/seacrh_page.dart';
+import 'package:second_project/widgets/pet_images.dart';
+import 'package:shimmer/shimmer.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  Widget build(BuildContext context) {
+    Future<List<AccessoryModel>> models = fetchAccessories();
+    Future<List<PetproductModel>> pet = fetchpetproduct();
+    Future<List<FoodProductModel>> food = fetchfoodproduct();
+
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 50),
+            _buildAppHeader(),
+            const SizedBox(height: 20),
+            _buildSearchField(),
+            const SizedBox(height: 20),
+            _buildImageCarousel(),
+            const SizedBox(height: 30),
+            _buildSectionTitle('Popular Accesories'),
+            _buildProductList(models),
+            const SizedBox(height: 24),
+            _buildSectionTitle('Popular Pets'),
+            _buildPetproduct(pet),
+            const SizedBox(height: 24),
+            _buildSectionTitle('Popular Foods'),
+            buildFoodProductGrid(food),
+            const SizedBox(height: 30),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppHeader() {
+    return Center(
+      child: Text(
+        'PetSpot',
+        style: TextStyle(
+          fontSize: 36,
+          color: Colors.teal[800],
+          fontWeight: FontWeight.bold,
+          fontFamily: 'Roboto',
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSearchField() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => SearchScreen()));
+      },
+      child: TextField(
+        decoration: InputDecoration(
+          hintText: 'Search for pets, food, accessories...',
+          prefixIcon: const Icon(Icons.search, color: Colors.teal),
+          filled: true,
+          fillColor: Colors.grey[200],
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: BorderSide.none,
+          ),
+        ),
+        enabled: false,
+        // onSubmitted: (value) {
+
+        //   // print("Searching for: $value");
+        // },
+      ),
+    );
+  }
+
+
+ 
+
+  // Widget _buildImageCarousel() {
+  //   return CarouselSlider(
+  //     items: sliderImages.map((image) {
+  //       return Stack(
+  //         children: [
+  //           ClipRRect(
+  //             borderRadius: BorderRadius.circular(12),
+  //             child: Image.network(
+  //               image,
+  //               fit: BoxFit.cover,
+  //               width: double.infinity,
+  //             ),
+  //           ),
+  //           // Positioned(
+  //           //   bottom: 10,
+  //           //   left: 10,
+  //           //   child: Container(
+  //           //     padding:
+  //           //         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+  //           //     color: Colors.black.withOpacity(0.5),
+  //           //     // child: Text(
+  //           //     //   "Special Offer!",
+  //           //     //   style: TextStyle(color: Colors.white, fontSize: 18),
+  //           //     // ),
+  //           //   ),
+  //           // ),
+  //         ],
+  //       );
+  //     }).toList(),
+  //     options: CarouselOptions(
+  //       height: 150,
+  //       autoPlay: true,
+  //       enlargeCenterPage: true,
+  //       viewportFraction: 0.9,
+  //       aspectRatio: 20 / 30,
+  //       autoPlayInterval: const Duration(seconds: 3),
+  //     ),
+  //   );
+  // }
+
+  
+  Widget _buildImageCarousel() {
+  return Column(
+    children: [
+      CarouselSlider(
+        items: sliderImages.map((image) {
+          return Stack(
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  image,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                ),
+              ),
+            ],
+          );
+        }).toList(),
+        options: CarouselOptions(
+          height: 150,
+          autoPlay: true,
+          enlargeCenterPage: true,
+          viewportFraction: 0.9,
+          aspectRatio: 20 / 30,
+          autoPlayInterval: const Duration(seconds: 3),
+        ),
+      ),
+
+      const SizedBox(height: 20),
+  
+    ],
+  );
+}
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 22,
+        fontWeight: FontWeight.bold,
+        color: Colors.teal[900],
+      ),
+    );
+  }
+
+ 
+
+ Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
+  return FutureBuilder<List<AccessoryModel>>(
+    future: futureAccessories,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        // Shimmer effect during loading
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: 6, // Display shimmer placeholders
+          itemBuilder: (context, index) {
+            return Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 110,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        height: 16,
+                        width: 100,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Container(
+                        height: 16,
+                        width: 60,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No accessories found'));
+      } else {
+        final items = snapshot.data!;
+        final displayedItems = items.take(4).toList(); // Limit to 4 items
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: displayedItems.length, // Set to 4
+          itemBuilder: (context, index) {
+            final item = displayedItems[index];
+            return Stack(
+              children: [
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0], // Display the first image
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 110,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.accesoryname,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toString()}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    },
+  );
+}
+
+
+ Widget _buildPetproduct(Future<List<PetproductModel>> futureProducts) {
+  return FutureBuilder<List<PetproductModel>>(
+    future: futureProducts,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: 6, // Placeholder shimmer items
+          itemBuilder: (context, index) {
+            return Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(12),
+                      child: Container(
+                        width: double.infinity,
+                        height: 110,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 100,
+                        height: 16,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Container(
+                        width: 60,
+                        height: 16,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No products found'));
+      } else {
+        final items = snapshot.data!;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          // Limit the item count to 4 or the length of the items list
+          itemCount: items.length > 4 ? 4 : items.length,
+          itemBuilder: (context, index) {
+            final item = items[index];
+            return Stack(
+              children: [
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0], // Display the first image
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 110,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.breed,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toString()}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    },
+  );
+}
+
+Widget buildFoodProductGrid(Future<List<FoodProductModel>> futureFoodProducts) {
+  return FutureBuilder<List<FoodProductModel>>(
+    future: futureFoodProducts,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        // Shimmer effect for loading state
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: 6, // Placeholder shimmer items
+          itemBuilder: (context, index) {
+            return Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Card(
+                elevation: 5,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      height: 110,
+                      color: Colors.grey[300],
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Container(
+                        width: 100,
+                        height: 16,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Container(
+                        width: 60,
+                        height: 16,
+                        color: Colors.grey[300],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      } else if (snapshot.hasError) {
+        return Center(child: Text('Error: ${snapshot.error}'));
+      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        return const Center(child: Text('No food products found'));
+      } else {
+        final items = snapshot.data!;
+        final displayedItems = items.take(4).toList(); // Limit to 4 items
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.98,
+          ),
+          itemCount: displayedItems.length, // Only display 4 items
+          itemBuilder: (context, index) {
+            final item = displayedItems[index];
+            return Stack(
+              children: [
+                Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0], // Display the first image
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: 110,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
+                                  ),
+                                ),
+                              ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.foodname,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+                // You can implement the Add to Cart functionality here as needed
+                // Positioned(
+                //   bottom: 8,
+                //   right: 8,
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       // Implement Add to Cart functionality
+                //       print("Add to Cart for ${item.foodname}");
+                //     },
+                //     child: Container(
+                //       decoration: BoxDecoration(
+                //         shape: BoxShape.circle,
+                //         color: Colors.teal,
+                //         boxShadow: [
+                //           BoxShadow(
+                //             color: Colors.black.withOpacity(0.2),
+                //             blurRadius: 5,
+                //             offset: const Offset(0, 2),
+                //           ),
+                //         ],
+                //       ),
+                //       padding: const EdgeInsets.all(8.0),
+                //       child: const Icon(
+                //         Icons.add,
+                //         color: Colors.white,
+                //         size: 24,
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
+            );
+          },
+        );
+      }
+    },
+  );
+}
+
+
+
+  Future<List<AccessoryModel>> fetchAccessories() async {
+    try {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('accessories').get();
+
+      return querySnapshot.docs.map((doc) {
+        return AccessoryModel.fromSnapshot(doc);
+      }).toList();
+    } catch (e) {
+      print('Error fetching accessories: $e');
+      return []; // Return an empty list on error
+    }
+  }
+
+  Future<List<PetproductModel>> fetchpetproduct() async {
+    try {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('products').get();
+
+      return querySnapshot.docs.map((doc) {
+        return PetproductModel.fromSnapshot(doc);
+      }).toList();
+    } catch (e) {
+      print('Error fetching pets: $e');
+      return []; // Return an empty list on error
+    }
+  }
+
+  Future<List<FoodProductModel>> fetchfoodproduct() async {
+    try {
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('foodproducts').get();
+
+      return querySnapshot.docs.map((doc) {
+        return FoodProductModel.fromSnapshot(doc);
+      }).toList();
+    } catch (e) {
+      print('Error fetching foodproduct: $e');
+      return []; // Return an empty list on error
+    }
+  }
+}

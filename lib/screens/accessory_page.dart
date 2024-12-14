@@ -1,60 +1,75 @@
-// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, prefer_const_declarations
+// ignore_for_file: depend_on_referenced_packages
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:second_project/bloc/breedsearch_bloc.dart';
+import 'package:second_project/bloc/accesoriesearch_bloc.dart';
 import 'package:intl/intl.dart';
-import 'package:second_project/screens/product_details.dart';
+import 'package:second_project/screens/accessory_detail.dart';
 
-class BreedDetails extends StatelessWidget {
-  final String categoryId;
 
-  const BreedDetails({
-    super.key,
-    required this.categoryId,
-  });
+class AccessoryPage extends StatefulWidget {
+  final String categoryid;
+  const AccessoryPage({super.key, required this.categoryid});
 
   @override
+  State<AccessoryPage> createState() => _AccessoryPageState();
+}
+
+class _AccessoryPageState extends State<AccessoryPage> {
+  @override
   Widget build(BuildContext context) {
-   
-    context.read<BreedsearchBloc>().add(FetchBreedsEvent(categoryid: categoryId));
+    context
+        .read<AccesoriesearchBloc>()
+        .add(FetchAccessories(categoryid: widget.categoryid));
 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Breed Details',
+          'Accessories',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
             onPressed: () {
-              context.read<BreedsearchBloc>().add(FilterBreeds(filter: 'Large'));
+              // Trigger filter event
+              context
+                  .read<AccesoriesearchBloc>()
+                  .add(FilterAccessories(filter: "Dog")); // Example filter
             },
+            icon: const Icon(
+              Icons.filter_alt_outlined,
+              color: Colors.black,
+            ),
           ),
           PopupMenuButton<String>(
-            icon: const Icon(Icons.sort, color: Colors.black),
             onSelected: (value) {
-              if (value == 'Sort by Price Ascending') {
-                context.read<BreedsearchBloc>().add(SortBreeds(ascending: true));
-              } else if (value == 'Sort by Price Descending') {
-                context.read<BreedsearchBloc>().add(SortBreeds(ascending: false));
+    
+              if (value == 'Ascending') {
+                context
+                    .read<AccesoriesearchBloc>()
+                    .add(SortAccessories(ascending: true));
+              } else if (value == 'Descending') {
+                context
+                    .read<AccesoriesearchBloc>()
+                    .add(SortAccessories(ascending: false));
               }
             },
-            itemBuilder: (BuildContext context) {
-              return [
-                const PopupMenuItem<String>(
-                  value: 'Sort by Price Ascending',
-                  child: Text('Sort by Price Ascending'),
-                ),
-                const PopupMenuItem<String>(
-                  value: 'Sort by Price Descending',
-                  child: Text('Sort by Price Descending'),
-                ),
-              ];
-            },
+            icon: const Icon(
+              Icons.sort,
+              color: Colors.black,
+            ),
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'Ascending',
+                child: Text('Sort by Price (Low to High)'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'Descending',
+                child: Text('Sort by Price (High to Low)'),
+              ),
+            ],
           ),
         ],
       ),
@@ -64,10 +79,13 @@ class BreedDetails extends StatelessWidget {
             padding: const EdgeInsets.all(8),
             child: TextField(
               onChanged: (value) {
-                context.read<BreedsearchBloc>().add(SerchBreeds(query: value));
+            
+                context
+                    .read<AccesoriesearchBloc>()
+                    .add(SearchAccessories(query: value));
               },
               decoration: InputDecoration(
-                hintText: 'Search breeds..',
+                hintText: 'Search accessories...',
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
@@ -76,39 +94,42 @@ class BreedDetails extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: BlocBuilder<BreedsearchBloc, BreedsearchState>(
+            child: BlocBuilder<AccesoriesearchBloc, AccesoriesearchState>(
               builder: (context, state) {
-                if (state is BreedLoading) {
+                if (state is AccessoryLoading) {
                   return const Center(child: CircularProgressIndicator());
-                } else if (state is BreedError) {
+                } else if (state is AccessoryError) {
                   return Center(child: Text('Error: ${state.error}'));
-                } else if (state is BreedLoaded) {
-                  final breeds = state.breeds;
-                  if (breeds.isEmpty) {
-                    return const Center(child: Text('No breeds available.'));
+                } else if (state is AccesoriesLoaded) {
+                  final accessories = state.accessories;
+
+                  if (accessories.isEmpty) {
+                    return const Center(
+                        child: Text('No accessories available'));
                   }
+
                   return GridView.builder(
-                    padding: const EdgeInsets.all(8.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
                       childAspectRatio: 0.7,
                     ),
-                    itemCount: breeds.length,
+                    itemCount: accessories.length,
                     itemBuilder: (context, index) {
-                      final breed = breeds[index];
+                      final accesory = accessories[index];
                       final double offerPercentage = ((50) / 100) * 100;
 
                       final arrivalDate = DateTime.now().add(
-                        Duration(days: breed.arrivalDays),
+                        Duration(days: accesory.arrivalDays),
                       );
                       final formattedArrivalDate =
                           DateFormat('dd MMM yyyy').format(arrivalDate);
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetails(name: breed.name,price: breed.price.toInt(),description: breed.descriptions.toString(),imageUrls: breed.imageUrls,gender: breed.gender,stock: breed.stock,)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryDetail(name: accesory.accesoryname,description: accesory.descriptions.toString(),price: accesory.price.toInt(),size: accesory.size,imageUrls:accesory.imageUrls,stock: accesory.stock,)));
                         },
                         child: Card(
                           elevation: 5,
@@ -124,27 +145,12 @@ class BreedDetails extends StatelessWidget {
                                     borderRadius: const BorderRadius.vertical(
                                       top: Radius.circular(10),
                                     ),
-                                    child: breed.imageUrls.isNotEmpty
+                                    child: accesory.imageUrls.isNotEmpty
                                         ? Image.network(
-                                            breed.imageUrls.first,
+                                            accesory.imageUrls.first,
                                             width: double.infinity,
                                             height: 102,
                                             fit: BoxFit.cover,
-                                            loadingBuilder:
-                                                (context, child, progress) {
-                                              if (progress == null) return child;
-                                              return const Center(
-                                                  child:
-                                                      CircularProgressIndicator());
-                                            },
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return const Icon(
-                                                Icons.broken_image,
-                                                size: 50,
-                                                color: Colors.grey,
-                                              );
-                                            },
                                           )
                                         : const Icon(
                                             Icons.image,
@@ -157,15 +163,15 @@ class BreedDetails extends StatelessWidget {
                                     right: 8,
                                     child: IconButton(
                                       icon: Icon(
-                                        breed.isLiked
+                                        accesory.isLiked
                                             ? Icons.favorite
                                             : Icons.favorite_border,
-                                        color: breed.isLiked
+                                        color: accesory.isLiked
                                             ? Colors.red
                                             : Colors.red,
                                       ),
                                       onPressed: () {
-                                       
+                                        // Handle like button toggle
                                       },
                                     ),
                                   ),
@@ -183,7 +189,7 @@ class BreedDetails extends StatelessWidget {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              breed.name,
+                                              accesory.accesoryname,
                                               style: const TextStyle(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -195,11 +201,7 @@ class BreedDetails extends StatelessWidget {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                          //  final item=CartModel(
-                                          //   name: breed.name, imageUrls: breed.imageUrls, price: breed.price, descriptions: breed.descriptions, id: breed.id, rating: breed.rating, arrivalDays: breed.arrivalDays,);
-                                          //   context.read<CartBloc>().add(AddToCart(item: item));
-                                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${breed.name}added to cart!')));
-
+                                              // Handle Add to Cart action
                                             },
                                             icon: const Icon(
                                               Icons.add_shopping_cart,
@@ -215,16 +217,15 @@ class BreedDetails extends StatelessWidget {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '₹${breed.price.toStringAsFixed(2)}',
+                                            '₹${accesory.price.toStringAsFixed(2)}',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
                                               color: Colors.teal,
                                             ),
                                           ),
-                                          
                                           Text(
-                                            '₹${breed.originalPrice.toStringAsFixed(2)}',
+                                            '₹${accesory.originalPrice.toStringAsFixed(2)}',
                                             style: const TextStyle(
                                               fontSize: 14,
                                               decoration:
@@ -232,7 +233,6 @@ class BreedDetails extends StatelessWidget {
                                               color: Colors.grey,
                                             ),
                                           ),
-                                        
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -253,7 +253,7 @@ class BreedDetails extends StatelessWidget {
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
-                                            '${breed.rating.toStringAsFixed(1)}',
+                                            '${accesory.rating.toStringAsFixed(1)}',
                                             style: const TextStyle(
                                               fontSize: 14,
                                               color: Colors.black54,
@@ -269,7 +269,6 @@ class BreedDetails extends StatelessWidget {
                                           color: Colors.black54,
                                         ),
                                       ),
-                                      
                                     ],
                                   ),
                                 ),
@@ -280,9 +279,8 @@ class BreedDetails extends StatelessWidget {
                       );
                     },
                   );
-                } else {
-                  return const Center(child: Text('Unexpected state.'));
                 }
+                return const SizedBox();
               },
             ),
           ),

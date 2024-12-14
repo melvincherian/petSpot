@@ -4,8 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/Firebase/address_repo.dart';
 import 'package:second_project/Firebase/user_authentication.dart';
+import 'package:second_project/bloc/accesoriesearch_bloc.dart';
 import 'package:second_project/bloc/address_bloc.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
+import 'package:second_project/bloc/breedsearch_bloc.dart';
+import 'package:second_project/bloc/cart_bloc.dart';
+import 'package:second_project/bloc/foodsearch_bloc.dart';
 import 'package:second_project/bloc/imagepicker_bloc.dart';
 import 'package:second_project/bloc/searchcategory_bloc.dart';
 import 'package:second_project/provider/bottom_navbar.dart';
@@ -36,7 +40,11 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ImagepickerBloc>(create: (context) => ImagepickerBloc()),
           BlocProvider<SearchcategoryBloc>(create: (context)=>SearchcategoryBloc()),
-          BlocProvider<AddressBloc>(create: (context)=>AddressBloc(AddressRepository()))
+          BlocProvider<AddressBloc>(create: (context)=>AddressBloc(AddressRepository())),
+          BlocProvider<BreedsearchBloc>(create: (context)=>BreedsearchBloc()),
+          BlocProvider<AccesoriesearchBloc>(create: (context)=>AccesoriesearchBloc()),
+          BlocProvider<FoodsearchBloc>(create: (context)=>FoodsearchBloc()),
+          BlocProvider(create: (context)=>CartBloc())
         ],
 
         child: const MaterialApp(
