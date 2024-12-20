@@ -19,3 +19,19 @@ class RemoveCart extends CartEvent{
 }
 
 class FetchCartitems extends CartEvent{}
+
+
+
+class UpdateCartItemQuantity extends CartEvent {
+  final String itemId;
+  final int newQuantity;
+
+  UpdateCartItemQuantity({
+    required this.itemId, 
+    required this.newQuantity
+  });
+
+
+
+}
+

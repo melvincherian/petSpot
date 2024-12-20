@@ -1,9 +1,13 @@
-// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations
+// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:second_project/bloc/cart_bloc.dart';
 import 'package:second_project/bloc/foodsearch_bloc.dart';
+import 'package:second_project/bloc/wishlist_bloc.dart';
+import 'package:second_project/models/cart_model.dart';
+import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/food_details.dart';
 
 class FoodScreen extends StatelessWidget {
@@ -182,7 +186,22 @@ class FoodScreen extends StatelessWidget {
                                             : Colors.red,
                                       ),
                                       onPressed: () {
-                                        // Handle like button toggle
+                                            final item = WishlistModel(
+                                            id: foods.id,
+                                            userReference: '',
+                                            items: [
+                                              WishlistItem(
+                                                  productReference: foods.id)
+                                            ]);
+                                        context
+                                            .read<WishlistBloc>()
+                                            .add(TaponWishlist(item));
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          backgroundColor: Colors.green,
+                                          content: Text(
+                                              '${foods.foodname} added to Wishlist!'),
+                                        ));
                                       },
                                     ),
                                   ),
@@ -213,7 +232,29 @@ class FoodScreen extends StatelessWidget {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                              // Handle Add to Cart action
+                                              final item = CartModel(
+                                                  id: foods.id,
+                                                  userReference: '',
+                                                  items: [
+                                                    CartItem(
+                                                        productReference:
+                                                            foods.id,
+                                                        price: foods.price,
+                                                        quantity: 1,
+                                                        )
+                                                  ],
+                                                  );
+
+                                              context
+                                                  .read<CartBloc>()
+                                                  .add(AddToCart(item: item));
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                backgroundColor: Colors.green,
+                                                content: Text(
+                                                    '${foods.foodname} added to cart!'),
+                                              ));
                                             },
                                             icon: const Icon(
                                               Icons.add_shopping_cart,

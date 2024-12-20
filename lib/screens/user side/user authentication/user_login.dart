@@ -6,6 +6,7 @@ import 'package:second_project/bloc/authentication_bloc.dart';
 import 'package:second_project/screens/user side/forgotpassword/forgotpass_screen.dart';
 import 'package:second_project/screens/user side/home_screen.dart';
 import 'package:second_project/screens/user side/user authentication/user_signup.dart';
+import 'package:second_project/services/shared_pref.dart';
 import 'package:second_project/widgets/login_textfield.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,6 +20,7 @@ class ScreenLogin extends StatefulWidget {
 class _ScreenLoginState extends State<ScreenLogin> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
+  final googleController=TextEditingController();
   final _formKey = GlobalKey<FormState>();
   
 
@@ -27,12 +29,12 @@ class _ScreenLoginState extends State<ScreenLogin> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
-        listener: (context, state) {
+        listener: (context, state)async {
           if (state is AuthenticationLoading) {
-           
-            // Show loading indicator if necessary
+       
           }
-          if (state is AuthenticationSuccess) {
+          if (state is AuthenticationSuccess && state.source=='google') {
+               await SharedPrefHelper().saveUserGoogle(googleController.text);
            Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenHome()));
           }
            if (state is AuthenticationSuccess && state.source=='login') {

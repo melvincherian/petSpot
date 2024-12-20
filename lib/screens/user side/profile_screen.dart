@@ -1,4 +1,4 @@
-// ignore_for_file: unnecessary_null_comparison, prefer_const_constructors, use_build_context_synchronously
+// ignore_for_file: unnecessary_null_comparison, prefer_const_constructors, use_build_context_synchronously, unused_field
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +22,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   String _username = '';
   String _email = '';
   String _imageUrl = '';
+  String _userGoogle= '';
 
   @override
   void initState() {
@@ -33,12 +34,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final prefHelper = SharedPrefHelper();
   final username = await prefHelper.getUserName() ?? 'No username set';
   final email = await prefHelper.getUserEmail() ?? 'No email set';
-  final imageUrl = await prefHelper.getUserImage() ?? ''; // Empty if no image is saved
+  final imageUrl = await prefHelper.getUserImage() ?? '';
+  final google=await prefHelper.getuserGoogle()??'';
+   // Empty if no image is saved
 
   setState(() {
     _username = username;
     _email = email;
     _imageUrl = imageUrl;
+    _userGoogle=google;
   });
 }
 

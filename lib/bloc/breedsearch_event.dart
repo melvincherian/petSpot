@@ -22,6 +22,15 @@ class FilterBreeds extends BreedsearchEvent{
   FilterBreeds({required this.filter});
 }
 
+// class FilterBreeds extends BreedsearchEvent{
+//   final int month;
+//   final int year;
+
+//   FilterBreeds({required this.month,required this.year});
+// }
+
+
+
 class SortBreeds extends BreedsearchEvent{
   final bool ascending;
 

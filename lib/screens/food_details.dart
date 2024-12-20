@@ -2,34 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:second_project/screens/ratings_review.dart';
 
 class FoodDetails extends StatefulWidget {
-
-final String ?name;
-final int?price;
-final String?description;
-final List<String> imageUrls;
-final String?foodweight;
-final String?packedDate;
-final String?endDate;
-final int?offerprice;
-final int?rating;
-final int?arrivalDate;
-final bool isLiked;
-final int?stock;
-const FoodDetails({super.key,required this.name,required this.description,required this.price,required this.imageUrls,required this.foodweight,required this.packedDate,required this.endDate,required this.offerprice,required this.rating,required this.arrivalDate,required this.isLiked,required this.stock});
+  final String? name;
+  final int? price;
+  final String? description;
+  final List<String> imageUrls;
+  final String? foodweight;
+  final String? packedDate;
+  final String? endDate;
+  final int? offerprice;
+  final int? rating;
+  final int? arrivalDate;
+  final bool isLiked;
+  final int? stock;
+  const FoodDetails(
+      {super.key,
+      required this.name,
+      required this.description,
+      required this.price,
+      required this.imageUrls,
+      required this.foodweight,
+      required this.packedDate,
+      required this.endDate,
+      required this.offerprice,
+      required this.rating,
+      required this.arrivalDate,
+      required this.isLiked,
+      required this.stock});
 
   @override
   State<FoodDetails> createState() => _FoodDetailsState();
 }
 
 class _FoodDetailsState extends State<FoodDetails> {
-
- final ValueNotifier<String> selectedImageNotifier = ValueNotifier('');
+  final ValueNotifier<String> selectedImageNotifier = ValueNotifier('');
 
   @override
   void initState() {
     super.initState();
-    
-    selectedImageNotifier.value = widget.imageUrls.isNotEmpty ? widget.imageUrls.first : '';
+
+    selectedImageNotifier.value =
+        widget.imageUrls.isNotEmpty ? widget.imageUrls.first : '';
   }
 
   @override
@@ -40,14 +52,15 @@ class _FoodDetailsState extends State<FoodDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-     appBar: AppBar(
-      title:const Text('Product Detail',
-      style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Product Detail',
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
-      centerTitle: true,
-     ),
-       body: SingleChildScrollView(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,41 +69,66 @@ class _FoodDetailsState extends State<FoodDetails> {
             ValueListenableBuilder<String>(
               valueListenable: selectedImageNotifier,
               builder: (context, selectedImage, child) {
-                return Container(
-                  width: double.infinity,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                    image: selectedImage.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(selectedImage),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    color: Colors.grey[200],
-                  ),
-                  child: selectedImage.isEmpty
-                      ? const Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            size: 80,
-                            color: Colors.grey,
+                return Stack(
+                  children: [
+                    // Main product image container
+                    Container(
+                      width: double.infinity,
+                      height: 250,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
                           ),
-                        )
-                      : null,
+                        ],
+                        image: selectedImage.isNotEmpty
+                            ? DecorationImage(
+                                image: NetworkImage(selectedImage),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.grey[200],
+                      ),
+                      child: selectedImage.isEmpty
+                          ? const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                size: 80,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : null,
+                    ),
+                    // Wishlist icon positioned on top of the image
+                    Positioned(
+                      top: 16,
+                      right: 16,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Add functionality to toggle the wishlist status
+                          print("Wishlist icon tapped");
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 20,
+                          child: Icon(
+                            Icons
+                                .favorite_border, // Change to Icons.favorite if already in wishlist
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
             const SizedBox(height: 20),
             SizedBox(
-              height: 70, 
+              height: 70,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.imageUrls.length,
@@ -98,7 +136,6 @@ class _FoodDetailsState extends State<FoodDetails> {
                   final imageUrl = widget.imageUrls[index];
                   return GestureDetector(
                     onTap: () {
-                    
                       selectedImageNotifier.value = imageUrl;
                     },
                     child: Container(
@@ -195,7 +232,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                 color: Colors.black54,
               ),
             ),
-              const Text(
+            const Text(
               'Packed Date',
               style: TextStyle(
                 fontSize: 22,
@@ -212,7 +249,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                 color: Colors.black54,
               ),
             ),
-              const Text(
+            const Text(
               'End Date',
               style: TextStyle(
                 fontSize: 22,
@@ -260,7 +297,9 @@ class _FoodDetailsState extends State<FoodDetails> {
                 IconButton(
                   onPressed: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => Reviewscreen()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Reviewscreen()));
                   },
                   icon: Icon(Icons.arrow_forward_rounded),
                 )

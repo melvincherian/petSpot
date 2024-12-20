@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/Firebase/address_repo.dart';
+import 'package:second_project/Firebase/cart_repository.dart';
 import 'package:second_project/Firebase/user_authentication.dart';
+import 'package:second_project/Firebase/wishlist_repo.dart';
 import 'package:second_project/bloc/accesoriesearch_bloc.dart';
 import 'package:second_project/bloc/address_bloc.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
@@ -12,6 +14,7 @@ import 'package:second_project/bloc/cart_bloc.dart';
 import 'package:second_project/bloc/foodsearch_bloc.dart';
 import 'package:second_project/bloc/imagepicker_bloc.dart';
 import 'package:second_project/bloc/searchcategory_bloc.dart';
+import 'package:second_project/bloc/wishlist_bloc.dart';
 import 'package:second_project/provider/bottom_navbar.dart';
 import 'package:second_project/screens/user side/user authentication/user_landing.dart';
 
@@ -44,7 +47,9 @@ class MyApp extends StatelessWidget {
           BlocProvider<BreedsearchBloc>(create: (context)=>BreedsearchBloc()),
           BlocProvider<AccesoriesearchBloc>(create: (context)=>AccesoriesearchBloc()),
           BlocProvider<FoodsearchBloc>(create: (context)=>FoodsearchBloc()),
-          BlocProvider(create: (context)=>CartBloc())
+          BlocProvider(create: (context)=>CartBloc(authService: AuthRepository(), cartRepository: CartRepository())),
+          BlocProvider(create: (context)=>WishlistBloc(wishlistRepository: WishlistRepository(), authRepository: AuthRepository()))
+          
         ],
 
         child: const MaterialApp(

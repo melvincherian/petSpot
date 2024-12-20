@@ -8,30 +8,34 @@ class ProductDetails extends StatefulWidget {
   final List<String> imageUrls;
   final String? gender;
   final int? stock;
+  final int? month;
+  final int? year;
 
-  const ProductDetails({
-    super.key,
-    required this.name,
-    required this.price,
-    required this.description,
-    required this.imageUrls,
-    required this.gender,
-    required this.stock,
-  });
+  const ProductDetails(
+      {super.key,
+      required this.name,
+      required this.price,
+      required this.description,
+      required this.imageUrls,
+      required this.gender,
+      required this.stock,
+      required this.month,
+      required this.year});
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
 }
 
 class _ProductDetailsState extends State<ProductDetails> {
-
   final ValueNotifier<String> selectedImageNotifier = ValueNotifier('');
+  final ValueNotifier<int> quantityNotifier = ValueNotifier<int>(1);
 
   @override
   void initState() {
     super.initState();
-  
-    selectedImageNotifier.value = widget.imageUrls.isNotEmpty ? widget.imageUrls.first : '';
+
+    selectedImageNotifier.value =
+        widget.imageUrls.isNotEmpty ? widget.imageUrls.first : '';
   }
 
   @override
@@ -56,45 +60,71 @@ class _ProductDetailsState extends State<ProductDetails> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Use ValueListenableBuilder to listen to the selected image
+            
             ValueListenableBuilder<String>(
               valueListenable: selectedImageNotifier,
               builder: (context, selectedImage, child) {
-                return Container(
-                  width: double.infinity,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                    image: selectedImage.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(selectedImage),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    color: Colors.grey[200],
-                  ),
-                  child: selectedImage.isEmpty
-                      ? const Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            size: 80,
-                            color: Colors.grey,
+                return Stack(
+                  children: [
+                  
+                    Container(
+                      width: double.infinity,
+                      height: 250,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
                           ),
-                        )
-                      : null,
+                        ],
+                        image: selectedImage.isNotEmpty
+                            ? DecorationImage(
+                                image: NetworkImage(selectedImage),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.grey[200],
+                      ),
+                      child: selectedImage.isEmpty
+                          ? const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                size: 80,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : null,
+                    ),
+              
+                    Positioned(
+                      top: 16,
+                      right: 16,
+                      child: GestureDetector(
+                        onTap: () {
+                     
+                          print("Wishlist icon tapped");
+                        },
+                        child:const CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 20,
+                          child: Icon(
+                            Icons
+                                .favorite_border, 
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
+
             const SizedBox(height: 20),
             SizedBox(
-              height: 70, 
+              height: 70,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: widget.imageUrls.length,
@@ -102,7 +132,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                   final imageUrl = widget.imageUrls[index];
                   return GestureDetector(
                     onTap: () {
-                    
                       selectedImageNotifier.value = imageUrl;
                     },
                     child: Container(
@@ -190,7 +219,6 @@ class _ProductDetailsState extends State<ProductDetails> {
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 10),
             Text(
               widget.gender ?? 'No gender available.',
               style: const TextStyle(
@@ -199,6 +227,46 @@ class _ProductDetailsState extends State<ProductDetails> {
                 color: Colors.black54,
               ),
             ),
+            // const SizedBox(height: 16),
+
+            // Text(
+            //   widget.month != null
+            //       ? (widget.month! == 1
+            //           ? 'Month: ${widget.month!.toStringAsFixed(0)} month'
+            //           : 'Month: ${widget.month!.toStringAsFixed(0)} months')
+            //       : 'Month: months',
+            //   style: const TextStyle(
+            //     fontSize: 24,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.black87,
+            //   ),
+            // ),
+
+            // const SizedBox(height: 16),
+
+            // // Text(
+            // //   'Year: ${widget.year?.toStringAsFixed(1) ?? 'months'}',
+            // //   style: const TextStyle(
+            // //     fontSize: 26,
+            // //     fontWeight: FontWeight.bold,
+            // //     color: Colors.black87,
+            // //   ),
+            // // ),
+            // Text(
+            //   widget.year != null
+            //       ? (widget.year! < 1
+            //           ? 'Age: ${(widget.year! * 12).toStringAsFixed(0)} months'
+            //           : 'Age: ${widget.year!.toStringAsFixed(1)} years')
+            //       : 'Age: months',
+            //   style: const TextStyle(
+            //     fontSize: 24,
+            //     fontWeight: FontWeight.bold,
+            //     color: Colors.black87,
+            //   ),
+            // ),
+
+            const SizedBox(height: 10),
+
             Row(
               children: [
                 SizedBox(width: 130),
@@ -230,12 +298,69 @@ class _ProductDetailsState extends State<ProductDetails> {
                 IconButton(
                   onPressed: () {
                     Navigator.push(
-                        context, MaterialPageRoute(builder: (context) => Reviewscreen()));
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => Reviewscreen()));
                   },
                   icon: Icon(Icons.arrow_forward_rounded),
                 )
               ],
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                  GestureDetector(onTap: () {
+                    //  if (quantityNotifier.value > 1) {
+                    //   quantityNotifier.value--;
+                    // }
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: Icon(Icons.remove),
+                    
+                  ),
+                  
+                  ),
+                  SizedBox(width: 13),
+                    ValueListenableBuilder<int>(
+                  valueListenable: quantityNotifier,
+                  builder: (context, quantity, _) {
+                    return Text(
+                      '$quantity',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    );
+                  },
+                ),
+                  SizedBox(width: 20,),
+                  GestureDetector(onTap: () {
+                    // quantityNotifier.value++;
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: Icon(Icons.add),
+                  ),
+                  ),
+                  SizedBox(width: 50),
+                  ElevatedButton(onPressed: (){
+                    print('Cart added successfully');
+                  },
+                   style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 40, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ), 
+                  child: Text('Add to cart',
+                  style: TextStyle(color: Colors.white),
+                  ))
+              ],
+            )
           ],
         ),
       ),

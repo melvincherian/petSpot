@@ -35,13 +35,13 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             _buildImageCarousel(),
             const SizedBox(height: 30),
-            _buildSectionTitle('Popular Accesories'),
+            _buildSectionTitle('Popular Accesories',(){}),
             _buildProductList(models),
             const SizedBox(height: 24),
-            _buildSectionTitle('Popular Pets'),
+            _buildSectionTitle('Popular Pets',(){}),
             _buildPetproduct(pet),
             const SizedBox(height: 24),
-            _buildSectionTitle('Popular Foods'),
+            _buildSectionTitle('Popular Foods',(){}),
             buildFoodProductGrid(food),
             const SizedBox(height: 30),
           ],
@@ -167,16 +167,35 @@ class _HomeScreenState extends State<HomeScreen> {
     ],
   );
 }
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: Colors.teal[900],
-      ),
-    );
-  }
+  Widget _buildSectionTitle(String title, VoidCallback onViewAllPressed) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(vertical: 8.0),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.teal[900],
+          ),
+        ),
+        TextButton(
+          onPressed: onViewAllPressed,
+          child: Text(
+            'View All',
+            style: TextStyle(
+              fontSize: 16,
+              color: Colors.teal[700],
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
  
 
@@ -259,63 +278,68 @@ class _HomeScreenState extends State<HomeScreen> {
           itemCount: displayedItems.length, // Set to 4
           itemBuilder: (context, index) {
             final item = displayedItems[index];
-            return Stack(
-              children: [
-                Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: item.imageUrls.isNotEmpty
-                            ? Image.network(
-                                item.imageUrls[0], // Display the first image
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 110,
-                              )
-                            : const SizedBox(
-                                height: 110,
-                                child: Center(
-                                  child: Text(
-                                    'No Image',
-                                    style: TextStyle(color: Colors.grey),
+            return GestureDetector(
+              onTap: () {
+                
+              },
+              child: Stack(
+                children: [
+                  Card(
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: item.imageUrls.isNotEmpty
+                              ? Image.network(
+                                  item.imageUrls[0], // Display the first image
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: 110,
+                                )
+                              : const SizedBox(
+                                  height: 110,
+                                  child: Center(
+                                    child: Text(
+                                      'No Image',
+                                      style: TextStyle(color: Colors.grey),
+                                    ),
                                   ),
                                 ),
-                              ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          item.accesoryname,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.teal[800],
-                          ),
-                          overflow: TextOverflow.ellipsis,
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '\$${item.price.toString()}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
+                            item.accesoryname,
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.teal[800],
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                      ),
-                      const Spacer(),
-                    ],
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          child: Text(
+                            '\$${item.price.toString()}',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         );

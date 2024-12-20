@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/accesoriesearch_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:second_project/bloc/cart_bloc.dart';
+import 'package:second_project/bloc/wishlist_bloc.dart';
+import 'package:second_project/models/cart_model.dart';
+import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/accessory_detail.dart';
 
 
@@ -171,7 +175,22 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                             : Colors.red,
                                       ),
                                       onPressed: () {
-                                        // Handle like button toggle
+                                     final item = WishlistModel(
+                                            id: accesory.id,
+                                            userReference: '',
+                                            items: [
+                                              WishlistItem(
+                                                  productReference: accesory.id)
+                                            ]);
+                                        context
+                                            .read<WishlistBloc>()
+                                            .add(TaponWishlist(item));
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          backgroundColor: Colors.green,
+                                          content: Text(
+                                              '${accesory.accesoryname} added to Wishlist!'),
+                                        ));
                                       },
                                     ),
                                   ),
@@ -201,7 +220,29 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                              // Handle Add to Cart action
+                                                final item = CartModel(
+                                                  id: accesory.id,
+                                                  userReference: '',
+                                                  items: [
+                                                    CartItem(
+                                                        productReference:
+                                                            accesory.id,
+                                                        price: accesory.price,
+                                                        quantity: 1,
+                                                        )
+                                                  ],
+                                                 );
+
+                                              context
+                                                  .read<CartBloc>()
+                                                  .add(AddToCart(item: item));
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                backgroundColor: Colors.green,
+                                                content: Text(
+                                                    '${accesory.accesoryname} added to cart!'),
+                                              ));
                                             },
                                             icon: const Icon(
                                               Icons.add_shopping_cart,

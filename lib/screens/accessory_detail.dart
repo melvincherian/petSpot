@@ -42,7 +42,11 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Product Detail'),
+        title: Text(
+          'Product Detail',
+          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -53,35 +57,60 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
             ValueListenableBuilder<String>(
               valueListenable: selectedImageNotifier,
               builder: (context, selectedImage, child) {
-                return Container(
-                  width: double.infinity,
-                  height: 250,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: const [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 8,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                    image: selectedImage.isNotEmpty
-                        ? DecorationImage(
-                            image: NetworkImage(selectedImage),
-                            fit: BoxFit.cover,
-                          )
-                        : null,
-                    color: Colors.grey[200],
-                  ),
-                  child: selectedImage.isEmpty
-                      ? const Center(
-                          child: Icon(
-                            Icons.broken_image,
-                            size: 80,
-                            color: Colors.grey,
+                return Stack(
+                  children: [
+                    // Main product image container
+                    Container(
+                      width: double.infinity,
+                      height: 250,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 8,
+                            offset: Offset(0, 4),
                           ),
-                        )
-                      : null,
+                        ],
+                        image: selectedImage.isNotEmpty
+                            ? DecorationImage(
+                                image: NetworkImage(selectedImage),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        color: Colors.grey[200],
+                      ),
+                      child: selectedImage.isEmpty
+                          ? const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                size: 80,
+                                color: Colors.grey,
+                              ),
+                            )
+                          : null,
+                    ),
+                    // Wishlist icon positioned on top of the image
+                    Positioned(
+                      top: 16,
+                      right: 16,
+                      child: GestureDetector(
+                        onTap: () {
+                          // Add functionality to toggle the wishlist status
+                          print("Wishlist icon tapped");
+                        },
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 20,
+                          child: Icon(
+                            Icons
+                                .favorite_border, // Change to Icons.favorite if already in wishlist
+                            color: Colors.red,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 );
               },
             ),
@@ -174,7 +203,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
               ),
             ),
             const SizedBox(height: 20),
-    
+
             Row(
               children: [
                 SizedBox(width: 130),

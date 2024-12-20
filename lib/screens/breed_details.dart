@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/breedsearch_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:second_project/bloc/cart_bloc.dart';
+import 'package:second_project/bloc/wishlist_bloc.dart';
+import 'package:second_project/models/cart_model.dart';
+import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/product_details.dart';
 
 class BreedDetails extends StatelessWidget {
@@ -16,8 +20,9 @@ class BreedDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-   
-    context.read<BreedsearchBloc>().add(FetchBreedsEvent(categoryid: categoryId));
+    context
+        .read<BreedsearchBloc>()
+        .add(FetchBreedsEvent(categoryid: categoryId));
 
     return Scaffold(
       appBar: AppBar(
@@ -31,16 +36,58 @@ class BreedDetails extends StatelessWidget {
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
             onPressed: () {
-              context.read<BreedsearchBloc>().add(FilterBreeds(filter: 'Large'));
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Filter Options"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          title: const Text('Male'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<BreedsearchBloc>()
+                                .add(FilterBreeds(filter: 'Male'));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Female'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<BreedsearchBloc>()
+                                .add(FilterBreeds(filter: 'Female'));
+                          },
+                        ),
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
             },
           ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort, color: Colors.black),
             onSelected: (value) {
               if (value == 'Sort by Price Ascending') {
-                context.read<BreedsearchBloc>().add(SortBreeds(ascending: true));
+                context
+                    .read<BreedsearchBloc>()
+                    .add(SortBreeds(ascending: true));
               } else if (value == 'Sort by Price Descending') {
-                context.read<BreedsearchBloc>().add(SortBreeds(ascending: false));
+                context
+                    .read<BreedsearchBloc>()
+                    .add(SortBreeds(ascending: false));
               }
             },
             itemBuilder: (BuildContext context) {
@@ -89,7 +136,8 @@ class BreedDetails extends StatelessWidget {
                   }
                   return GridView.builder(
                     padding: const EdgeInsets.all(8.0),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
@@ -108,7 +156,20 @@ class BreedDetails extends StatelessWidget {
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ProductDetails(name: breed.name,price: breed.price.toInt(),description: breed.descriptions.toString(),imageUrls: breed.imageUrls,gender: breed.gender,stock: breed.stock,)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => ProductDetails(
+                                        name: breed.name,
+                                        price: breed.price.toInt(),
+                                        description:
+                                            breed.descriptions.toString(),
+                                        imageUrls: breed.imageUrls,
+                                        gender: breed.gender,
+                                        stock: breed.stock,
+                                        month: breed.month,
+                                        year: breed.year,
+                                      )));
                         },
                         child: Card(
                           elevation: 5,
@@ -127,12 +188,14 @@ class BreedDetails extends StatelessWidget {
                                     child: breed.imageUrls.isNotEmpty
                                         ? Image.network(
                                             breed.imageUrls.first,
-                                            width: double.infinity,
+                                            // width: double.infinity,
+                                            width: 150,
                                             height: 102,
                                             fit: BoxFit.cover,
                                             loadingBuilder:
                                                 (context, child, progress) {
-                                              if (progress == null) return child;
+                                              if (progress == null)
+                                                return child;
                                               return const Center(
                                                   child:
                                                       CircularProgressIndicator());
@@ -165,7 +228,22 @@ class BreedDetails extends StatelessWidget {
                                             : Colors.red,
                                       ),
                                       onPressed: () {
-                                       
+                                        final item = WishlistModel(
+                                            id: breed.id,
+                                            userReference: '',
+                                            items: [
+                                              WishlistItem(
+                                                  productReference: breed.id)
+                                            ]);
+                                        context
+                                            .read<WishlistBloc>()
+                                            .add(TaponWishlist(item));
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                          backgroundColor: Colors.green,
+                                          content: Text(
+                                              '${breed.name} added to Wishlist!'),
+                                        ));
                                       },
                                     ),
                                   ),
@@ -175,7 +253,8 @@ class BreedDetails extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -195,11 +274,29 @@ class BreedDetails extends StatelessWidget {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                          //  final item=CartModel(
-                                          //   name: breed.name, imageUrls: breed.imageUrls, price: breed.price, descriptions: breed.descriptions, id: breed.id, rating: breed.rating, arrivalDays: breed.arrivalDays,);
-                                          //   context.read<CartBloc>().add(AddToCart(item: item));
-                                          //   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('${breed.name}added to cart!')));
+                                              final item = CartModel(
+                                                  id: breed.id,
+                                                  userReference: '',
+                                                  items: [
+                                                    CartItem(
+                                                        productReference:
+                                                            breed.id,
+                                                        price: breed.price,
+                                                        quantity: 1,
+                                                      )
+                                                  ],
+                                                );
 
+                                              context
+                                                  .read<CartBloc>()
+                                                  .add(AddToCart(item: item));
+
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(SnackBar(
+                                                backgroundColor: Colors.green,
+                                                content: Text(
+                                                    '${breed.name} added to cart!'),
+                                              ));
                                             },
                                             icon: const Icon(
                                               Icons.add_shopping_cart,
@@ -222,17 +319,31 @@ class BreedDetails extends StatelessWidget {
                                               color: Colors.teal,
                                             ),
                                           ),
-                                          
+
+                                          // Text(
+                                          //   '₹${breed.originalPrice.toStringAsFixed(2)}',
+                                          //   style: const TextStyle(
+                                          //     fontSize: 14,
+                                          //     decoration:
+                                          //         TextDecoration.lineThrough,
+                                          //     color: Colors.grey,
+                                          //   ),
+                                          // ),
                                           Text(
-                                            '₹${breed.originalPrice.toStringAsFixed(2)}',
+                                            '${breed.month} Months old',
                                             style: const TextStyle(
                                               fontSize: 14,
-                                              decoration:
-                                                  TextDecoration.lineThrough,
                                               color: Colors.grey,
                                             ),
                                           ),
-                                        
+                                          //   Text(
+                                          //   '${breed.year}year old',
+                                          //   style: const TextStyle(
+                                          //     fontSize: 14,
+
+                                          //     color: Colors.grey,
+                                          //   ),
+                                          // ),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -269,7 +380,6 @@ class BreedDetails extends StatelessWidget {
                                           color: Colors.black54,
                                         ),
                                       ),
-                                      
                                     ],
                                   ),
                                 ),

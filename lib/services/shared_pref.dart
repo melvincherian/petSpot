@@ -8,11 +8,18 @@ class SharedPrefHelper {
   static String userphoneKey = "USERPHONEKEY";
   static String lastNameKey ="USERLASTNAME";
   static String dobKey="USERDOB";
+  static String userGoogle="USERGOOGLE";
 
 
   Future<bool> saveUserId(String getuserId) async {
     SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.setString(userIdKey, getuserId);
+  }
+
+  
+  Future<bool> saveUserGoogle(String getuserGoogle) async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.setString(userGoogle, getuserGoogle);
   }
 
   Future<bool> saveUserName(String getuserName) async {
@@ -49,6 +56,12 @@ class SharedPrefHelper {
     SharedPreferences pref = await SharedPreferences.getInstance();
     return pref.getString(userIdKey);
   }
+
+   Future<String?> getuserGoogle() async {
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    return pref.getString(userGoogle);
+  }
+
 
   Future<String?> getUserName() async {
     SharedPreferences pref = await SharedPreferences.getInstance();

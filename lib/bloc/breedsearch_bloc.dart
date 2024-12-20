@@ -40,24 +40,42 @@ class BreedsearchBloc extends Bloc<BreedsearchEvent, BreedsearchState> {
 
     
     
-    // on<SerchBreeds>((event, emit) {
-    //   _debouncer.run(() {
-    //     final searchAccessories = _allBreeds.where((breed) =>
-    //         breed.name
-    //             .toLowerCase()
-    //             .contains(event.query.toLowerCase()))
-    //         .toList();
-    //     emit(BreedLoaded(searchAccessories));
-    //   });
-    // });
+   
+  //  on<FilterBreeds>((event, emit) {
+     
+  //     final filteredBreeds = _allBreeds.where((breed) {
+  //       return breed.gender == event.filter;
+  //     }).toList();
+  //     emit(BreedLoaded(filteredBreeds));
+  //   });
 
-   on<FilterBreeds>((event, emit) {
-      // Implement filter logic based on `filterCriteria`
-      final filteredBreeds = _allBreeds.where((breed) {
-        return breed.size == event.filter; // Customize as needed
-      }).toList();
-      emit(BreedLoaded(filteredBreeds));
-    });
+  on<FilterBreeds>((event, emit) {
+
+  if (event.filter.isEmpty) {
+    emit(BreedLoaded(List.from(_allBreeds)));
+    return;
+  }
+  final filteredBreeds = _allBreeds.where((breed) {
+    return breed.gender.toLowerCase() == event.filter.toLowerCase();
+  }).toList();
+
+  emit(BreedLoaded(filteredBreeds));
+});
+
+
+//  on<FilterBreeds>((event, emit) {
+//   // Filter the breeds based on the provided month and year
+//   final filteredBreeds = _allBreeds.where((breed) {
+//     return breed.month == event.month && breed.year == event.year;
+//   }).toList();
+
+//   emit(BreedLoaded(filteredBreeds));
+// });
+
+   
+
+
+
 
     on<SortBreeds>((event, emit) {
       final sortBreeds=List<BreedModel>.from(_allBreeds)..sort((a,b)=>event.ascending?a.price.compareTo(b.price)
