@@ -1,4 +1,3 @@
-
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
@@ -28,7 +27,6 @@ class MyAddress extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Button to add a new address
             Row(
               children: [
                 ElevatedButton.icon(
@@ -52,7 +50,6 @@ class MyAddress extends StatelessWidget {
                         color: Colors.blue),
                   ),
                   style: ElevatedButton.styleFrom(
-                    // primary: Colors.blueAccent,
                     padding: const EdgeInsets.symmetric(
                         vertical: 10, horizontal: 20),
                     shape: RoundedRectangleBorder(
@@ -63,8 +60,6 @@ class MyAddress extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-
-            // StreamBuilder to fetch and display the addresses
             Expanded(
               child: StreamBuilder<List<AddressModel>>(
                 stream: AddressRepository().fetchAddresses(),
@@ -108,83 +103,78 @@ class MyAddress extends StatelessWidget {
                             style: const TextStyle(
                                 fontSize: 16, color: Colors.grey),
                           ),
-                      
-                         
-                          
-                          
-                          onTap: () {
-                            // Optionally, navigate to an update screen or show address details
-                          },  trailing: Row(
-      mainAxisSize: MainAxisSize.min, // Ensures the row doesn't take up unnecessary space
-      children: [
-        // Edit Button
-        IconButton(
-          icon: const Icon(Icons.edit, color: Colors.blue),
-          onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>EditAddress(address: address,)));
-            // Navigate to the edit address screen
-            // Navigator.push(
-            //   context,
-            //   MaterialPageRoute(
-            //     builder: (context) => AddAddress(
-            //       address: address, // Pass the current address for editing
-            //     ),
-            //   ),
-            // );
-          },
-        ),
-        // Delete Button
-        IconButton(
-          icon: const Icon(Icons.delete, color: Colors.red),
-          onPressed: () async {
-            final shouldDelete = await showDialog<bool>(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: const Text('Delete Address'),
-                  content: const Text(
-                      'Are you sure you want to delete this address?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context)
-                          .pop(false), // Cancel
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context)
-                          .pop(true), // Confirm
-                      child: const Text('Delete'),
-                    ),
-                  ],
-                );
-              },
-            );
+                          onTap: () {},
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.edit, color: Colors.blue),
+                                onPressed: () {
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) => EditAddress(
+                                                address: address,
+                                              )));
+                                },
+                              ),
+                              // Delete Button
+                              IconButton(
+                                icon:
+                                    const Icon(Icons.delete, color: Colors.red),
+                                onPressed: () async {
+                                  final shouldDelete = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title: const Text('Delete Address'),
+                                        content: const Text(
+                                            'Are you sure you want to delete this address?'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context)
+                                                    .pop(false),
+                                            child: const Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () =>
+                                                Navigator.of(context).pop(true),
+                                            child: const Text('Delete'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
 
-            if (shouldDelete == true) {
-              try {
-                await AddressRepository()
-                    .deleteAddress(address.id);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('Address deleted successfully.'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              } catch (error) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(
-                        'Failed to delete address: $error'),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-              }
-            }
-          },
-        ),
-      ],
-    ),
+                                  if (shouldDelete == true) {
+                                    try {
+                                      await AddressRepository()
+                                          .deleteAddress(address.id);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Address deleted successfully.'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    } catch (error) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                              'Failed to delete address: $error'),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       );
                     },

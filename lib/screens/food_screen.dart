@@ -1,5 +1,6 @@
-// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, curly_braces_in_flow_control_structures
+// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, curly_braces_in_flow_control_structures, avoid_print
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -9,6 +10,7 @@ import 'package:second_project/bloc/wishlist_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/food_details.dart';
+import 'package:second_project/screens/user%20side/cart_screen.dart';
 
 class FoodScreen extends StatelessWidget {
   final String categoryId;
@@ -20,6 +22,7 @@ class FoodScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     context.read<FoodsearchBloc>().add(FetchFoods(categoryId: categoryId));
 
     return Scaffold(
@@ -31,6 +34,53 @@ class FoodScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
+          BlocBuilder<CartBloc, CartState>(
+            builder: (context, cartstate) {
+              int cartCount = 0;
+              if (cartstate is Cartstateori) {
+                cartCount = cartstate.cartItemCount;
+                print('Cart Count: $cartCount');
+              }
+              return Stack(
+                children: [
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CartScreen(userId: userid),
+                        ),
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.shopping_cart,
+                      color: Colors.black,
+                    ),
+                  ),
+                  if (cartCount > 0)
+                    Positioned(
+                      right: 6,
+                      top: 6,
+                      child: Container(
+                        padding: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          cartCount.toString(),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
             onPressed: () {
@@ -128,6 +178,7 @@ class FoodScreen extends StatelessWidget {
                                         arrivalDate: foods.arrivalDays,
                                         isLiked: foods.isLiked,
                                         stock: foods.stock,
+                                        id: foods.id,
                                       )));
                         },
                         child: Card(
@@ -186,12 +237,14 @@ class FoodScreen extends StatelessWidget {
                                             : Colors.red,
                                       ),
                                       onPressed: () {
-                                            final item = WishlistModel(
+                                        final item = WishlistModel(
                                             id: foods.id,
                                             userReference: '',
                                             items: [
                                               WishlistItem(
-                                                  productReference: foods.id)
+                                                productReference: foods.id,
+                                                productName: foods.foodname,
+                                              )
                                             ]);
                                         context
                                             .read<WishlistBloc>()
@@ -233,17 +286,18 @@ class FoodScreen extends StatelessWidget {
                                           IconButton(
                                             onPressed: () {
                                               final item = CartModel(
-                                                  id: foods.id,
-                                                  userReference: '',
-                                                  items: [
-                                                    CartItem(
-                                                        productReference:
-                                                            foods.id,
-                                                        price: foods.price,
-                                                        quantity: 1,
-                                                        )
-                                                  ],
-                                                  );
+                                                id: foods.id,
+                                                userReference: '',
+                                                // totalAmount: 0.0,
+                                                items: [
+                                                  CartItem(
+                                                    productReference: foods.id,
+                                                    price: foods.price,
+                                                    quantity: 1,
+                                                    productName: foods.foodname,
+                                                  )
+                                                ],
+                                              );
 
                                               context
                                                   .read<CartBloc>()

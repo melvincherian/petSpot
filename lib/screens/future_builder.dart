@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:second_project/models/food_model.dart';
 import 'package:second_project/models/pet_model.dart';
 import 'package:second_project/models/signupmodel/popular_pet_model.dart';
+import 'package:second_project/screens/accessory_detail.dart';
+import 'package:second_project/screens/food_details.dart';
+import 'package:second_project/screens/product_details.dart';
 import 'package:second_project/screens/seacrh_page.dart';
 import 'package:second_project/widgets/pet_images.dart';
 import 'package:shimmer/shimmer.dart';
@@ -35,13 +38,13 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 20),
             _buildImageCarousel(),
             const SizedBox(height: 30),
-            _buildSectionTitle('Popular Accesories',(){}),
+            _buildSectionTitle('Popular Accesories', () {}),
             _buildProductList(models),
             const SizedBox(height: 24),
-            _buildSectionTitle('Popular Pets',(){}),
+            _buildSectionTitle('Popular Pets', () {}),
             _buildPetproduct(pet),
             const SizedBox(height: 24),
-            _buildSectionTitle('Popular Foods',(){}),
+            _buildSectionTitle('Popular Foods', () {}),
             buildFoodProductGrid(food),
             const SizedBox(height: 30),
           ],
@@ -90,9 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
- 
-
   // Widget _buildImageCarousel() {
   //   return CarouselSlider(
   //     items: sliderImages.map((image) {
@@ -133,534 +133,644 @@ class _HomeScreenState extends State<HomeScreen> {
   //   );
   // }
 
-  
   Widget _buildImageCarousel() {
-  return Column(
-    children: [
-      CarouselSlider(
-        items: sliderImages.map((image) {
-          return Stack(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.network(
-                  image,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                ),
-              ),
-            ],
-          );
-        }).toList(),
-        options: CarouselOptions(
-          height: 150,
-          autoPlay: true,
-          enlargeCenterPage: true,
-          viewportFraction: 0.9,
-          aspectRatio: 20 / 30,
-          autoPlayInterval: const Duration(seconds: 3),
-        ),
-      ),
-
-      const SizedBox(height: 20),
-  
-    ],
-  );
-}
-  Widget _buildSectionTitle(String title, VoidCallback onViewAllPressed) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8.0),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Column(
       children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-            color: Colors.teal[900],
+        CarouselSlider(
+          items: sliderImages.map((image) {
+            return Stack(
+              children: [
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(12),
+                  child: Image.network(
+                    image,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                ),
+              ],
+            );
+          }).toList(),
+          options: CarouselOptions(
+            height: 150,
+            autoPlay: true,
+            enlargeCenterPage: true,
+            viewportFraction: 0.9,
+            aspectRatio: 20 / 30,
+            autoPlayInterval: const Duration(seconds: 3),
           ),
         ),
-        TextButton(
-          onPressed: onViewAllPressed,
-          child: Text(
-            'View All',
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildSectionTitle(String title, VoidCallback onViewAllPressed) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
             style: TextStyle(
-              fontSize: 16,
-              color: Colors.teal[700],
+              fontSize: 22,
               fontWeight: FontWeight.bold,
+              color: Colors.teal[900],
             ),
           ),
-        ),
-      ],
-    ),
-  );
-}
-
- 
-
- Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
-  return FutureBuilder<List<AccessoryModel>>(
-    future: futureAccessories,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        // Shimmer effect during loading
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.98,
+          TextButton(
+            onPressed: onViewAllPressed,
+            child: Text(
+              'View All',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.teal[700],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
-          itemCount: 6, // Display shimmer placeholders
-          itemBuilder: (context, index) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProductList(Future<List<AccessoryModel>> futureAccessories) {
+    return FutureBuilder<List<AccessoryModel>>(
+      future: futureAccessories,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Shimmer effect during loading
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.98,
+            ),
+            itemCount: 6, // Display shimmer placeholders
+            itemBuilder: (context, index) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 110,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          height: 16,
+                          width: 100,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          height: 16,
+                          width: 60,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No accessories found'));
+        } else {
+          final items = snapshot.data!;
+          final displayedItems = items.take(4).toList(); // Limit to 4 items
+
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.98,
+            ),
+            itemCount: displayedItems.length, // Set to 4
+            itemBuilder: (context, index) {
+              final item = displayedItems[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AccessoryDetail(
+                              name: displayedItems[index].accesoryname,
+                              description: displayedItems[index].description,
+                              price: displayedItems[index].price.toInt(),
+                              imageUrls: displayedItems[index].imageUrls,
+                              size: displayedItems[index].size,
+                              id: displayedItems[index].id,
+                              stock: displayedItems[index].stock)));
+                },
+                child: Stack(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 110,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: 16,
-                        width: 100,
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        height: 16,
-                        width: 60,
-                        color: Colors.grey[300],
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: item.imageUrls.isNotEmpty
+                                ? Image.network(
+                                    item.imageUrls[
+                                        0], // Display the first image
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 110,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child; // Image is fully loaded
+                                      }
+                                      return Container(
+                                        width: double.infinity,
+                                        height: 110,
+                                        color: Colors.grey[300],
+                                        child: const Center(
+                                          child:
+                                              CircularProgressIndicator(), // Loading indicator
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        width: double.infinity,
+                                        height: 110,
+                                        color: Colors.grey[300],
+                                        child: const Center(
+                                          child: Text(
+                                            'Image Error',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    height: 110,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'No Image',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              item.accesoryname,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal[800],
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              '\$${item.price.toString()}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              ),
-            );
-          },
-        );
-      } else if (snapshot.hasError) {
-        return Center(child: Text('Error: ${snapshot.error}'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text('No accessories found'));
-      } else {
-        final items = snapshot.data!;
-        final displayedItems = items.take(4).toList(); // Limit to 4 items
+              );
+            },
+          );
+        }
+      },
+    );
+  }
 
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.98,
-          ),
-          itemCount: displayedItems.length, // Set to 4
-          itemBuilder: (context, index) {
-            final item = displayedItems[index];
-            return GestureDetector(
-              onTap: () {
-                
-              },
-              child: Stack(
-                children: [
-                  Card(
-                    elevation: 5,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: item.imageUrls.isNotEmpty
-                              ? Image.network(
-                                  item.imageUrls[0], // Display the first image
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  height: 110,
-                                )
-                              : const SizedBox(
-                                  height: 110,
-                                  child: Center(
-                                    child: Text(
-                                      'No Image',
-                                      style: TextStyle(color: Colors.grey),
+  Widget _buildPetproduct(Future<List<PetproductModel>> futureProducts) {
+    return FutureBuilder<List<PetproductModel>>(
+      future: futureProducts,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.98,
+            ),
+            itemCount: 6, // Placeholder shimmer items
+            itemBuilder: (context, index) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Container(
+                          width: double.infinity,
+                          height: 110,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 100,
+                          height: 16,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Container(
+                          width: 60,
+                          height: 16,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No products found'));
+        } else {
+          final items = snapshot.data!;
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.98,
+            ),
+            // Limit the item count to 4 or the length of the items list
+            itemCount: items.length > 4 ? 4 : items.length,
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => ProductDetails(
+                              name: items[index].breed,
+                              price: items[index].price.toInt(),
+                              description: items[index].description,
+                              imageUrls: items[index].imageUrls,
+                              gender: '',
+                              stock: items[index].stock,
+                              month: 10,
+                              year: 10,
+                              id: items[index].id)));
+                },
+                child: Stack(
+                  children: [
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: item.imageUrls.isNotEmpty
+                                ? Image.network(
+                                    item.imageUrls[
+                                        0], // Display the first image
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 110,
+                                  )
+                                : const SizedBox(
+                                    height: 110,
+                                    child: Center(
+                                      child: Text(
+                                        'No Image',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
                                     ),
                                   ),
-                                ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text(
-                            item.accesoryname,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.teal[800],
-                            ),
-                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            '\$${item.price.toString()}',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              item.breed,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal[800],
+                              ),
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                        const Spacer(),
-                      ],
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              '\$${item.price.toString()}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      }
-    },
-  );
-}
-
-
- Widget _buildPetproduct(Future<List<PetproductModel>> futureProducts) {
-  return FutureBuilder<List<PetproductModel>>(
-    future: futureProducts,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.98,
-          ),
-          itemCount: 6, // Placeholder shimmer items
-          itemBuilder: (context, index) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: Container(
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Widget buildFoodProductGrid(
+      Future<List<FoodProductModel>> futureFoodProducts) {
+    return FutureBuilder<List<FoodProductModel>>(
+      future: futureFoodProducts,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          // Shimmer effect for loading state
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.98,
+            ),
+            itemCount: 6, // Placeholder shimmer items
+            itemBuilder: (context, index) {
+              return Shimmer.fromColors(
+                baseColor: Colors.grey[300]!,
+                highlightColor: Colors.grey[100]!,
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
                         width: double.infinity,
                         height: 110,
                         color: Colors.grey[300],
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100,
-                        height: 16,
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        width: 60,
-                        height: 16,
-                        color: Colors.grey[300],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      } else if (snapshot.hasError) {
-        return Center(child: Text('Error: ${snapshot.error}'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text('No products found'));
-      } else {
-        final items = snapshot.data!;
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.98,
-          ),
-          // Limit the item count to 4 or the length of the items list
-          itemCount: items.length > 4 ? 4 : items.length,
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return Stack(
-              children: [
-                Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: item.imageUrls.isNotEmpty
-                            ? Image.network(
-                                item.imageUrls[0], // Display the first image
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 110,
-                              )
-                            : const SizedBox(
-                                height: 110,
-                                child: Center(
-                                  child: Text(
-                                    'No Image',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                              ),
-                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          item.breed,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.teal[800],
-                          ),
-                          overflow: TextOverflow.ellipsis,
+                        child: Container(
+                          width: 100,
+                          height: 16,
+                          color: Colors.grey[300],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '\$${item.price.toString()}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
+                        child: Container(
+                          width: 60,
+                          height: 16,
+                          color: Colors.grey[300],
                         ),
                       ),
-                      const Spacer(),
                     ],
                   ),
                 ),
-              ],
-            );
-          },
-        );
-      }
-    },
-  );
-}
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No food products found'));
+        } else {
+          final items = snapshot.data!;
+          final displayedItems = items.take(4).toList(); // Limit to 4 items
 
-Widget buildFoodProductGrid(Future<List<FoodProductModel>> futureFoodProducts) {
-  return FutureBuilder<List<FoodProductModel>>(
-    future: futureFoodProducts,
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
-        // Shimmer effect for loading state
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.98,
-          ),
-          itemCount: 6, // Placeholder shimmer items
-          itemBuilder: (context, index) {
-            return Shimmer.fromColors(
-              baseColor: Colors.grey[300]!,
-              highlightColor: Colors.grey[100]!,
-              child: Card(
-                elevation: 5,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          return GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16,
+              mainAxisSpacing: 16,
+              childAspectRatio: 0.98,
+            ),
+            itemCount: displayedItems.length, // Only display 4 items
+            itemBuilder: (context, index) {
+              final item = displayedItems[index];
+              return GestureDetector(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => FoodDetails(
+                          name: displayedItems[index].foodname,
+                          description: displayedItems[index].description,
+                          price: displayedItems[index].price.toInt(),
+                          imageUrls: displayedItems[index].imageUrls,
+                          foodweight: displayedItems[index].foodweight,
+                          packedDate: displayedItems[index].packedDate,
+                          endDate: displayedItems[index].endDate,
+                          offerprice: displayedItems[index].price.toInt(),
+                          rating: 10,
+                          arrivalDate: displayedItems[index].arrivalDays,
+                          isLiked: displayedItems[index].isLiked,
+                          id: displayedItems[index].id,
+                          stock: displayedItems[index].stock)));
+                },
+                child: Stack(
                   children: [
-                    Container(
-                      width: double.infinity,
-                      height: 110,
-                      color: Colors.grey[300],
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        width: 100,
-                        height: 16,
-                        color: Colors.grey[300],
+                    Card(
+                      elevation: 5,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: item.imageUrls.isNotEmpty
+                                ? Image.network(
+                                    item.imageUrls[
+                                        0], // Display the first image
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: 110,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        return child; // Image is fully loaded
+                                      }
+                                      return Container(
+                                        width: double.infinity,
+                                        height: 110,
+                                        color: Colors.grey[300],
+                                        child: const Center(
+                                          child:
+                                              CircularProgressIndicator(), // Loading indicator
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        width: double.infinity,
+                                        height: 110,
+                                        color: Colors.grey[300],
+                                        child: const Center(
+                                          child: Text(
+                                            'Image Error',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  )
+                                : Container(
+                                    height: 110,
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[300],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: const Center(
+                                      child: Text(
+                                        'No Image',
+                                        style: TextStyle(color: Colors.grey),
+                                      ),
+                                    ),
+                                  ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              item.foodname,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.teal[800],
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Text(
+                              '\$${item.price.toStringAsFixed(2)}',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          const Spacer(),
+                        ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Container(
-                        width: 60,
-                        height: 16,
-                        color: Colors.grey[300],
-                      ),
-                    ),
+                    // You can implement the Add to Cart functionality here as needed
+                    // Positioned(
+                    //   bottom: 8,
+                    //   right: 8,
+                    //   child: GestureDetector(
+                    //     onTap: () {
+                    //       // Implement Add to Cart functionality
+                    //       print("Add to Cart for ${item.foodname}");
+                    //     },
+                    //     child: Container(
+                    //       decoration: BoxDecoration(
+                    //         shape: BoxShape.circle,
+                    //         color: Colors.teal,
+                    //         boxShadow: [
+                    //           BoxShadow(
+                    //             color: Colors.black.withOpacity(0.2),
+                    //             blurRadius: 5,
+                    //             offset: const Offset(0, 2),
+                    //           ),
+                    //         ],
+                    //       ),
+                    //       padding: const EdgeInsets.all(8.0),
+                    //       child: const Icon(
+                    //         Icons.add,
+                    //         color: Colors.white,
+                    //         size: 24,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
                   ],
                 ),
-              ),
-            );
-          },
-        );
-      } else if (snapshot.hasError) {
-        return Center(child: Text('Error: ${snapshot.error}'));
-      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-        return const Center(child: Text('No food products found'));
-      } else {
-        final items = snapshot.data!;
-        final displayedItems = items.take(4).toList(); // Limit to 4 items
-
-        return GridView.builder(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 16,
-            mainAxisSpacing: 16,
-            childAspectRatio: 0.98,
-          ),
-          itemCount: displayedItems.length, // Only display 4 items
-          itemBuilder: (context, index) {
-            final item = displayedItems[index];
-            return Stack(
-              children: [
-                Card(
-                  elevation: 5,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: item.imageUrls.isNotEmpty
-                            ? Image.network(
-                                item.imageUrls[0], // Display the first image
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: 110,
-                              )
-                            : const SizedBox(
-                                height: 110,
-                                child: Center(
-                                  child: Text(
-                                    'No Image',
-                                    style: TextStyle(color: Colors.grey),
-                                  ),
-                                ),
-                              ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          item.foodname,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.teal[800],
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                        child: Text(
-                          '\$${item.price.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      const Spacer(),
-                    ],
-                  ),
-                ),
-                // You can implement the Add to Cart functionality here as needed
-                // Positioned(
-                //   bottom: 8,
-                //   right: 8,
-                //   child: GestureDetector(
-                //     onTap: () {
-                //       // Implement Add to Cart functionality
-                //       print("Add to Cart for ${item.foodname}");
-                //     },
-                //     child: Container(
-                //       decoration: BoxDecoration(
-                //         shape: BoxShape.circle,
-                //         color: Colors.teal,
-                //         boxShadow: [
-                //           BoxShadow(
-                //             color: Colors.black.withOpacity(0.2),
-                //             blurRadius: 5,
-                //             offset: const Offset(0, 2),
-                //           ),
-                //         ],
-                //       ),
-                //       padding: const EdgeInsets.all(8.0),
-                //       child: const Icon(
-                //         Icons.add,
-                //         color: Colors.white,
-                //         size: 24,
-                //       ),
-                //     ),
-                //   ),
-                // ),
-              ],
-            );
-          },
-        );
-      }
-    },
-  );
-}
-
-
+              );
+            },
+          );
+        }
+      },
+    );
+  }
 
   Future<List<AccessoryModel>> fetchAccessories() async {
     try {

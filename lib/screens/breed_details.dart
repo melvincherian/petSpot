@@ -1,5 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, prefer_const_declarations
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/breedsearch_bloc.dart';
@@ -9,6 +11,7 @@ import 'package:second_project/bloc/wishlist_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/product_details.dart';
+import 'package:second_project/screens/user%20side/cart_screen.dart';
 
 class BreedDetails extends StatelessWidget {
   final String categoryId;
@@ -20,6 +23,7 @@ class BreedDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     context
         .read<BreedsearchBloc>()
         .add(FetchBreedsEvent(categoryid: categoryId));
@@ -30,9 +34,20 @@ class BreedDetails extends StatelessWidget {
           'Breed Details',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
+        // centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CartScreen(userId: userid)));
+              },
+              icon: Icon(
+                Icons.shopping_cart,
+                color: Colors.black,
+              )),
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
             onPressed: () {
@@ -60,6 +75,24 @@ class BreedDetails extends StatelessWidget {
                             context
                                 .read<BreedsearchBloc>()
                                 .add(FilterBreeds(filter: 'Female'));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Descending'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<BreedsearchBloc>()
+                                .add(SortBreeds(ascending: true));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Ascending'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<BreedsearchBloc>()
+                                .add(SortBreeds(ascending: false));
                           },
                         ),
                       ],
@@ -131,6 +164,7 @@ class BreedDetails extends StatelessWidget {
                   return Center(child: Text('Error: ${state.error}'));
                 } else if (state is BreedLoaded) {
                   final breeds = state.breeds;
+                
                   if (breeds.isEmpty) {
                     return const Center(child: Text('No breeds available.'));
                   }
@@ -169,6 +203,7 @@ class BreedDetails extends StatelessWidget {
                                         stock: breed.stock,
                                         month: breed.month,
                                         year: breed.year,
+                                        id: breed.id,
                                       )));
                         },
                         child: Card(
@@ -183,34 +218,35 @@ class BreedDetails extends StatelessWidget {
                                 children: [
                                   ClipRRect(
                                     borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(10),
-                                    ),
+                                        top: Radius.circular(10)),
                                     child: breed.imageUrls.isNotEmpty
                                         ? Image.network(
                                             breed.imageUrls.first,
-                                            // width: double.infinity,
-                                            width: 150,
+                                            width: 170,
                                             height: 102,
                                             fit: BoxFit.cover,
                                             loadingBuilder:
                                                 (context, child, progress) {
-                                              if (progress == null)
+                                              if (progress == null) {
                                                 return child;
+                                              }
                                               return const Center(
                                                   child:
-                                                      CircularProgressIndicator());
+                                                      CircularProgressIndicator()); 
                                             },
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return const Icon(
-                                                Icons.broken_image,
+                                                Icons
+                                                    .broken_image, 
                                                 size: 50,
                                                 color: Colors.grey,
                                               );
                                             },
                                           )
                                         : const Icon(
-                                            Icons.image,
+                                            Icons
+                                                .image, 
                                             size: 50,
                                             color: Colors.grey,
                                           ),
@@ -233,17 +269,28 @@ class BreedDetails extends StatelessWidget {
                                             userReference: '',
                                             items: [
                                               WishlistItem(
-                                                  productReference: breed.id)
+                                                productReference: breed.id,
+                                                productName: breed.name,
+                                              )
                                             ]);
                                         context
                                             .read<WishlistBloc>()
                                             .add(TaponWishlist(item));
+
+                                        final snackBar = SnackBar(
+                                          elevation: 0,
+                                          behavior: SnackBarBehavior.floating,
+                                          backgroundColor: Colors.transparent,
+                                          content: AwesomeSnackbarContent(
+                                            title: 'Added to Wishlist!',
+                                            message:
+                                                '${breed.name} has been added to your wishlist.',
+                                            contentType: ContentType.success,
+                                          ),
+                                        );
+
                                         ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          backgroundColor: Colors.green,
-                                          content: Text(
-                                              '${breed.name} added to Wishlist!'),
-                                        ));
+                                            .showSnackBar(snackBar);
                                       },
                                     ),
                                   ),
@@ -275,28 +322,39 @@ class BreedDetails extends StatelessWidget {
                                           IconButton(
                                             onPressed: () {
                                               final item = CartModel(
-                                                  id: breed.id,
-                                                  userReference: '',
-                                                  items: [
-                                                    CartItem(
-                                                        productReference:
-                                                            breed.id,
-                                                        price: breed.price,
-                                                        quantity: 1,
-                                                      )
-                                                  ],
-                                                );
+                                                id: breed.id,
+                                                userReference: '',
+                                                items: [
+                                                  CartItem(
+                                                      productReference:
+                                                          breed.id,
+                                                      price: breed.price,
+                                                      quantity: 1,
+                                                      productName: breed.name)
+                                                ],
+                                              );
 
                                               context
                                                   .read<CartBloc>()
                                                   .add(AddToCart(item: item));
 
+                                              final snackBar = SnackBar(
+                                                elevation: 0,
+                                                behavior:
+                                                    SnackBarBehavior.floating,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                content: AwesomeSnackbarContent(
+                                                  title: 'Added to Cart!',
+                                                  message:
+                                                      '${breed.name} has been added to your cart.',
+                                                  contentType:
+                                                      ContentType.success,
+                                                ),
+                                              );
+
                                               ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                backgroundColor: Colors.green,
-                                                content: Text(
-                                                    '${breed.name} added to cart!'),
-                                              ));
+                                                  .showSnackBar(snackBar);
                                             },
                                             icon: const Icon(
                                               Icons.add_shopping_cart,

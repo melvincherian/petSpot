@@ -1,5 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:second_project/bloc/cart_bloc.dart';
+import 'package:second_project/bloc/wishlist_bloc.dart';
+import 'package:second_project/models/cart_model.dart';
+import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/ratings_review.dart';
+import 'package:second_project/screens/user%20side/cart_screen.dart';
 
 class FoodDetails extends StatefulWidget {
   final String? name;
@@ -14,6 +21,7 @@ class FoodDetails extends StatefulWidget {
   final int? arrivalDate;
   final bool isLiked;
   final int? stock;
+   final String? id;
   const FoodDetails(
       {super.key,
       required this.name,
@@ -27,6 +35,7 @@ class FoodDetails extends StatefulWidget {
       required this.rating,
       required this.arrivalDate,
       required this.isLiked,
+      required this.id,
       required this.stock});
 
   @override
@@ -35,6 +44,7 @@ class FoodDetails extends StatefulWidget {
 
 class _FoodDetailsState extends State<FoodDetails> {
   final ValueNotifier<String> selectedImageNotifier = ValueNotifier('');
+    final ValueNotifier<int> quantityNotifier = ValueNotifier<int>(1);
 
   @override
   void initState() {
@@ -52,6 +62,7 @@ class _FoodDetailsState extends State<FoodDetails> {
 
   @override
   Widget build(BuildContext context) {
+        final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -59,6 +70,12 @@ class _FoodDetailsState extends State<FoodDetails> {
           style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        backgroundColor: Colors.teal,
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>CartScreen(userId:userid )));
+          }, icon: Icon(Icons.shopping_cart,color: Colors.black,)),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
@@ -108,8 +125,26 @@ class _FoodDetailsState extends State<FoodDetails> {
                       right: 16,
                       child: GestureDetector(
                         onTap: () {
-                          // Add functionality to toggle the wishlist status
-                          print("Wishlist icon tapped");
+                          
+                          final items = WishlistModel(
+                              id: widget.id.toString(),
+                              userReference: '',
+                              items: [
+                                WishlistItem(
+                                    productReference: widget.id.toString(),
+                                    productName: widget.name.toString(),
+
+                                    )
+                              ]);
+                          context
+                              .read<WishlistBloc>()
+                              .add(TaponWishlist(items));
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            backgroundColor: Colors.green,
+                            content: Text('added to Wishlist!'),
+                          ));
+                        
                         },
                         child: CircleAvatar(
                           backgroundColor: Colors.white,
@@ -232,6 +267,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                 color: Colors.black54,
               ),
             ),
+            SizedBox(height: 10),
             const Text(
               'Packed Date',
               style: TextStyle(
@@ -266,26 +302,6 @@ class _FoodDetailsState extends State<FoodDetails> {
                 color: Colors.black54,
               ),
             ),
-            Row(
-              children: [
-                SizedBox(width: 130),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ),
-                  child: Text(
-                    'Checkout',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                )
-              ],
-            ),
             Divider(),
             Row(
               children: [
@@ -305,6 +321,84 @@ class _FoodDetailsState extends State<FoodDetails> {
                 )
               ],
             ),
+             Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                  if (quantityNotifier.value > 1) {
+                      quantityNotifier.value--;
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: Icon(Icons.remove),
+                  ),
+                ),
+                SizedBox(width: 13),
+                ValueListenableBuilder<int>(
+                  valueListenable: quantityNotifier,
+                  builder: (context, quantity, _) {
+                    return Text(
+                      '$quantity',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    );
+                  },
+                ),
+                SizedBox(
+                  width: 20,
+                ),
+                GestureDetector(
+                  onTap: () {
+                  quantityNotifier.value++;
+                  },
+                  child: CircleAvatar(
+                    radius: 30,
+                    child: Icon(Icons.add),
+                  ),
+                ),
+                SizedBox(width: 50),
+                ElevatedButton(
+                    onPressed: () {
+                        final items = CartModel(
+                              id: widget.id.toString(),
+                              userReference: '',
+                              items: [
+                                CartItem(
+                                    productReference: widget.id.toString(),
+                                    productName: widget.name.toString(),
+                                     price: widget.price?.toDouble() ?? 0.0,
+                                    quantity: quantityNotifier.value
+
+                                    )
+                              ]);
+                          context
+                              .read<CartBloc>()
+                              .add(AddToCart(item: items));
+                          ScaffoldMessenger.of(context)
+                              .showSnackBar(const SnackBar(
+                            backgroundColor: Colors.green,
+                            content: Text('Cart added successfully!'),
+                          ));
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 15),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: Text(
+                      'Add to cart',
+                      style: TextStyle(color: Colors.white),
+                    ))
+              ],
+            )
           ],
         ),
       ),

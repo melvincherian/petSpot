@@ -27,3 +27,12 @@ final String message;
 CartSuccess(this.message);
 
 }
+
+class Cartstateori extends CartState {
+  final List<CartItem> items;
+
+  Cartstateori({required this.items});
+
+  int get cartItemCount => items.length; // This gives the count
+}
+

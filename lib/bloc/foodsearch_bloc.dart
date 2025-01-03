@@ -32,13 +32,42 @@ final List<FoodProductModel>_allFoods=[];
        emit(FoodLoaded(searhfoods));
     },);
 
-    on<FilterFoods>((event, emit) {
-      final filteredfoods=_allFoods.where((food){
-        return food.foodweight==event.filter;
 
-      }).toList();
-      emit(FoodLoaded(filteredfoods));
-    },);
+on<FilterFoods>((event, emit) {
+  if (event.filter.isEmpty) {
+    emit(FoodLoaded(List.from(_allFoods)));
+    return;
+  }
+  final filterPrice = double.tryParse(event.filter);
+  if (filterPrice == null) {
+    
+    emit(FoodLoaded([])); 
+    return;
+  }
+
+  final filteredFoods = _allFoods.where((foods) {
+    return foods.price == filterPrice; // Compare as a numeric type
+  }).toList();
+
+  emit(FoodLoaded(filteredFoods));
+});
+
+// on<FilterFoodsByPriceRange>((event, emit) async {
+//   emit(FoodLoading());
+//   try {
+//     final filteredFoods = _allFoods.where((food) {
+//       return food.price >= event.minPrice && food.price <= event.maxPrice;
+//     }).toList();
+
+//     emit(FoodLoaded( filteredFoods));
+//   } catch (e) {
+//     emit(FoodError( e.toString()));
+//   }
+// });
+
+
+
+
 
     on<SortFoods>((event, emit) {
       final sortedfoods=List<FoodProductModel>.from(_allFoods)..sort((a,b)=>event.ascending?a.price.compareTo(b.price)

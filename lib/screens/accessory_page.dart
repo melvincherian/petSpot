@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/accesoriesearch_bloc.dart';
@@ -9,6 +10,7 @@ import 'package:second_project/bloc/wishlist_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/accessory_detail.dart';
+import 'package:second_project/screens/user%20side/cart_screen.dart';
 
 
 class AccessoryPage extends StatefulWidget {
@@ -22,6 +24,8 @@ class AccessoryPage extends StatefulWidget {
 class _AccessoryPageState extends State<AccessoryPage> {
   @override
   Widget build(BuildContext context) {
+
+     final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
     context
         .read<AccesoriesearchBloc>()
         .add(FetchAccessories(categoryid: widget.categoryid));
@@ -32,15 +36,69 @@ class _AccessoryPageState extends State<AccessoryPage> {
           'Accessories',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
-        centerTitle: true,
+        // centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
+           IconButton(onPressed: (){
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>CartScreen(userId:userid )));
+          }, icon: Icon(Icons.shopping_cart,color: Colors.black,)),
           IconButton(
             onPressed: () {
-              // Trigger filter event
-              context
-                  .read<AccesoriesearchBloc>()
-                  .add(FilterAccessories(filter: "Dog")); // Example filter
+
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Filter Options"),
+                    content: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          title: const Text('Size'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<AccesoriesearchBloc>()
+                                .add(FilterAccessories(filter: 'size'));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Descending'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<AccesoriesearchBloc>()
+                                .add(SortAccessories(ascending: true));
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Ascending'),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            context
+                                .read<AccesoriesearchBloc>()
+                                .add(SortAccessories(ascending: false));
+                          },
+                        ),
+                        
+                      ],
+                    ),
+                    actions: [
+                      TextButton(
+                        child: const Text("Cancel"),
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Close the dialog
+                        },
+                      ),
+                    
+                    ],
+                  );
+                },
+              );
+              // // Trigger filter event
+              // context
+              //     .read<AccesoriesearchBloc>()
+              //     .add(FilterAccessories(filter: "size")); // Example filter
             },
             icon: const Icon(
               Icons.filter_alt_outlined,
@@ -133,7 +191,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryDetail(name: accesory.accesoryname,description: accesory.descriptions.toString(),price: accesory.price.toInt(),size: accesory.size,imageUrls:accesory.imageUrls,stock: accesory.stock,)));
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryDetail(name: accesory.accesoryname,description: accesory.descriptions.toString(),price: accesory.price.toInt(),size: accesory.size,imageUrls:accesory.imageUrls,stock: accesory.stock,id: accesory.id,)));
                         },
                         child: Card(
                           elevation: 5,
@@ -178,9 +236,13 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                      final item = WishlistModel(
                                             id: accesory.id,
                                             userReference: '',
+                                            
                                             items: [
                                               WishlistItem(
-                                                  productReference: accesory.id)
+                                                  productReference: accesory.id,
+                                                  productName: accesory.accesoryname,
+                                                
+                                                  )
                                             ]);
                                         context
                                             .read<WishlistBloc>()
@@ -223,12 +285,14 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                                 final item = CartModel(
                                                   id: accesory.id,
                                                   userReference: '',
+                                                 
                                                   items: [
                                                     CartItem(
                                                         productReference:
                                                             accesory.id,
                                                         price: accesory.price,
                                                         quantity: 1,
+                                                        productName:accesory.accesoryname 
                                                         )
                                                   ],
                                                  );
@@ -258,7 +322,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            '₹${accesory.price.toStringAsFixed(2)}',
+                                            '${accesory.price.toStringAsFixed(2)}',
                                             style: const TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.bold,
@@ -284,6 +348,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                           color: Colors.red,
                                         ),
                                       ),
+                                      
                                       const SizedBox(height: 4),
                                       Row(
                                         children: [
@@ -300,6 +365,14 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                               color: Colors.black54,
                                             ),
                                           ),
+                                          SizedBox(width: 80),
+                                            Text(
+                                            'Size: ${accesory.size}',
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black54,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -310,6 +383,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                           color: Colors.black54,
                                         ),
                                       ),
+                                      
                                     ],
                                   ),
                                 ),

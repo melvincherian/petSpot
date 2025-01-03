@@ -40,15 +40,6 @@ class BreedsearchBloc extends Bloc<BreedsearchEvent, BreedsearchState> {
 
     
     
-   
-  //  on<FilterBreeds>((event, emit) {
-     
-  //     final filteredBreeds = _allBreeds.where((breed) {
-  //       return breed.gender == event.filter;
-  //     }).toList();
-  //     emit(BreedLoaded(filteredBreeds));
-  //   });
-
   on<FilterBreeds>((event, emit) {
 
   if (event.filter.isEmpty) {
@@ -61,19 +52,6 @@ class BreedsearchBloc extends Bloc<BreedsearchEvent, BreedsearchState> {
 
   emit(BreedLoaded(filteredBreeds));
 });
-
-
-//  on<FilterBreeds>((event, emit) {
-//   // Filter the breeds based on the provided month and year
-//   final filteredBreeds = _allBreeds.where((breed) {
-//     return breed.month == event.month && breed.year == event.year;
-//   }).toList();
-
-//   emit(BreedLoaded(filteredBreeds));
-// });
-
-   
-
 
 
 

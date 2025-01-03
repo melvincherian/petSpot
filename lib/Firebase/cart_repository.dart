@@ -1,54 +1,10 @@
-// ignore_for_file: unnecessary_null_comparison, unnecessary_cast, avoid_print
+// ignore_for_file: unnecessary_null_comparison, unnecessary_cast, avoid_print, avoid_types_as_parameter_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:second_project/models/cart_model.dart';
 
 class CartRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-//   Future<void> addToCart(CartModel cart) async {
-//   try {
-//     if (cart == null || cart.userReference == null) {
-//       throw ArgumentError('Cart or user reference cannot be null');
-//     }
-
-//     final userCartSnapshot = await _firestore
-//         .collection('cart')
-//         .where('userReference', isEqualTo: cart.userReference)
-//         .limit(1)
-//         .get();
-
-//     if (userCartSnapshot.docs.isNotEmpty) {
-      
-//       final existingCartDoc = userCartSnapshot.docs.first;
-//       final existingCartData = existingCartDoc.data();
-
-//       // Convert the existing items to a list of CartItem
-//       final existingItems = List<CartItem>.from(
-//         (existingCartData['items'] as List)
-//             .map((item) => CartItem.fromMap(item as Map<String, dynamic>)),
-//       );
-
-//       // Add the new item to the existing items
-//       existingItems.addAll(cart.items);
-
-//       // Update the cart with the new list of items
-//       await _firestore
-//           .collection('cart')
-//           .doc(existingCartDoc.id)
-//           .update({'items': existingItems.map((item) => item.toMap()).toList()});
-//     } else {
-//       // Cart does not exist, create a new one
-//       await _firestore.collection('cart').add(cart.toMap());
-//     }
-
-//     print('Cart item added successfully');
-//   } catch (e) {
-//     print('Error adding cart item: $e');
-//     rethrow;
-//   }
-// }
-
 
 Future<void> addToCart(CartModel cart) async {
   try {

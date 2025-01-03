@@ -1,5 +1,6 @@
 // ignore_for_file: use_super_parameters, avoid_print, unused_local_variable
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:provider/provider.dart';
@@ -11,16 +12,19 @@ import 'package:second_project/screens/user%20side/favourite_screen.dart';
 import 'package:second_project/screens/user%20side/profile_screen.dart';
 
 class ScreenHome extends StatelessWidget {
+  
   const ScreenHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bottomNavProvider = Provider.of<BottomNavprovider>(context);
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
+     final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
     final pages = [
       const HomeScreen(),
       const CategoriesScreen(),
-      const CartScreen(),
-      const ScreenFavourite(),
+       CartScreen(userId: userId),
+      ScreenFavourite(userid: userid,),
       const ProfileScreen(),
     ];
 

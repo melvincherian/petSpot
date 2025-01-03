@@ -1,5 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:second_project/bloc/cart_bloc.dart';
+import 'package:second_project/bloc/wishlist_bloc.dart';
+import 'package:second_project/models/cart_model.dart';
+import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/ratings_review.dart';
+import 'package:second_project/screens/user%20side/cart_screen.dart';
 
 class ProductDetails extends StatefulWidget {
   final String? name;
@@ -10,17 +17,20 @@ class ProductDetails extends StatefulWidget {
   final int? stock;
   final int? month;
   final int? year;
+  final String? id;
 
-  const ProductDetails(
-      {super.key,
-      required this.name,
-      required this.price,
-      required this.description,
-      required this.imageUrls,
-      required this.gender,
-      required this.stock,
-      required this.month,
-      required this.year});
+  const ProductDetails({
+    Key? key,
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.imageUrls,
+    required this.gender,
+    required this.stock,
+    required this.month,
+    required this.year,
+    required this.id,
+  }) : super(key: key);
 
   @override
   State<ProductDetails> createState() => _ProductDetailsState();
@@ -33,7 +43,6 @@ class _ProductDetailsState extends State<ProductDetails> {
   @override
   void initState() {
     super.initState();
-
     selectedImageNotifier.value =
         widget.imageUrls.isNotEmpty ? widget.imageUrls.first : '';
   }
@@ -46,39 +55,42 @@ class _ProductDetailsState extends State<ProductDetails> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
     return Scaffold(
       appBar: AppBar(
         title: const Text(
           'Product Details',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.teal,
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CartScreen(userId: userId)),
+              );
+            },
+            icon: const Icon(Icons.shopping_cart, color: Colors.white),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            
             ValueListenableBuilder<String>(
               valueListenable: selectedImageNotifier,
               builder: (context, selectedImage, child) {
-                return Stack(
+                return Column(
                   children: [
-                  
                     Container(
                       width: double.infinity,
                       height: 250,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black26,
-                            blurRadius: 8,
-                            offset: Offset(0, 4),
-                          ),
-                        ],
                         image: selectedImage.isNotEmpty
                             ? DecorationImage(
                                 image: NetworkImage(selectedImage),
@@ -97,85 +109,96 @@ class _ProductDetailsState extends State<ProductDetails> {
                             )
                           : null,
                     ),
-              
-                    Positioned(
-                      top: 16,
-                      right: 16,
-                      child: GestureDetector(
-                        onTap: () {
-                     
-                          print("Wishlist icon tapped");
-                        },
-                        child:const CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 20,
-                          child: Icon(
-                            Icons
-                                .favorite_border, 
-                            color: Colors.red,
+                    const SizedBox(height: 10),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: widget.imageUrls.map((imageUrl) {
+                        return GestureDetector(
+                          onTap: () {
+                            selectedImageNotifier.value = imageUrl;
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 5),
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                color: selectedImageNotifier.value == imageUrl
+                                    ? Colors.teal
+                                    : Colors.grey,
+                              ),
+                              borderRadius: BorderRadius.circular(8),
+                              image: DecorationImage(
+                                image: NetworkImage(imageUrl),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                           ),
-                        ),
-                      ),
+                        );
+                      }).toList(),
                     ),
                   ],
                 );
               },
             ),
-
-            const SizedBox(height: 20),
-            SizedBox(
-              height: 70,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: widget.imageUrls.length,
-                itemBuilder: (context, index) {
-                  final imageUrl = widget.imageUrls[index];
-                  return GestureDetector(
-                    onTap: () {
-                      selectedImageNotifier.value = imageUrl;
-                    },
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 4),
-                      width: 70,
-                      height: 70,
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: selectedImageNotifier.value == imageUrl
-                              ? Colors.grey
-                              : Colors.grey,
-                          width: 2,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        image: DecorationImage(
-                          image: NetworkImage(imageUrl),
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
             const SizedBox(height: 20),
             Text(
               widget.name ?? 'Unknown Product',
               style: const TextStyle(
-                fontSize: 26,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              '₹${widget.price?.toStringAsFixed(2) ?? 'N/A'}',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w500,
+                color: Colors.teal,
+              ),
+            ),
+            const Divider(thickness: 1, height: 30),
+              const Text(
+              'Description',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+            Text(
+              widget.description ?? 'No description available.',
+              style: const TextStyle(
+                fontSize: 16,
+                color: Colors.black54,
+              ),
+            ),
+             const Text(
+              'Gender',
+              style: TextStyle(
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
             const SizedBox(height: 10),
             Text(
-              'Price: ₹${widget.price?.toStringAsFixed(2) ?? 'N/A'}',
+              widget.gender.toString(),
               style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w500,
-                color: Colors.teal,
+                fontSize: 16,
+                height: 1.5,
+                color: Colors.black54,
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
+            //  Text(
+            //   widget.gender ?? 'No description available.',
+            //   style: const TextStyle(
+            //     fontSize: 16,
+            //     color: Colors.black54,
+            //   ),
+            // ),
+              const Text(
               'Stock',
               style: TextStyle(
                 fontSize: 22,
@@ -192,173 +215,115 @@ class _ProductDetailsState extends State<ProductDetails> {
                 color: Colors.black54,
               ),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Description',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              widget.description ?? 'No description available.',
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: Colors.black54,
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Gender',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            Text(
-              widget.gender ?? 'No gender available.',
-              style: const TextStyle(
-                fontSize: 16,
-                height: 1.5,
-                color: Colors.black54,
-              ),
-            ),
-            // const SizedBox(height: 16),
-
-            // Text(
-            //   widget.month != null
-            //       ? (widget.month! == 1
-            //           ? 'Month: ${widget.month!.toStringAsFixed(0)} month'
-            //           : 'Month: ${widget.month!.toStringAsFixed(0)} months')
-            //       : 'Month: months',
-            //   style: const TextStyle(
-            //     fontSize: 24,
-            //     fontWeight: FontWeight.bold,
-            //     color: Colors.black87,
-            //   ),
-            // ),
-
-            // const SizedBox(height: 16),
-
-            // // Text(
-            // //   'Year: ${widget.year?.toStringAsFixed(1) ?? 'months'}',
-            // //   style: const TextStyle(
-            // //     fontSize: 26,
-            // //     fontWeight: FontWeight.bold,
-            // //     color: Colors.black87,
-            // //   ),
-            // // ),
-            // Text(
-            //   widget.year != null
-            //       ? (widget.year! < 1
-            //           ? 'Age: ${(widget.year! * 12).toStringAsFixed(0)} months'
-            //           : 'Age: ${widget.year!.toStringAsFixed(1)} years')
-            //       : 'Age: months',
-            //   style: const TextStyle(
-            //     fontSize: 24,
-            //     fontWeight: FontWeight.bold,
-            //     color: Colors.black87,
-            //   ),
-            // ),
-
-            const SizedBox(height: 10),
-
+            const Divider(thickness: 1, height: 30),
             Row(
               children: [
-                SizedBox(width: 130),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                const Text(
+                  'Quantity:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                const Spacer(),
+                IconButton(
+                  onPressed: () {
+                    if (quantityNotifier.value > 1) {
+                      quantityNotifier.value--;
+                    }
+                  },
+                  icon: const Icon(Icons.remove),
+                ),
+                ValueListenableBuilder<int>(
+                  valueListenable: quantityNotifier,
+                  builder: (context, quantity, _) {
+                    return Text(
+                      '$quantity',
+                      style: const TextStyle(fontSize: 18),
+                    );
+                  },
+                ),
+                IconButton(
+                  onPressed: () {
+                    quantityNotifier.value++;
+                  },
+                  icon: const Icon(Icons.add),
+                ),
+              ],
+            ),
+            const Divider(thickness: 1, height: 30),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      final cartItem = CartModel(
+                        id: widget.id ?? '',
+                        userReference: userId,
+                        items: [
+                          CartItem(
+                            productReference: widget.id ?? '',
+                            productName: widget.name ?? '',
+                            price: widget.price?.toDouble() ?? 0.0,
+                            quantity: quantityNotifier.value,
+                          ),
+                        ],
+                      );
+                      context.read<CartBloc>().add(AddToCart(item: cartItem));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Text('Added to Cart'),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.shopping_cart),
+                    label: const Text('Add to Cart'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
                     ),
                   ),
-                  child: Text(
-                    'Checkout',
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      final wishlistItem = WishlistModel(
+                        id: widget.id ?? '',
+                        userReference: userId,
+                        items: [
+                          WishlistItem(
+                            productReference: widget.id ?? '',
+                            productName: widget.name ?? '',
+                          ),
+                        ],
+                      );
+                      context.read<WishlistBloc>().add(TaponWishlist(wishlistItem));
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          backgroundColor: Colors.green,
+                          content: Text('Added to Wishlist'),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.favorite_border, color: Colors.red),
+                    label: const Text('Add to Wishlist'),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Colors.red),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
                   ),
-                )
+                ),
               ],
             ),
             Divider(),
             Row(
               children: [
-                Text(
-                  'Reviews',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
+                Text('Reviews',
+                style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 260),
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => Reviewscreen()));
-                  },
-                  icon: Icon(Icons.arrow_forward_rounded),
-                )
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                  GestureDetector(onTap: () {
-                    //  if (quantityNotifier.value > 1) {
-                    //   quantityNotifier.value--;
-                    // }
-                  },
-                  child: CircleAvatar(
-                    radius: 30,
-                    child: Icon(Icons.remove),
-                    
-                  ),
-                  
-                  ),
-                  SizedBox(width: 13),
-                    ValueListenableBuilder<int>(
-                  valueListenable: quantityNotifier,
-                  builder: (context, quantity, _) {
-                    return Text(
-                      '$quantity',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    );
-                  },
-                ),
-                  SizedBox(width: 20,),
-                  GestureDetector(onTap: () {
-                    // quantityNotifier.value++;
-                  },
-                  child: CircleAvatar(
-                    radius: 30,
-                    child: Icon(Icons.add),
-                  ),
-                  ),
-                  SizedBox(width: 50),
-                  ElevatedButton(onPressed: (){
-                    print('Cart added successfully');
-                  },
-                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 40, vertical: 15),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                  ), 
-                  child: Text('Add to cart',
-                  style: TextStyle(color: Colors.white),
-                  ))
+                SizedBox(width: 235),
+                IconButton(onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Reviewscreen()));
+                }, icon: Icon(Icons.arrow_circle_right))
               ],
             )
           ],

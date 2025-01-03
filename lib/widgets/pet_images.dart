@@ -76,8 +76,8 @@ final List<Map<String, String>> pets = [
     },
   ];
   final List<String> sliderImages = [
-    'https://www.shutterstock.com/image-photo/set-dog-toys-isolated-on-600nw-2327832511.jpg',
-    'https://images.squarespace-cdn.com/content/v1/54822a56e4b0b30bd821480c/45ed8ecf-0bb2-4e34-8fcf-624db47c43c8/Golden+Retrievers+dans+pet+care.jpeg',
-    'https://static.vecteezy.com/system/resources/thumbnails/024/646/930/small_2x/ai-generated-stray-cat-in-danger-background-animal-background-photo.jpg',
+    'https://img.freepik.com/free-vector/hand-drawn-pet-shop-facebook-ad-template_23-2150380201.jpg',
+    'https://img.freepik.com/free-vector/hand-drawn-pet-shop-facebook-ad-template_23-2150383113.jpg',
+    'https://c8.alamy.com/comp/2PJ8YMH/advertising-poster-design-for-pet-shop-cute-cat-dog-and-different-accessories-on-color-background-2PJ8YMH.jpg',
     'https://portlandpetfoodcompany.com/cdn/shop/files/hi_res-1f-Portland_Pet_Food_Company_r1_01E_0303_1.jpg?v=1721069477&width=4000'
   ];

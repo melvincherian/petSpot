@@ -36,13 +36,18 @@ final List<ProductAccessoriesModel>_allAccessories=[];
       emit(AccesoriesLoaded(searchaccessories));
     },);
 
-    on<FilterAccessories>((event, emit) {
-      final filteredaccessories=_allAccessories.where((accessories){
-         return accessories.petType==event.filter;
+        on<FilterAccessories>((event, emit) {
 
-      }).toList();
-      emit(AccesoriesLoaded(filteredaccessories));
-    },);
+  if (event.filter.isEmpty) {
+    emit(AccesoriesLoaded(List.from(_allAccessories)));
+    return;
+  }
+  final filteredaccessories = _allAccessories.where((accesories) {
+    return accesories.size.toLowerCase() == event.filter.toLowerCase();
+  }).toList();
+
+  emit(AccesoriesLoaded(filteredaccessories));
+});
 
     on<SortAccessories>((event, emit) {
       final sortaccessories=List<ProductAccessoriesModel>.from(_allAccessories)..sort((a,b)=>event.ascending?a.price.compareTo(b.price)

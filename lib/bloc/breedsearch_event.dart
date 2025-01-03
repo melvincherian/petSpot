@@ -3,11 +3,6 @@ part of 'breedsearch_bloc.dart';
 @immutable
 sealed class BreedsearchEvent {}
 
-// class LoadBreeds extends BreedsearchEvent{
-//   final String categoryId;
-
-//   LoadBreeds(this.categoryId);
-// }
 
 class SerchBreeds extends BreedsearchEvent{
 
@@ -22,14 +17,6 @@ class FilterBreeds extends BreedsearchEvent{
   FilterBreeds({required this.filter});
 }
 
-// class FilterBreeds extends BreedsearchEvent{
-//   final int month;
-//   final int year;
-
-//   FilterBreeds({required this.month,required this.year});
-// }
-
-
 
 class SortBreeds extends BreedsearchEvent{
   final bool ascending;
@@ -43,5 +30,4 @@ class FetchBreedsEvent extends BreedsearchEvent {
   FetchBreedsEvent({required this.categoryid});
 }
 
-//added wishlist 
 

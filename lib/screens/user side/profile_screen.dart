@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/authentication_bloc.dart';
 import 'package:second_project/bloc/imagepicker_bloc.dart';
+import 'package:second_project/screens/about_screen.dart';
 import 'package:second_project/screens/my_address.dart';
 import 'package:second_project/screens/edit_profile.dart';
 import 'package:second_project/screens/terms_service.dart';
@@ -202,7 +203,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           context,
           icon: Icons.settings,
           title: "Settings",
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>AboutScreen()));
+          },
         ),
         _buildOptionItem(
           context,

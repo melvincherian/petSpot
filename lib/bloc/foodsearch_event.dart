@@ -26,3 +26,12 @@ class FetchFoods extends FoodsearchEvent{
 
   FetchFoods({required this.categoryId});
 }
+
+class FilterFoodsByPriceRange extends FoodsearchEvent {
+  final double minPrice;
+  final double maxPrice;
+
+  FilterFoodsByPriceRange({required this.minPrice, required this.maxPrice});
+}
+
+

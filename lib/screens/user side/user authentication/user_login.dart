@@ -21,6 +21,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final googleController=TextEditingController();
+   final _name = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   
 
@@ -38,6 +39,8 @@ class _ScreenLoginState extends State<ScreenLogin> {
            Navigator.push(context, MaterialPageRoute(builder: (context)=>const ScreenHome()));
           }
            if (state is AuthenticationSuccess && state.source=='login') {
+               await SharedPrefHelper().saveUserEmail(emailController.text);
+           
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text("Login Successfully",
@@ -221,6 +224,7 @@ class _ScreenLoginState extends State<ScreenLogin> {
       context.read<AuthenticationBloc>().add(LoginRequested(
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
+        
         source: 'login'
       ));
  context.read<AuthenticationBloc>().stream.listen((state) async {

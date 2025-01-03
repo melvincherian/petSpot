@@ -12,26 +12,16 @@ class CartModel {
   });
 
 
-  double get totalAmount {
+  double get totalprice {
     return items.fold(0.0, (sum, item) => sum + item.subtotal);
   }
-
-  // factory CartModel.fromMap(Map<String, dynamic> map, String id) {
-  //   return CartModel(
-  //     id: id,
-  //     userReference: map['userReference']as String,
-  //     items: (map['items'] as List<dynamic>?)
-  //             ?.map((item) => CartItem.fromMap(item))
-  //             .toList() ??
-  //         [],
-  //     totalAmount: (map['totalAmount'] as num?)?.toDouble() ?? 0.0,
-  //   );
-  // }
 
     factory CartModel.fromMap(Map<String, dynamic> map, String id) {
     return CartModel(
       id: id,
       userReference: map['userReference'] as String,
+      //  totalAmount: (map['totalAmount'] as num?)?.toDouble() ?? 0.0,
+      // totalAmount: map['totalAmount'],
       
       items: List<CartItem>.from(
         (['items'] as List).map((item) => CartItem.fromMap(item as Map<String, dynamic>)),
@@ -45,7 +35,7 @@ class CartModel {
       'id': id,
       'userReference': userReference,
       'items': items.map((item) => item.toMap()).toList(),
-      'totalAmount': totalAmount,
+      // 'totalAmount': totalAmount,
     };
   }
 
@@ -69,18 +59,24 @@ class CartModel {
 
 
 
-// CartItem class for individual cart items
+
 class CartItem {
-  final String productReference; // Reference to the product
-  final double price; // Price of the product
-  final int quantity; // Quantity of the product
-  final double subtotal; // Subtotal for the item (price * quantity)
+  final String productReference; 
+  final double price;
+  final int quantity; 
+  final double subtotal;
+  final String productName;
+  final Map<String, dynamic>? productDetails;
+
+
 
   CartItem({
     required this.productReference,
     required this.price,
     required this.quantity,
-    // required this.subtotal,
+    required this.productName,
+    this.productDetails,
+  
   }): subtotal = price * quantity;
 
   factory CartItem.fromMap(Map<String, dynamic> map) {
@@ -88,6 +84,9 @@ class CartItem {
       productReference: map['productReference']as String,
       price: (map['price'] as num?)?.toDouble() ?? 0.0,
       quantity: map['quantity'] as int? ?? 1,
+       productName: map['productName'] as String? ?? '',
+       
+      
       // subtotal: (map['subtotal'] as num?)?.toDouble() ?? 0.0,
     );
   }
@@ -98,6 +97,7 @@ class CartItem {
       'price': price,
       'quantity': quantity,
       'subtotal': subtotal,
+        'productName': productName,
     };
   }
 }

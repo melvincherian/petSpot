@@ -54,6 +54,8 @@ class CartBloc extends Bloc<CartEvent, CartState> {
               productReference: item.productReference,
               price: item.price,
               quantity: event.newQuantity,
+              productName: item.productName
+              
               // subtotal: item.price * event.newQuantity
             );
             
@@ -65,10 +67,6 @@ class CartBloc extends Bloc<CartEvent, CartState> {
       }
       emit(CartLoaded(List.from(_cart)));
     });
-
-    // on<FetchCartitems>((event, emit) {
-    //   emit(CartLoaded(List.from(_cart)));
-    // });
 
 
 on<FetchCartitems>((event, emit) async {
@@ -94,9 +92,7 @@ on<FetchCartitems>((event, emit) async {
 });
 
 
-  }
-
-
+}
 }
 
 
