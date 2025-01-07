@@ -93,4 +93,26 @@ class AuthRepository {
   Future<void> logoutUser() async {
     await _auth.signOut();
   }
+
+
+//   Future<String> deleteAccount() async {
+//   try {
+//     User? user = FirebaseAuth.instance.currentUser;
+//     if (user != null) {
+//       // Delete user data from Firestore
+//       await FirebaseFirestore.instance.collection('users').doc(user.uid).delete();
+
+//       // Delete the user's account
+//       await user.delete();
+//       return "Account deleted successfully.";
+//     } else {
+//       return "No user is currently logged in.";
+//     }
+//   } on FirebaseAuthException catch (e) {
+//     return e.message ?? "An error occurred while deleting the account.";
+//   } catch (e) {
+//     return e.toString();
+//   }
+// }
+
 }

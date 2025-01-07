@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:second_project/models/address_model.dart';
 
@@ -5,6 +7,22 @@ class AddressRepository{
   final FirebaseFirestore _firestore=FirebaseFirestore.instance;
 
   Future<void>addAddress(AddressModel address)async{
+
+    //  if (address == null || address.userReference == null) {
+    //   throw ArgumentError('Address or user reference cannot be null');
+    // }
+
+    // final userAddresssnapshot = await _firestore
+    //     .collection('address')
+    //     .where('userReference', isEqualTo: address.userReference)
+    //     .limit(1)
+    //     .get();
+
+    // if (userAddresssnapshot.docs.isNotEmpty) {
+    //   final existingAddressDoc = userAddresssnapshot.docs.first;
+    //   final existingpaymentData = existingAddressDoc.data();
+
+    // }
     try{
       await _firestore.collection('address').add(address.toMap());
 

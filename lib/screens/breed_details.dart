@@ -164,7 +164,7 @@ class BreedDetails extends StatelessWidget {
                   return Center(child: Text('Error: ${state.error}'));
                 } else if (state is BreedLoaded) {
                   final breeds = state.breeds;
-                
+
                   if (breeds.isEmpty) {
                     return const Center(child: Text('No breeds available.'));
                   }
@@ -232,21 +232,19 @@ class BreedDetails extends StatelessWidget {
                                               }
                                               return const Center(
                                                   child:
-                                                      CircularProgressIndicator()); 
+                                                      CircularProgressIndicator());
                                             },
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return const Icon(
-                                                Icons
-                                                    .broken_image, 
+                                                Icons.broken_image,
                                                 size: 50,
                                                 color: Colors.grey,
                                               );
                                             },
                                           )
                                         : const Icon(
-                                            Icons
-                                                .image, 
+                                            Icons.image,
                                             size: 50,
                                             color: Colors.grey,
                                           ),

@@ -274,8 +274,8 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.shopping_cart),
-                    label: const Text('Add to Cart'),
+                    icon: const Icon(Icons.shopping_cart,color: Colors.white,),
+                    label: const Text('Add to Cart',style: TextStyle(color: Colors.white),),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       padding: const EdgeInsets.symmetric(vertical: 15),

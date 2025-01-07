@@ -8,6 +8,7 @@ class AddressModel {
   final String buildingName;
   final String roadName;
   final String location;
+  final String? userReference;
 
   AddressModel({
     required this.id,
@@ -18,11 +19,12 @@ class AddressModel {
     required this.city,
     required this.buildingName,
     required this.roadName,
-    required this.location
+    required this.location,
+    this.userReference,
   });
 
   // Factory constructor to create an AddressModel from a JSON map
-  factory AddressModel.fromMap(Map<String, dynamic> map,String id) {
+  factory AddressModel.fromMap(Map<String, dynamic> map, String id) {
     return AddressModel(
       id: id,
       name: map['name'] as String,
@@ -32,14 +34,15 @@ class AddressModel {
       city: map['city'] as String,
       buildingName: map['buildingName'] as String,
       roadName: map['roadName'] as String,
-      location: map['location']as String,
+      location: map['location'] as String,
+      userReference: map['userReference'] as String?, // Safe cast to String?
     );
   }
 
   // Method to convert an AddressModel to a JSON map
   Map<String, dynamic> toMap() {
     return {
-      'id':id,
+      'id': id,
       'name': name,
       'phone': phone,
       'pincode': pincode,
@@ -47,7 +50,35 @@ class AddressModel {
       'city': city,
       'buildingName': buildingName,
       'roadName': roadName,
-      'location':location,
+      'location': location,
+      'userReference': userReference, // Include nullable field
     };
+  }
+
+  // CopyWith method to create a new instance with modified fields
+  AddressModel copyWith({
+    String? id,
+    String? name,
+    int? phone,
+    int? pincode,
+    String? state,
+    String? city,
+    String? buildingName,
+    String? roadName,
+    String? location,
+    String? userReference,
+  }) {
+    return AddressModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      phone: phone ?? this.phone,
+      pincode: pincode ?? this.pincode,
+      state: state ?? this.state,
+      city: city ?? this.city,
+      buildingName: buildingName ?? this.buildingName,
+      roadName: roadName ?? this.roadName,
+      location: location ?? this.location,
+      userReference: userReference ?? this.userReference,
+    );
   }
 }

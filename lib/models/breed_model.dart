@@ -10,7 +10,7 @@ class BreedModel {
   final double originalPrice; 
   final double rating;
   final int arrivalDays;
-  final bool isLiked; 
+   bool isLiked; 
   final Map<String, dynamic>? categoryDetails;
   final int month;
   final int year;

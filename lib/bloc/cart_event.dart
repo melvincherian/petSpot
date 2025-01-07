@@ -36,13 +36,13 @@ class UpdateCartItemQuantity extends CartEvent {
 }
 
 class IncrementQuantity extends CartEvent {
-  final String itemId;  // Changed from String increment to itemId
+  final String itemId; 
 
-  IncrementQuantity(this.itemId);  // Changed the constructor to accept itemId
+  IncrementQuantity(this.itemId); 
 }
 
 class DecrementQuantity extends CartEvent {
-  final String itemId;  // Changed from String decrement to itemId
+  final String itemId;  
 
-  DecrementQuantity(this.itemId);  // Changed the constructor to accept itemId
+  DecrementQuantity(this.itemId); 
 }

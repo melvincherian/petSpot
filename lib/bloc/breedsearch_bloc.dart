@@ -9,59 +9,54 @@ part 'breedsearch_event.dart';
 part 'breedsearch_state.dart';
 
 class BreedsearchBloc extends Bloc<BreedsearchEvent, BreedsearchState> {
-
- final List<BreedModel> _allBreeds=[];
-
-  //  final Debouncer _debouncer = Debouncer(delay: Duration(milliseconds: 500)); 
+  final List<BreedModel> _allBreeds = [];
 
   BreedsearchBloc() : super(BreedsearchInitial()) {
-    on<FetchBreedsEvent>((event, emit)async {
+    on<FetchBreedsEvent>((event, emit) async {
       emit(BreedLoading());
-      try{
-        final snapshot=await FirebaseFirestore.instance.collection('breed')
-        .where('category',isEqualTo: event.categoryid).get();
+      try {
+        final snapshot = await FirebaseFirestore.instance
+            .collection('breed')
+            .where('category', isEqualTo: event.categoryid)
+            .get();
 
         _allBreeds.clear();
-        _allBreeds.addAll(snapshot.docs.map((doc){
-         return BreedModel.fromMap(doc.data(), doc.id);
+        _allBreeds.addAll(snapshot.docs.map((doc) {
+          return BreedModel.fromMap(doc.data(), doc.id);
         }).toList());
 
         emit(BreedLoaded(List.from(_allBreeds)));
-      }catch(e){
+      } catch (e) {
         emit(BreedError(e.toString()));
       }
-    
     });
 
-    on<SerchBreeds>((event,emit){
-      final Filteredbreeds=_allBreeds.where((breed)=>breed.name.toLowerCase().contains(event.query.toLowerCase())).toList();
+    on<SerchBreeds>((event, emit) {
+      final Filteredbreeds = _allBreeds
+          .where((breed) =>
+              breed.name.toLowerCase().contains(event.query.toLowerCase()))
+          .toList();
       emit(BreedLoaded(Filteredbreeds));
     });
 
-    
-    
-  on<FilterBreeds>((event, emit) {
+    on<FilterBreeds>((event, emit) {
+      if (event.filter.isEmpty) {
+        emit(BreedLoaded(List.from(_allBreeds)));
+        return;
+      }
+      final filteredBreeds = _allBreeds.where((breed) {
+        return breed.gender.toLowerCase() == event.filter.toLowerCase();
+      }).toList();
 
-  if (event.filter.isEmpty) {
-    emit(BreedLoaded(List.from(_allBreeds)));
-    return;
-  }
-  final filteredBreeds = _allBreeds.where((breed) {
-    return breed.gender.toLowerCase() == event.filter.toLowerCase();
-  }).toList();
-
-  emit(BreedLoaded(filteredBreeds));
-});
-
-
-
-    on<SortBreeds>((event, emit) {
-      final sortBreeds=List<BreedModel>.from(_allBreeds)..sort((a,b)=>event.ascending?a.price.compareTo(b.price)
-      :b.price.compareTo(b.price)
-      );
-      emit(BreedLoaded(sortBreeds));
+      emit(BreedLoaded(filteredBreeds));
     });
 
-    
+    on<SortBreeds>((event, emit) {
+      final sortBreeds = List<BreedModel>.from(_allBreeds)
+        ..sort((a, b) => event.ascending
+            ? a.price.compareTo(b.price)
+            : b.price.compareTo(b.price));
+      emit(BreedLoaded(sortBreeds));
+    });
   }
 }

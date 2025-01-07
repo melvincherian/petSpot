@@ -1,9 +1,17 @@
+// ignore_for_file: library_private_types_in_public_api, prefer_const_constructors, prefer_const_literals_to_create_immutables
+
 import 'package:flutter/material.dart';
+import 'package:second_project/screens/review_screen.dart';
 import 'package:second_project/widgets/linear_indicator.dart';
 
-class Reviewscreen extends StatelessWidget {
+class Reviewscreen extends StatefulWidget {
   const Reviewscreen({super.key});
 
+  @override
+  _ReviewscreenState createState() => _ReviewscreenState();
+}
+
+class _ReviewscreenState extends State<Reviewscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,9 +22,9 @@ class Reviewscreen extends StatelessWidget {
         ),
         centerTitle: true,
       ),
-      body: const SingleChildScrollView(
+      body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsets.all(16),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -54,6 +62,22 @@ class Reviewscreen extends StatelessWidget {
                   ),
                 ],
               ),
+              SizedBox(height: 20),
+              Row(
+                children: [
+                  TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => Reviewaddingscreen()));
+                      },
+                      child: Text(
+                        'Write a review',
+                        style: TextStyle(color: Colors.blue),
+                      ))
+                ],
+              )
             ],
           ),
         ),
@@ -61,5 +85,3 @@ class Reviewscreen extends StatelessWidget {
     );
   }
 }
-
-

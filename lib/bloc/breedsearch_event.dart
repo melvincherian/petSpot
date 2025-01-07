@@ -31,3 +31,11 @@ class FetchBreedsEvent extends BreedsearchEvent {
 }
 
 
+class UpdateBreedLikedStatus extends BreedsearchEvent {
+  final String breedId;
+  final bool isLiked;
+
+  UpdateBreedLikedStatus({required this.breedId, required this.isLiked});
+}
+
+

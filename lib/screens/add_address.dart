@@ -19,6 +19,8 @@ class AddAddress extends StatelessWidget {
     final buildingController = TextEditingController();
     final roadNameController = TextEditingController();
     final locationController = TextEditingController();
+    // final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
+
 
     final _formKey = GlobalKey<FormState>();
 
@@ -258,7 +260,9 @@ class AddAddress extends StatelessWidget {
                               city: cityController.text,
                               buildingName: buildingController.text,
                               roadName: roadNameController.text,
-                              location: locationController.text);
+                              location: locationController.text,
+                              userReference: ''
+                              );
 
                           nameController.clear();
                           phoneController.clear();

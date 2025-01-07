@@ -36,5 +36,6 @@ final AuthRepository authRepository;
     on<RemoveWishlist>((event, emit) {
       _wishlist.removeWhere((wishlistmodel)=>wishlistmodel.items.any((item)=>item.productReference==event.itemId));
     },);
+    
   }
 }

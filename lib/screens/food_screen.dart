@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, curly_braces_in_flow_control_structures, avoid_print
+// ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, curly_braces_in_flow_control_structures, avoid_print, prefer_const_constructors
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +34,58 @@ class FoodScreen extends StatelessWidget {
         centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
+          IconButton(
+              onPressed: () {
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text("Filter Options"),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              title: const Text('filtered by'),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                context
+                                    .read<FoodsearchBloc>()
+                                    .add(FilterFoods(filter: 'size'));
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('filtered by price:Descending'),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                context
+                                    .read<FoodsearchBloc>()
+                                    .add(SortFoods(ascending: true));
+                              },
+                            ),
+                            ListTile(
+                              title: const Text('filtered by price:Ascending'),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                context
+                                    .read<FoodsearchBloc>()
+                                    .add(SortFoods(ascending: false));
+                              },
+                            ),
+                          ],
+                        ),
+                        actions: [
+                          TextButton(
+                            child: const Text("Cancel"),
+                            onPressed: () {
+                              Navigator.of(context).pop(); // Close the dialog
+                            },
+                          ),
+                        ],
+                      );
+                    });
+              },
+              icon: Icon(Icons.filter_alt_outlined,color: Colors.black,)),
+
           BlocBuilder<CartBloc, CartState>(
             builder: (context, cartstate) {
               int cartCount = 0;
@@ -62,7 +114,7 @@ class FoodScreen extends StatelessWidget {
                       right: 6,
                       top: 6,
                       child: Container(
-                        padding: const EdgeInsets.all(2),
+                        padding:  EdgeInsets.all(2),
                         decoration: BoxDecoration(
                           color: Colors.red,
                           shape: BoxShape.circle,
@@ -81,12 +133,12 @@ class FoodScreen extends StatelessWidget {
               );
             },
           ),
-          IconButton(
-            icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
-            onPressed: () {
-              context.read<FoodsearchBloc>().add(FilterFoods(filter: 'Large'));
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
+          //   onPressed: () {
+          //     context.read<FoodsearchBloc>().add(FilterFoods(filter: 'Large'));
+          //   },
+          // ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.sort, color: Colors.black),
             onSelected: (value) {

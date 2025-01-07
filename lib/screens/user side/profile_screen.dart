@@ -31,13 +31,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     _loadUserInfo();
   }
 
-     Future<void> _loadUserInfo() async {
+  Future<void> _loadUserInfo() async {
   final prefHelper = SharedPrefHelper();
   final username = await prefHelper.getUserName() ?? 'No username set';
   final email = await prefHelper.getUserEmail() ?? 'No email set';
   final imageUrl = await prefHelper.getUserImage() ?? '';
   final google=await prefHelper.getuserGoogle()??'';
-   // Empty if no image is saved
+  
 
   setState(() {
     _username = username;
@@ -226,16 +226,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         _buildOptionItem(
           context,
-          icon: Icons.sort,
+          icon: Icons.shopping_cart,
           title: "My Orders",
           onTap: () {},
         ),
-        _buildOptionItem(
-          context,
-          icon: Icons.wallet,
-          title: "My Wallet",
-          onTap: () {},
-        ),
+        // _buildOptionItem(
+        //   context,
+        //   icon: Icons.delete,
+        //   title: "Delete Account",
+        //   onTap: () {
+        //     _showDeleteAccountDialog(context);
+        //   },
+        // ),
       ],
     );
   }
@@ -290,4 +292,56 @@ class _ProfileScreenState extends State<ProfileScreen> {
       (route) => false,
     );
   }
+
+//   Future<void> _showDeleteAccountDialog(BuildContext context) async {
+//   final authRepository = AuthRepository();
+
+//   showDialog<void>(
+//     context: context,
+//     barrierDismissible: true,
+//     builder: (BuildContext context) {
+//       return AlertDialog(
+//         title: const Text('Delete Account'),
+//         content: const Text(
+//             'Are you sure you want to delete your account? This action cannot be undone.'),
+//         actions: <Widget>[
+//           TextButton(
+//             child: const Text('Cancel'),
+//             onPressed: () {
+//               Navigator.of(context).pop(); // Close the dialog
+//             },
+//           ),
+//           ElevatedButton(
+//             style: ElevatedButton.styleFrom(
+//               backgroundColor: Colors.redAccent,
+//             ),
+//             child: const Text(
+//               'Delete',
+//               style: TextStyle(color: Colors.white),
+//             ),
+//             onPressed: () async {
+//               Navigator.of(context).pop(); // Close the dialog
+
+//               // Call deleteAccount and handle response
+//               String result = await authRepository.deleteAccount();
+//               if (result == "Account deleted successfully.") {
+//                 await logout(context); // Ensure user is logged out
+//               }
+
+//               // Show a SnackBar with the result
+//               ScaffoldMessenger.of(context).showSnackBar(
+//                 SnackBar(
+//                   content: Text(result),
+//                   backgroundColor:
+//                       result.contains("successfully") ? Colors.green : Colors.red,
+//                 ),
+//               );
+//             },
+//           ),
+//         ],
+//       );
+//     },
+//   );
+// }
+
 }

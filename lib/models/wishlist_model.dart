@@ -2,7 +2,6 @@ class WishlistModel {
   final String id;
   final String userReference;
   final List<WishlistItem> items;
-  
 
   WishlistModel(
       {required this.id, required this.userReference, required this.items});
@@ -41,19 +40,23 @@ class WishlistModel {
 
 class WishlistItem {
   final String productReference;
-    final String productName;
-      // final double price;
+  final String productName;
+  // final double price;
   final Map<String, dynamic>? productDetails;
 
-  WishlistItem({required this.productReference,required this.productName,this.productDetails,});
+  WishlistItem({
+    required this.productReference,
+    required this.productName,
+    this.productDetails,
+  });
 
   factory WishlistItem.fromMap(Map<String, dynamic> map) {
-    return WishlistItem(productReference: map['productReference'],
+    return WishlistItem(
+      productReference: map['productReference'],
       // price: (map['price'] as num?)?.toDouble() ?? 0.0,
-    //  price: (map['price'])?.toInt() ?? 0.0,
-     productName: map['productName'] as String? ?? '',
+      //  price: (map['price'])?.toInt() ?? 0.0,
+      productName: map['productName'] as String? ?? '',
     );
-    
   }
 
   Map<String, dynamic> toMap() {

@@ -470,7 +470,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) =>const MyAddress()));
+                                          builder: (context) =>
+                                              const MyAddress()));
                                 },
                                 child: const Text('Change'))
                           ],
@@ -502,6 +503,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   right: 16,
                   child: ElevatedButton(
                     onPressed: () {
+                      
                       openCheckout(totalAmount);
                     },
                     style: ElevatedButton.styleFrom(

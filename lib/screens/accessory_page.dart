@@ -44,7 +44,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
           }, icon: Icon(Icons.shopping_cart,color: Colors.black,)),
           IconButton(
             onPressed: () {
-
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
@@ -53,8 +52,9 @@ class _AccessoryPageState extends State<AccessoryPage> {
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        
                         ListTile(
-                          title: const Text('Size'),
+                          title: const Text('filtered by:size'),
                           onTap: () {
                             Navigator.of(context).pop();
                             context
@@ -63,7 +63,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                           },
                         ),
                         ListTile(
-                          title: const Text('Descending'),
+                          title: const Text('filtered by price:Descending'),
                           onTap: () {
                             Navigator.of(context).pop();
                             context
@@ -72,7 +72,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                           },
                         ),
                         ListTile(
-                          title: const Text('Ascending'),
+                          title: const Text('filtered by price:Ascending'),
                           onTap: () {
                             Navigator.of(context).pop();
                             context
@@ -96,9 +96,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                 },
               );
               // // Trigger filter event
-              // context
-              //     .read<AccesoriesearchBloc>()
-              //     .add(FilterAccessories(filter: "size")); // Example filter
+             // Example filter
             },
             icon: const Icon(
               Icons.filter_alt_outlined,

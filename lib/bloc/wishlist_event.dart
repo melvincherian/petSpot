@@ -19,3 +19,9 @@ final String itemId;
 RemoveWishlist(this.itemId);
 
 }
+
+class ToggleWishlistStatus extends WishlistEvent {
+  final String breedId;
+
+  ToggleWishlistStatus({required this.breedId});
+}
