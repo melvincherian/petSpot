@@ -5,7 +5,7 @@ sealed class PaymentEvent {}
 
 class AddPayment extends PaymentEvent{
   final PaymentModel payment;
-  AddPayment(this.payment);
+  AddPayment({required this.payment});
 }
 
 class FetchPaymentsEvent extends PaymentEvent{}

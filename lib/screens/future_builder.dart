@@ -771,7 +771,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
+ 
   Future<List<AccessoryModel>> fetchAccessories() async {
     try {
       final querySnapshot =

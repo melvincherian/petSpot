@@ -1,5 +1,4 @@
 // ignore_for_file: unnecessary_import, no_leading_underscores_for_local_identifiers
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +18,8 @@ class AddAddress extends StatelessWidget {
     final buildingController = TextEditingController();
     final roadNameController = TextEditingController();
     final locationController = TextEditingController();
-    // final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
-
+    
+    
 
     final _formKey = GlobalKey<FormState>();
 
@@ -261,7 +260,7 @@ class AddAddress extends StatelessWidget {
                               buildingName: buildingController.text,
                               roadName: roadNameController.text,
                               location: locationController.text,
-                              userReference: ''
+                              userReference: '',
                               );
 
                           nameController.clear();

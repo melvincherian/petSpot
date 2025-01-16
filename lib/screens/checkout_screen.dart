@@ -1,11 +1,18 @@
 // ignore_for_file: use_build_context_synchronously, avoid_types_as_parameter_names, non_constant_identifier_names
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
+import 'package:second_project/Firebase/address_repo.dart';
+import 'package:second_project/bloc/payment_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
+import 'package:second_project/models/payment_model.dart';
 import 'package:second_project/screens/my_address.dart';
 import 'package:second_project/screens/payment_success.dart';
+import 'package:second_project/services/cart_services.dart';
+import 'package:second_project/services/order_service.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String userId;
@@ -16,6 +23,7 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
+       
   Stream<List<CartItem>> streamCartItems() {
     return FirebaseFirestore.instance
         .collection('cart')
@@ -71,107 +79,65 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     });
   }
 
-  void updateCartItemQuantity({
-    required BuildContext context,
-    required String userId,
-    required String productReference,
-    required int quantityChange,
-    required double price,
-  }) async {
+  late Razorpay _razorpay;
+
+  void handlePaymentSuccess(PaymentSuccessResponse response) async {
     try {
-      final cartQuery = await FirebaseFirestore.instance
-          .collection('cart')
-          .where('userReference', isEqualTo: userId)
-          .limit(1)
-          .get();
-
-      if (cartQuery.docs.isNotEmpty) {
-        final cartDoc = cartQuery.docs.first;
-        final cartData = cartDoc.data();
-        final items = List<Map<String, dynamic>>.from(cartData['items']);
-        final itemIndex = items
-            .indexWhere((item) => item['productReference'] == productReference);
-
-        if (itemIndex == -1) {
-          throw Exception('Product not found in cart');
-        }
-
-        // Verify if product exists in Firestore
-        final Map<String, String> collectionToNameField = {
-          'breed': 'name',
-          'foodproducts': 'foodname',
-          'accessories': 'accesoryname',
-        };
-
-        bool productExists = false;
-        for (final collection in collectionToNameField.keys) {
-          final productDoc = await FirebaseFirestore.instance
-              .collection(collection)
-              .doc(productReference)
-              .get();
-
-          if (productDoc.exists) {
-            productExists = true;
-            break;
-          }
-        }
-
-        if (!productExists) {
-          throw Exception('Product not found in Firestore');
-        }
-
-        final currentQuantity = items[itemIndex]['quantity'] as int;
-        final newQuantity = currentQuantity + quantityChange;
-
-        if (newQuantity < 1) {
-          items.removeAt(itemIndex);
-        } else {
-          items[itemIndex]['quantity'] = newQuantity;
-          items[itemIndex]['subtotal'] = newQuantity * price;
-        }
-
-        // Update the total cart price
-        final double newTotalPrice = items.fold(0.0, (sum, item) {
-          return sum + (item['subtotal'] as double);
-        });
-
-        await FirebaseFirestore.instance
-            .collection('cart')
-            .doc(cartDoc.id)
-            .update({'items': items, 'totalPrice': newTotalPrice});
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text(
-              newQuantity < 1
-                  ? 'Item removed successfully'
-                  : 'Quantity  updated successfully',
-            ),
-          ),
-        );
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        print("User not logged in");
+        return;
       }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating quantity and price: $e')),
+
+      final paymentDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('payment')
+          .doc(response.orderId);
+
+      // print('fsfsfsf$paymentDoc');
+
+      // await paymentDoc.update({
+      //   'paymentStatus': 'success',
+      //   'transactionId': response.paymentId,
+      // });
+
+      // print('Payment success updated in Firestore.');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) =>  PaymentSuccessScreen()),
       );
-      print('Error: $e');
-      rethrow;
+    } catch (e) {
+      // print('Error updating payment status: $e');
     }
   }
 
-  late Razorpay _razorpay;
+  void handlePaymentError(PaymentFailureResponse response) async {
+    try {
+      final userId = FirebaseAuth.instance.currentUser?.uid;
+      if (userId == null) {
+        print("User not logged in");
+        return;
+      }
 
-  void handlePaymentSuccess(PaymentSuccessResponse response) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PaymentSuccess()));
-    // Future.delayed(Duration(seconds: 2));
-    print('payment success');
-  }
+      final paymentDoc = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('payments')
+          .doc();
 
-  void handlePaymentError(PaymentFailureResponse response) {
-    print(
-        'Payment Failure: Code: ${response.code}, Message: ${response.message}');
+      await paymentDoc.update({
+        'paymentStatus': 'failed',
+        'error': {
+          'code': response.code,
+          'message': response.message,
+        },
+      });
+
+      print('Payment failure updated in Firestore.');
+    } catch (e) {
+      print('Error updating payment status: $e');
+    }
   }
 
   void externalWalletResponse(ExternalWalletResponse response) {}
@@ -327,14 +293,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   children: [
                                     IconButton(
                                       onPressed: () {
-                                        updateCartItemQuantity(
+                                        final cartservices = CartService();
+                                        cartservices.updateCartItemQuantity(
                                             context: context,
                                             userId: widget.userId,
                                             productReference:
                                                 item.productReference,
                                             quantityChange: -1,
-                                            price: item.price // Decrease
-                                            );
+                                            price: item.price);
                                       },
                                       icon: const Icon(Icons.remove_circle,
                                           size: 30, color: Colors.teal),
@@ -348,14 +314,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        updateCartItemQuantity(
+                                        final cartservices = CartService();
+                                        cartservices.updateCartItemQuantity(
                                             context: context,
                                             userId: widget.userId,
                                             productReference:
                                                 item.productReference,
                                             quantityChange: 1,
-                                            price: item.price // Increase
-                                            );
+                                            price: item.price);
                                       },
                                       icon: const Icon(Icons.add_circle,
                                           size: 30, color: Colors.teal),
@@ -502,8 +468,45 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   left: 16,
                   right: 16,
                   child: ElevatedButton(
-                    onPressed: () {
-                      
+                    onPressed: ()async {
+                      final currentUser = FirebaseAuth.instance.currentUser;
+                      if (currentUser == null) {
+                        print("User not logged in");
+                        return;
+                      }
+                    final orderId = OrderIdGenerator.generateOrderId();
+                      final address=AddressRepository();
+
+                      const shippingFee = 5.0;
+                      const taxFee = 3.0;
+                      const deliveryFee = 20.0;
+                      final totalAmountWithFees = totalAmount + shippingFee + taxFee + deliveryFee;
+                      final payment = PaymentModel(
+                        id: DateTime.now().millisecondsSinceEpoch.toString(),
+                        userReference: currentUser.uid,
+                        paymentStatus: 'success',
+                        transactionId: '',
+                        paymentmethod: 'razorpay',
+                        orderId: orderId,
+                        createdAt: DateTime.now().toString(),
+                        orderStatus: 'pending',
+                        totalAmount: totalAmountWithFees,
+                        shippingFee: shippingFee,
+                        taxFee: taxFee,
+                        delivery: deliveryFee,
+                        adrress: address.toString(),
+                        payment: cartItems.map((item) {
+                          return PaymentItems(
+                            productReference: item.productReference,
+                            price: item.price,
+                            subtotal: item.subtotal,
+                          );
+                        }).toList(),
+                      );
+
+                      context
+                          .read<PaymentBloc>()
+                          .add(AddPayment(payment: payment));
                       openCheckout(totalAmount);
                     },
                     style: ElevatedButton.styleFrom(
@@ -566,4 +569,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       rethrow;
     }
   }
+
+
 }

@@ -27,7 +27,7 @@ class ScreenHome extends StatelessWidget {
       ScreenFavourite(userid: userid,),
       const ProfileScreen(),
     ];
-
+     
     return Scaffold(
       body: pages[bottomNavProvider.currentIndex],
       bottomNavigationBar: CurvedNavigationBar(

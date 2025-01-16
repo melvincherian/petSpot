@@ -30,6 +30,16 @@ Future<void> addtowishlist(WishlistModel wishlist) async {
             .map((item) => WishlistItem.fromMap(item as Map<String, dynamic>)),
       );
 
+        final existingItemIndex = existingItems.indexWhere(
+        (item) => item.productReference == wishlist.items.first.productReference,
+      );
+
+      if (existingItemIndex != -1) {
+      
+        print('${wishlist.items.first.productName} is already in the wishlist.');
+        return;
+      }
+
 
       existingItems.addAll(wishlist.items);
 

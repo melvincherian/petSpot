@@ -19,7 +19,7 @@ Future<void> addToCart(CartModel cart) async {
         .get();
 
     if (userCartSnapshot.docs.isNotEmpty) {
-      // Cart exists, update items
+    
       final existingCartDoc = userCartSnapshot.docs.first;
       final existingCartData = existingCartDoc.data();
 
@@ -27,6 +27,18 @@ Future<void> addToCart(CartModel cart) async {
         (existingCartData['items'] as List)
             .map((item) => CartItem.fromMap(item as Map<String, dynamic>)),
       );
+
+            
+      final existingItemIndex = existingItems.indexWhere(
+        (item) => item.productReference == cart.items.first.productReference,
+      );
+
+      if (existingItemIndex != -1) {
+        
+        print('${cart.items.first.productName} is already in the cart.');
+        
+        return;
+      }
 
       // Add new items to the existing items
       existingItems.addAll(cart.items);

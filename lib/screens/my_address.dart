@@ -17,7 +17,7 @@ class MyAddress extends StatefulWidget {
 class _MyAddressState extends State<MyAddress> {
   // final ValueNotifier<Set<String>> _selectedAddresses = ValueNotifier({});
   final ValueNotifier<String?> _currentlySelectedAddress = ValueNotifier(null);
-       final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
+  final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
 
   @override
   Widget build(BuildContext context) {
@@ -209,7 +209,6 @@ class _MyAddressState extends State<MyAddress> {
   }
 
   void _onChoosePressed() {
-    // Handle the "Choose" action (e.g., pass the selected address to another screen or save it)
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green,

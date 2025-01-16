@@ -24,12 +24,24 @@ class CartBloc extends Bloc<CartEvent, CartState> {
           return;
         }
 
+    //     final isItemInCart = _cart.any((cartModel) => 
+    //   cartModel.items.any((item) => item.productReference == event.item.items.first.productReference)
+    // );
+
+    // if (isItemInCart) {
+    //   emit(CartError('${event.item.items.first.productName} is already in the cart'));
+    //   return;
+    // }
+
         // Update cart model with user reference
         final cartWithUserRef = event.item.copyWith(
+          
           userReference: authService.currentUser?.uid
         );
+       
 
         await cartRepository.addToCart(cartWithUserRef);
+        
         emit(CartSuccess('Item added to cart'));
       } catch (e) {
         emit(CartError('Failed to add item to cart'));

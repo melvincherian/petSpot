@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
-class PaymentSuccess extends StatelessWidget {
-  const PaymentSuccess({super.key});
+class PaymentSuccessScreen extends StatelessWidget {
+  const PaymentSuccessScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

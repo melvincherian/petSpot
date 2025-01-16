@@ -1,4 +1,4 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
 
 import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/cart_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/wishlist_model.dart';
+import 'package:shimmer/shimmer.dart';
 
 class ScreenFavourite extends StatelessWidget {
   final String userid;
@@ -75,7 +76,8 @@ class ScreenFavourite extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'My Wishlist',
-          style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+              fontSize: 26, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         centerTitle: true,
         flexibleSpace: Container(
@@ -102,7 +104,7 @@ class ScreenFavourite extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 16),
-                   Text(
+                  Text(
                     'Your Wishlist is Empty',
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
@@ -135,19 +137,41 @@ class ScreenFavourite extends StatelessWidget {
                                 width: 120,
                                 height: 120,
                                 fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  } else {
+                                    return Shimmer.fromColors(
+                                      baseColor: Colors.grey[300]!,
+                                      highlightColor: Colors.grey[100]!,
+                                      child: Container(
+                                        width: 120,
+                                        height: 120,
+                                        color: Colors.grey[300],
+                                      ),
+                                    );
+                                  }
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: 120,
+                                    height: 120,
+                                    color: Colors.grey[200],
+                                    child: const Icon(Icons.image_not_supported,
+                                        size: 60, color: Colors.grey),
+                                  );
+                                },
                               )
-                            : GestureDetector(
-                              onTap: () {
-
-                              },
-                              child: Container(
+                            : Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: Container(
                                   width: 120,
                                   height: 120,
-                                  color: Colors.grey[200],
-                                  child: const Icon(Icons.image_not_supported,
-                                      size: 60, color: Colors.grey),
+                                  color: Colors.grey[300],
                                 ),
-                            ),
+                              ),
                       ),
                       Expanded(
                         child: Padding(
@@ -167,7 +191,8 @@ class ScreenFavourite extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 'Price: \$${item.productDetails?['price'].toStringAsFixed(2)}',
-                                style: const TextStyle(fontSize: 14, color: Colors.teal),
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.teal),
                               ),
                               const SizedBox(height: 8),
                               Row(
@@ -176,11 +201,14 @@ class ScreenFavourite extends StatelessWidget {
                                   IconButton(
                                     onPressed: () async {
                                       try {
-                                        await Removewishlist(context, userid, item.productReference);
+                                        await Removewishlist(context, userid,
+                                            item.productReference);
                                       } catch (e) {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
-                                            content: Text('Wishlist item removal failed: $e'),
+                                            content: Text(
+                                                'Wishlist item removal failed: $e'),
                                           ),
                                         );
                                       }
@@ -194,32 +222,42 @@ class ScreenFavourite extends StatelessWidget {
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.teal,
-                                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20, vertical: 10),
                                       shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
                                     onPressed: () {
-                                      final priceValue = item.productDetails?['price'];
+                                      final priceValue =
+                                          item.productDetails?['price'];
                                       final price = priceValue is double
                                           ? priceValue
-                                          : double.tryParse(priceValue?.toString() ?? '0') ?? 0;
+                                          : double.tryParse(
+                                                  priceValue?.toString() ??
+                                                      '0') ??
+                                              0;
                                       final cartItem = CartModel(
                                         id: UniqueKey().toString(),
                                         userReference: userid,
                                         items: [
                                           CartItem(
-                                            productReference: item.productReference,
+                                            productReference:
+                                                item.productReference,
                                             price: price,
                                             quantity: 1,
                                             productName: item.productName,
                                           )
                                         ],
                                       );
-                                      context.read<CartBloc>().add(AddToCart(item: cartItem));
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      context
+                                          .read<CartBloc>()
+                                          .add(AddToCart(item: cartItem));
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
-                                          content: Text('Item added to cart successfully'),
+                                          content: Text(
+                                              'Item added to cart successfully'),
                                           backgroundColor: Colors.green,
                                         ),
                                       );
@@ -260,7 +298,8 @@ class ScreenFavourite extends StatelessWidget {
         final cartData = cartDoc.data();
         final items = List<Map<String, dynamic>>.from(cartData['items']);
 
-        items.removeWhere((item) => item['productReference'] == productReference);
+        items.removeWhere(
+            (item) => item['productReference'] == productReference);
 
         await FirebaseFirestore.instance
             .collection('wishlist')

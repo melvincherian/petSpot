@@ -95,10 +95,10 @@ class AboutScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 10),
-            const ListTile(
-              leading: Icon(Icons.phone, color: Colors.teal),
-              title: Text('+919961593179'),
-            ),
+            // const ListTile(
+            //   leading: Icon(Icons.phone, color: Colors.teal),
+            //   title: Text('+919961593179'),
+            // ),
             const ListTile(
               leading: Icon(Icons.email, color: Colors.teal),
               title: Text('support@petspot.com'),

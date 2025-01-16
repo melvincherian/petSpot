@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ImagepickerBloc>(create: (context) => ImagepickerBloc()),
           BlocProvider<SearchcategoryBloc>(create: (context)=>SearchcategoryBloc()),
-          BlocProvider<AddressBloc>(create: (context)=>AddressBloc(AddressRepository())),
+          BlocProvider<AddressBloc>(create: (context)=>AddressBloc(AddressRepository(),AuthRepository())),
           BlocProvider<BreedsearchBloc>(create: (context)=>BreedsearchBloc()),
           BlocProvider<AccesoriesearchBloc>(create: (context)=>AccesoriesearchBloc()),
           BlocProvider<FoodsearchBloc>(create: (context)=>FoodsearchBloc()),
@@ -57,7 +57,7 @@ class MyApp extends StatelessWidget {
           BlocProvider(create: (context)=>RatingsBloc(ratingsRepo: RatingsRepo(), repository: AuthRepository()))
           
         ],
-
+        
         child: const MaterialApp(
           debugShowCheckedModeBanner: false,
           home: UserLanding(),

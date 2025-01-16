@@ -23,3 +23,5 @@ class PaymentSuccess extends PaymentState{
 
   PaymentSuccess(this.message);
 }
+
+class PaymentEmpty extends PaymentState {}

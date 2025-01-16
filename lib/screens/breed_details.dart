@@ -37,17 +37,45 @@ class BreedDetails extends StatelessWidget {
         // centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CartScreen(userId: userid)));
-              },
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.black,
-              )),
+          Stack(
+            children: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => CartScreen(userId: userid)));
+                  },
+                  icon: Icon(
+                    Icons.shopping_cart,
+                    color: Colors.black,
+                  )),
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  padding: const EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    color: Colors.red,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  constraints: const BoxConstraints(
+                    minWidth: 16,
+                    minHeight: 16,
+                  ),
+                  child: const Text(
+                    '3',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.filter_alt_outlined, color: Colors.black),
             onPressed: () {
