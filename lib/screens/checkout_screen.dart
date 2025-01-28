@@ -1,11 +1,9 @@
 // ignore_for_file: use_build_context_synchronously, avoid_types_as_parameter_names, non_constant_identifier_names
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
-import 'package:second_project/Firebase/address_repo.dart';
 import 'package:second_project/bloc/payment_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/payment_model.dart';
@@ -13,6 +11,8 @@ import 'package:second_project/screens/my_address.dart';
 import 'package:second_project/screens/payment_success.dart';
 import 'package:second_project/services/cart_services.dart';
 import 'package:second_project/services/order_service.dart';
+import 'package:second_project/services/remove_cart_item.dart';
+import 'package:second_project/services/stream_cart.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String userId;
@@ -23,71 +23,37 @@ class CheckoutScreen extends StatefulWidget {
 }
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
-       
-  Stream<List<CartItem>> streamCartItems() {
-    return FirebaseFirestore.instance
-        .collection('cart')
-        .where('userReference', isEqualTo: widget.userId)
-        .snapshots()
-        .asyncMap((querySnapshot) async {
-      List<CartItem> cartItems = [];
-      final Map<String, String> collectionToNameField = {
-        'breed': 'name',
-        'foodproducts': 'foodname',
-        'accessories': 'accesoryname',
-      };
+  final StreamCartService _cartService = StreamCartService();
+  
+final cartService = StreamCartService();
 
-      for (var doc in querySnapshot.docs) {
-        final data = doc.data();
-        final List items = data['items'] as List;
-        for (var item in items) {
-          final productReference = item['productReference'];
-          Map<String, dynamic>? productData;
-          String? productName;
-
-          for (final collection in collectionToNameField.keys) {
-            final productDoc = await FirebaseFirestore.instance
-                .collection(collection)
-                .doc(productReference)
-                .get();
-
-            if (productDoc.exists) {
-              productData = productDoc.data();
-              if (productData != null) {
-                productName = productData[collectionToNameField[collection]];
-              }
-              break;
-            }
-          }
-
-          if (productData != null) {
-            cartItems.add(CartItem(
-              productReference: productReference,
-              productName: productName.toString(),
-              price: item['price'].toDouble(),
-              quantity: item['quantity'],
-              productDetails: {
-                'description': productData['description'] ?? 'No Description',
-                'category': productData['category'] ?? 'No Category',
-                'imageUrls': productData['imageUrls'][0] ?? '',
-              },
-            ));
-          }
-        }
-      }
-      return cartItems;
-    });
+void onPaymentSuccess(String userId) async {
+  try {
+    
+    await cartService.clearCart(userId);
+    print('Cart cleared successfully!');
+  } catch (e) {
+    print('Error clearing cart: $e');
   }
+}
+
+
+
 
   late Razorpay _razorpay;
 
+
+
   void handlePaymentSuccess(PaymentSuccessResponse response) async {
+    
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) {
         print("User not logged in");
         return;
       }
+      // onPaymentSuccess(widget.userId);
+
 
       final paymentDoc = FirebaseFirestore.instance
           .collection('users')
@@ -105,7 +71,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       // print('Payment success updated in Firestore.');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>  PaymentSuccessScreen()),
+        MaterialPageRoute(builder: (context) =>const PaymentSuccessScreen()),
       );
     } catch (e) {
       // print('Error updating payment status: $e');
@@ -161,7 +127,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     double shippingCharge = 5.00;
     double tax = 3.00;
     double Delivery = 20.00;
-
+    
     double grandTotal = totalAmount + shippingCharge + tax + Delivery;
     var options = {
       'key': 'rzp_test_x4yKuLEYJQuXwJ',
@@ -190,6 +156,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    
+    final RemoveCartService cartService = RemoveCartService();
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -199,7 +167,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         centerTitle: true,
       ),
       body: StreamBuilder<List<CartItem>>(
-        stream: streamCartItems(),
+        stream: _cartService.streamCartItems(widget.userId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -209,14 +177,14 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.shopping_cart, size: 100, color: Colors.teal),
-                  SizedBox(height: 16),
-                  Text(
-                    'Your Cart is Empty',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                ],
+                // children: [
+                //   Icon(Icons.shopping_cart, size: 100, color: Colors.teal),
+                //   SizedBox(height: 16),
+                //   Text(
+                //     'Your Cart is Empty',
+                //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                //   ),
+                // ],
               ),
             );
           } else {
@@ -298,7 +266,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                             context: context,
                                             userId: widget.userId,
                                             productReference:
-                                                item.productReference,
+                                            item.productReference,
                                             quantityChange: -1,
                                             price: item.price);
                                       },
@@ -319,7 +287,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                             context: context,
                                             userId: widget.userId,
                                             productReference:
-                                                item.productReference,
+                                            item.productReference,
                                             quantityChange: 1,
                                             price: item.price);
                                       },
@@ -331,8 +299,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                 TextButton(
                                   onPressed: () async {
                                     try {
-                                      await removeCartItem(context,
-                                          widget.userId, item.productReference);
+                                      await cartService.removeCartItem(
+                                          context: context,
+                                          userId: widget.userId,
+                                          productReference:
+                                              item.productReference);
+                            
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -344,6 +316,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                   },
                                   child: const Text(
                                     'Remove',
+
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
@@ -439,7 +412,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                                           builder: (context) =>
                                               const MyAddress()));
                                 },
-                                child: const Text('Change'))
+                                child: const Text('Select Address'))
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -468,24 +441,23 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                   left: 16,
                   right: 16,
                   child: ElevatedButton(
-                    onPressed: ()async {
+                    onPressed: () async {
                       final currentUser = FirebaseAuth.instance.currentUser;
                       if (currentUser == null) {
                         print("User not logged in");
                         return;
                       }
-                    final orderId = OrderIdGenerator.generateOrderId();
-                      final address=AddressRepository();
-
+                      final orderId = OrderIdGenerator.generateOrderId();
+                      // final address=AddressRepository();
                       const shippingFee = 5.0;
                       const taxFee = 3.0;
                       const deliveryFee = 20.0;
-                      final totalAmountWithFees = totalAmount + shippingFee + taxFee + deliveryFee;
+                      final totalAmountWithFees =
+                      totalAmount + shippingFee + taxFee + deliveryFee;
                       final payment = PaymentModel(
                         id: DateTime.now().millisecondsSinceEpoch.toString(),
                         userReference: currentUser.uid,
                         paymentStatus: 'success',
-                        transactionId: '',
                         paymentmethod: 'razorpay',
                         orderId: orderId,
                         createdAt: DateTime.now().toString(),
@@ -494,7 +466,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         shippingFee: shippingFee,
                         taxFee: taxFee,
                         delivery: deliveryFee,
-                        adrress: address.toString(),
+                        adrress: '',
                         payment: cartItems.map((item) {
                           return PaymentItems(
                             productReference: item.productReference,
@@ -508,6 +480,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                           .read<PaymentBloc>()
                           .add(AddPayment(payment: payment));
                       openCheckout(totalAmount);
+                      onPaymentSuccess(widget.userId);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
@@ -517,7 +490,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                       ),
                     ),
                     child: Text(
-                      'Adopt now - \$${(totalAmount + 5.00 + 3 + 20).toStringAsFixed(2)}',
+                      'Adopt now  \$${(totalAmount + 5.00 + 3 + 20).toStringAsFixed(2)}',
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -534,41 +507,18 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     );
   }
 
-  Future<void> removeCartItem(
-      BuildContext context, String userId, String productReference) async {
-    try {
-      final cartQuery = await FirebaseFirestore.instance
-          .collection('cart')
-          .where('userReference', isEqualTo: userId)
-          .limit(1)
-          .get();
 
-      if (cartQuery.docs.isNotEmpty) {
-        final cartDoc = cartQuery.docs.first;
-        final cartData = cartDoc.data();
-        final items = List<Map<String, dynamic>>.from(cartData['items']);
+//   Future<AddressModel> fetchAddressById(String id) async {
+//   final snapshot = await FirebaseFirestore.instance
+//       .collection('addresses')
+//       .doc(id)
+//       .get();
 
-        items.removeWhere(
-            (item) => item['productReference'] == productReference);
-
-        await FirebaseFirestore.instance
-            .collection('cart')
-            .doc(cartDoc.id)
-            .update({'items': items});
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-              backgroundColor: Colors.green,
-              content: Text('Item removed successfully')),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error removing item: $e')),
-      );
-      rethrow;
-    }
-  }
-
+//   if (snapshot.exists) {
+//     return AddressModel.fromMap(snapshot.data()!,snapshot.id);
+//   } else {
+//     throw Exception('Address not found');
+//   }
+// }
 
 }

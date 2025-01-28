@@ -2,7 +2,7 @@ class PaymentModel {
   final String id;
   final String userReference;
   final String paymentStatus;
-  final String transactionId;
+  // final String transactionId;
   final String paymentmethod;
   final String orderId;
   final String createdAt;
@@ -20,7 +20,7 @@ class PaymentModel {
       required this.userReference,
       required this.payment,
       required this.paymentStatus,
-      required this.transactionId,
+      // required this.transactionId,
       required this.paymentmethod,
       required this.orderId,
       required this.createdAt,
@@ -43,7 +43,7 @@ class PaymentModel {
           ),
         ),
         paymentStatus: map['paymentStatus'] as String,
-        transactionId: map['transactionId'] as String,
+        // transactionId: map['transactionId'] as String,
         paymentmethod: map['paymentmethod'] as String,
         createdAt: map['createdAt']as String,
         orderStatus: map['orderStatus']as String,
@@ -61,7 +61,7 @@ class PaymentModel {
       'userReference': userReference,
       'payment': payment.map((item) => item.toMap()).toList(),
       'paymentStatus': paymentStatus,
-      'transactionId': transactionId,
+      // 'transactionId': transactionId,
       'paymentmethod': paymentmethod,
       'orderId': orderId,
       'createdAt':createdAt,

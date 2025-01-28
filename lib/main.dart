@@ -47,7 +47,7 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider<ImagepickerBloc>(create: (context) => ImagepickerBloc()),
           BlocProvider<SearchcategoryBloc>(create: (context)=>SearchcategoryBloc()),
-          BlocProvider<AddressBloc>(create: (context)=>AddressBloc(AddressRepository(),AuthRepository())),
+          BlocProvider<AddressBloc>(create: (context)=>AddressBloc(authRepository: AuthRepository(),repository: AddressRepository())),
           BlocProvider<BreedsearchBloc>(create: (context)=>BreedsearchBloc()),
           BlocProvider<AccesoriesearchBloc>(create: (context)=>AccesoriesearchBloc()),
           BlocProvider<FoodsearchBloc>(create: (context)=>FoodsearchBloc()),

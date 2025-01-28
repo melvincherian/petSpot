@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, unnecessary_null_comparison
+// ignore_for_file: avoid_print, unnecessary_null_comparison, unused_local_variable, unnecessary_cast
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:second_project/models/address_model.dart';
@@ -17,23 +17,18 @@ Future<void> addAddress(AddressModel address) async {
         .where('userReference', isEqualTo: address.userReference)
         .limit(1)
         .get();
-
-    if (userAddress.docs.isNotEmpty) {
-     
-      final existingAddressDoc = userAddress.docs.first;
-      await existingAddressDoc.reference.update(address.toMap());
-    } else {
-      
       await _firestore.collection('address').add(address.toMap());
-    }
   } catch (e) {
     print('Error adding address: $e');
   }
 }
 
-
-   Stream<List<AddressModel>> fetchAddresses() {
-    return _firestore.collection('address').snapshots().map((snapshot) {
+    Stream<List<AddressModel>> fetchAddresses(String userReference) {
+    return _firestore
+        .collection('address')
+        .where('userReference', isEqualTo: userReference)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.docs
           .map((doc) => AddressModel.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();

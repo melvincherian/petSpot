@@ -1,8 +1,8 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:second_project/models/breed_model.dart';
 import 'package:second_project/models/food_model.dart';
-import 'package:second_project/models/pet_model.dart';
 import 'package:second_project/models/signupmodel/popular_pet_model.dart';
 import 'package:second_project/screens/accessory_detail.dart';
 import 'package:second_project/screens/food_details.dart';
@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     Future<List<AccessoryModel>> models = fetchAccessories();
-    Future<List<PetproductModel>> pet = fetchpetproduct();
+    Future<List<BreedModel>> pet = fetchpetproduct();
     Future<List<FoodProductModel>> food = fetchfoodproduct();
 
     return SingleChildScrollView(
@@ -388,8 +388,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildPetproduct(Future<List<PetproductModel>> futureProducts) {
-    return FutureBuilder<List<PetproductModel>>(
+  Widget _buildPetproduct(Future<List<BreedModel>> futureProducts) {
+    return FutureBuilder<List<BreedModel>>(
       future: futureProducts,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -470,14 +470,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => ProductDetails(
-                              name: items[index].breed,
+                              name: items[index].name,
                               price: items[index].price.toInt(),
-                              description: items[index].description,
+                              description: items[index].descriptions.toString(),
                               imageUrls: items[index].imageUrls,
-                              gender: '',
+                              gender: items[index].gender,
                               stock: items[index].stock,
-                              month: 10,
-                              year: 10,
+                              month: items[index].month,
+                              year: items[index].year,
                               id: items[index].id)));
                 },
                 child: Stack(
@@ -513,7 +513,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              item.breed,
+                              item.name,
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -786,13 +786,13 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<List<PetproductModel>> fetchpetproduct() async {
+  Future<List<BreedModel>> fetchpetproduct() async {
     try {
       final querySnapshot =
-          await FirebaseFirestore.instance.collection('products').get();
+          await FirebaseFirestore.instance.collection('breed').get();
 
       return querySnapshot.docs.map((doc) {
-        return PetproductModel.fromSnapshot(doc);
+        return BreedModel.fromMap(doc.data(),doc.id);
       }).toList();
     } catch (e) {
       print('Error fetching pets: $e');

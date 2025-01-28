@@ -27,10 +27,11 @@ class AddressSuccess extends AddressState{
   AddressSuccess(this.message);
 }
 
-// class displaySuccess extends AddressState{
-//   final List<AddressModel>address;
+class AddressSelected extends AddressState {
+  final AddressModel selectedAddress;
+  AddressSelected(this.selectedAddress);
+}
 
-//   displaySuccess(this.address);
-// }
+
 
 

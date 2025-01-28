@@ -23,3 +23,4 @@ class DeleteAddressEvent extends AddressEvent{
 }
 
 class FetchAddressesEvent extends AddressEvent {}
+

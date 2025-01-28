@@ -8,6 +8,7 @@ import 'package:second_project/models/address_model.dart';
 import 'package:second_project/screens/edit_address.dart';
 
 class MyAddress extends StatefulWidget {
+
   const MyAddress({super.key});
 
   @override
@@ -17,7 +18,7 @@ class MyAddress extends StatefulWidget {
 class _MyAddressState extends State<MyAddress> {
   // final ValueNotifier<Set<String>> _selectedAddresses = ValueNotifier({});
   final ValueNotifier<String?> _currentlySelectedAddress = ValueNotifier(null);
-  final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
+  final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +85,7 @@ class _MyAddressState extends State<MyAddress> {
             const SizedBox(height: 16),
             Expanded(
               child: StreamBuilder<List<AddressModel>>(
-                stream: AddressRepository().fetchAddresses(),
+                stream: AddressRepository().fetchAddresses(userid),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -258,6 +259,8 @@ class _MyAddressState extends State<MyAddress> {
     }
   }
 
+
+  
   // void _deleteSelectedAddresses() async {
   //   for (final id in _selectedAddresses.value) {
   //     await AddressRepository().deleteAddress(id);

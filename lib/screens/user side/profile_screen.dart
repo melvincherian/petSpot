@@ -7,6 +7,8 @@ import 'package:second_project/bloc/imagepicker_bloc.dart';
 import 'package:second_project/screens/about_screen.dart';
 import 'package:second_project/screens/my_address.dart';
 import 'package:second_project/screens/edit_profile.dart';
+import 'package:second_project/screens/my_orders.dart';
+import 'package:second_project/screens/privacy_screen.dart';
 import 'package:second_project/screens/terms_service.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
 import 'package:second_project/services/shared_pref.dart';
@@ -228,16 +230,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           context,
           icon: Icons.shopping_cart,
           title: "My Orders",
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context)=>MyOrders()));
+          },
         ),
-        // _buildOptionItem(
-        //   context,
-        //   icon: Icons.delete,
-        //   title: "Delete Account",
-        //   onTap: () {
-        //     _showDeleteAccountDialog(context);
-        //   },
-        // ),
+        _buildOptionItem(
+          context,
+          icon: Icons.privacy_tip,
+          title: "Privacy Policy",
+          onTap: () {
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>PrivacyScreen()));
+          },
+        ),
       ],
     );
   }

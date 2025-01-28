@@ -13,7 +13,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
   final AddressRepository repository;
    final AuthRepository authRepository;
 
-  AddressBloc(this.repository,this.authRepository) : super(AddressInitial()) {
+  AddressBloc({required this.repository,required this.authRepository}) : super(AddressInitial()) {
 
     on<FetchAddressesEvent>((event, emit) async {
       emit(AddressLoading());
@@ -25,7 +25,9 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
           return;
         }
 
-        final stream = repository.fetchAddresses();
+        
+
+        final stream = repository.fetchAddresses(currentUser.uid);
         await emit.forEach(
           stream,
           onData: (addresses) => AddressLoaded(addresses),
@@ -35,6 +37,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
         emit(AddressError('Failed to fetch addresses: $e'));
       }
     });
+
 
    
     on<AddAddressEvent>((event, emit) async {
@@ -56,31 +59,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       }
     });
 
-    
-
-
-    // on<FetchAddressesEvent>((event, emit)async {
-    //   emit(AddressLoading());
-    //   try{
-    //     final stream=repository.fetchAddresses();
-    //     await emit.forEach(stream, 
-    //     onData: (address)=>AddressLoaded(address),
-    //     onError: (error,StackTrace)=>AddressError('failed to fetch address')
-    //     );
-    //   }catch(e){
-    //     emit(AddressError(e.toString()));
-    //   }
-    
-    // });
-
-    // on<AddAddressEvent>((event,emit)async{
-    //      try{
-    //       await repository.addAddress(event.address);
-    //      }catch(e){
-    //       emit(AddressError('Failed to add address$e'));
-    //      }
-    // });
-
+  
      on<UpdateAddressEvent>((event, emit) async {
       try {
         await repository.updateAddress(event.address);
@@ -97,5 +76,7 @@ class AddressBloc extends Bloc<AddressEvent, AddressState> {
       }
     });
   }
+
+
   
 }

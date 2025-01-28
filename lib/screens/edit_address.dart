@@ -1,5 +1,6 @@
 // ignore_for_file: no_leading_underscores_for_local_identifiers
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/address_bloc.dart';
@@ -24,7 +25,7 @@ class EditAddress extends StatelessWidget {
     final roadNameController = TextEditingController(text: address.roadName);
     final locationController = TextEditingController(text: address.location);
 
-
+ final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     final _formKey = GlobalKey<FormState>();
 
     return Scaffold(
@@ -188,7 +189,7 @@ class EditAddress extends StatelessWidget {
                               buildingName: buildingController.text,
                               roadName: roadNameController.text,
                               location: locationController.text,
-                              // userReference: userid
+                              userReference: userid
                               );
                           nameController.clear();
                           phoneController.clear();

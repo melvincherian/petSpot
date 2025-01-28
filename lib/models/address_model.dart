@@ -35,7 +35,7 @@ class AddressModel {
       buildingName: map['buildingName'] as String,
       roadName: map['roadName'] as String,
       location: map['location'] as String,
-      userReference: map['userReference'] as String?, // Safe cast to String?
+      userReference: map['userReference'] as String?, 
     );
   }
 
@@ -51,7 +51,7 @@ class AddressModel {
       'buildingName': buildingName,
       'roadName': roadName,
       'location': location,
-      'userReference': userReference, // Include nullable field
+      'userReference': userReference, 
     };
   }
 
@@ -82,3 +82,4 @@ class AddressModel {
     );
   }
 }
+

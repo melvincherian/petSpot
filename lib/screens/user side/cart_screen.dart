@@ -1,12 +1,14 @@
 // ignore_for_file: avoid_types_as_parameter_names, avoid_print, use_build_context_synchronously, curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/screens/checkout_screen.dart';
+import 'package:second_project/services/cart_services.dart';
+import 'package:second_project/services/remove_cart_item.dart';
+import 'package:second_project/services/stream_cart.dart';
 import 'package:shimmer/shimmer.dart';
 
-class CartScreen extends StatelessWidget {
+class CartScreen extends StatefulWidget {
   final String userId;
 
   const CartScreen({
@@ -14,152 +16,16 @@ class CartScreen extends StatelessWidget {
     required this.userId,
   });
 
-  Stream<List<CartItem>> streamCartItems() {
-    return FirebaseFirestore.instance
-        .collection('cart')
-        .where('userReference', isEqualTo: userId)
-        .snapshots()
-        .asyncMap((querySnapshot) async {
-      List<CartItem> cartItems = [];
-      final Map<String, String> collectionToNameField = {
-        'breed': 'name',
-        'foodproducts': 'foodname',
-        'accessories': 'accesoryname',
-      };
+  @override
+  State<CartScreen> createState() => _CartScreenState();
+}
 
-      for (var doc in querySnapshot.docs) {
-        final data = doc.data();
-        final List items = data['items'] as List;
-        for (var item in items) {
-          final productReference = item['productReference'];
-          Map<String, dynamic>? productData;
-          String? productName;
-
-          for (final collection in collectionToNameField.keys) {
-            final productDoc = await FirebaseFirestore.instance
-                .collection(collection)
-                .doc(productReference)
-                .get();
-
-            if (productDoc.exists) {
-              productData = productDoc.data();
-              if (productData != null) {
-                productName = productData[collectionToNameField[collection]];
-              }
-              break;
-            }
-          }
-
-          if (productData != null) {
-            cartItems.add(CartItem(
-              productReference: productReference,
-              productName: productName.toString(),
-              price: item['price'].toDouble(),
-              quantity: item['quantity'],
-              productDetails: {
-                'description': productData['description'] ?? 'No Description',
-                'category': productData['category'] ?? 'No Category',
-                'imageUrls': productData['imageUrls'][0] ?? '',
-              },
-            ));
-          }
-        }
-      }
-      return cartItems;
-    });
-  }
-
-  void updateCartItemQuantity({
-    required BuildContext context,
-    required String userId,
-    required String productReference,
-    required int quantityChange,
-    required double price,
-  }) async {
-    try {
-      final cartQuery = await FirebaseFirestore.instance
-          .collection('cart')
-          .where('userReference', isEqualTo: userId)
-          .limit(1)
-          .get();
-
-      if (cartQuery.docs.isNotEmpty) {
-        final cartDoc = cartQuery.docs.first;
-        final cartData = cartDoc.data();
-        final items = List<Map<String, dynamic>>.from(cartData['items']);
-        final itemIndex = items
-            .indexWhere((item) => item['productReference'] == productReference);
-
-        if (itemIndex == -1) {
-          throw Exception('Product not found in cart');
-        }
-
-        // Verify if product exists in Firestore
-        final Map<String, String> collectionToNameField = {
-          'breed': 'name',
-          'foodproducts': 'foodname',
-          'accessories': 'accesoryname',
-        };
-
-        bool productExists = false;
-        for (final collection in collectionToNameField.keys) {
-          final productDoc = await FirebaseFirestore.instance
-              .collection(collection)
-              .doc(productReference)
-              .get();
-
-          if (productDoc.exists) {
-            productExists = true;
-            break;
-          }
-        }
-
-        if (!productExists) {
-          throw Exception('Product not found in Firestore');
-        }
-
-        final currentQuantity = items[itemIndex]['quantity'] as int;
-        final newQuantity = currentQuantity + quantityChange;
-
-        if (newQuantity < 1) {
-          items.removeAt(itemIndex);
-        } else {
-          items[itemIndex]['quantity'] = newQuantity;
-          items[itemIndex]['subtotal'] = newQuantity * price;
-        }
-
-        // Update the total cart price
-        final double newTotalPrice = items.fold(0.0, (sum, item) {
-          return sum + (item['subtotal'] as double);
-        });
-
-        await FirebaseFirestore.instance
-            .collection('cart')
-            .doc(cartDoc.id)
-            .update({'items': items, 'totalPrice': newTotalPrice});
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Colors.green,
-            content: Text(
-              newQuantity < 1
-                  ? 'Item removed successfully'
-                  : 'Quantity  updated successfully',
-            ),
-          ),
-        );
-      }
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error updating quantity and price: $e')),
-      );
-      print('Error: $e');
-      rethrow;
-    }
-  }
-
+class _CartScreenState extends State<CartScreen> {
+   final StreamCartService _cartService=StreamCartService();
   @override
   Widget build(BuildContext context) {
+
+    final RemoveCartService cartService = RemoveCartService();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.teal,
@@ -170,7 +36,7 @@ class CartScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: StreamBuilder<List<CartItem>>(
-        stream: streamCartItems(),
+        stream: _cartService.streamCartItems(widget.userId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -300,14 +166,14 @@ class CartScreen extends StatelessWidget {
                                   children: [
                                     IconButton(
                                       onPressed: () {
-                                        updateCartItemQuantity(
-                                            context: context,
-                                            userId: userId,
-                                            productReference:
-                                                item.productReference,
-                                            quantityChange: -1,
-                                            price: item.price // Decrease
-                                            );
+                                        final cartservices=CartService();
+                                        cartservices.updateCartItemQuantity(
+                                          context: context, userId: widget.userId, 
+                                          productReference: item.productReference, 
+                                          quantityChange: -1, 
+                                          price: item.price
+                                          );
+                                       
                                       },
                                       icon: const Icon(Icons.remove_circle,
                                           size: 30, color: Colors.teal),
@@ -321,14 +187,15 @@ class CartScreen extends StatelessWidget {
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        updateCartItemQuantity(
-                                            context: context,
-                                            userId: userId,
-                                            productReference:
-                                                item.productReference,
-                                            quantityChange: 1,
-                                            price: item.price // Increase
-                                            );
+                                        final cartservices=CartService();
+                                        cartservices.updateCartItemQuantity(
+                                          context: context, 
+                                          userId: widget.userId, 
+                                          productReference: item.productReference, 
+                                          quantityChange: 1, 
+                                          price: item.price
+                                          );
+                                       
                                       },
                                       icon: const Icon(Icons.add_circle,
                                           size: 30, color: Colors.teal),
@@ -338,8 +205,10 @@ class CartScreen extends StatelessWidget {
                                 TextButton(
                                   onPressed: () async {
                                     try {
-                                      await removeCartItem(context, userId,
-                                          item.productReference);
+                                      await cartService.removeCartItem(
+                                        context: context, userId: widget.userId, 
+                                        productReference: item.productReference);
+                                     
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -372,7 +241,7 @@ class CartScreen extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                               builder: (context) => CheckoutScreen(
-                                    userId: userId,
+                                    userId: widget.userId,
                                    
                                   )));
                     },
@@ -399,40 +268,5 @@ class CartScreen extends StatelessWidget {
         },
       ),
     );
-  }
-}
-
-Future<void> removeCartItem(
-    BuildContext context, String userId, String productReference) async {
-  try {
-    final cartQuery = await FirebaseFirestore.instance
-        .collection('cart')
-        .where('userReference', isEqualTo: userId)
-        .limit(1)
-        .get();
-
-    if (cartQuery.docs.isNotEmpty) {
-      final cartDoc = cartQuery.docs.first;
-      final cartData = cartDoc.data();
-      final items = List<Map<String, dynamic>>.from(cartData['items']);
-
-      items.removeWhere((item) => item['productReference'] == productReference);
-
-      await FirebaseFirestore.instance
-          .collection('cart')
-          .doc(cartDoc.id)
-          .update({'items': items});
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            backgroundColor: Colors.green,
-            content: Text('Item removed successfully')),
-      );
-    }
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Error removing item: $e')),
-    );
-    rethrow;
   }
 }
