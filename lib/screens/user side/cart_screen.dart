@@ -34,6 +34,7 @@ class _CartScreenState extends State<CartScreen> {
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        automaticallyImplyLeading: false,
       ),
       body: StreamBuilder<List<CartItem>>(
         stream: _cartService.streamCartItems(widget.userId),

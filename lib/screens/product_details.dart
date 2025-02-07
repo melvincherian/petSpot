@@ -60,7 +60,7 @@ class _ProductDetailsState extends State<ProductDetails> {
       appBar: AppBar(
         title: const Text(
           'Product Details',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
         backgroundColor: Colors.teal,
@@ -322,7 +322,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 ),
                 SizedBox(width: 235),
                 IconButton(onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Reviewscreen()));
+                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Reviewscreen(productReference:widget.id)));
                 }, icon: Icon(Icons.arrow_circle_right))
               ],
             )
@@ -331,4 +331,5 @@ class _ProductDetailsState extends State<ProductDetails> {
       ),
     );
   }
+  
 }

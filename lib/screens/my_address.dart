@@ -1,10 +1,12 @@
 // ignore_for_file: unrelated_type_equality_checks
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:second_project/Firebase/address_repo.dart';
 import 'package:second_project/screens/add_address.dart';
 import 'package:second_project/models/address_model.dart';
+import 'package:second_project/screens/checkout_screen.dart';
 import 'package:second_project/screens/edit_address.dart';
 
 class MyAddress extends StatefulWidget {
@@ -19,6 +21,8 @@ class _MyAddressState extends State<MyAddress> {
   // final ValueNotifier<Set<String>> _selectedAddresses = ValueNotifier({});
   final ValueNotifier<String?> _currentlySelectedAddress = ValueNotifier(null);
   final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
+  // List<AddressModel>?  alladdress;
+    String ?selected;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +102,6 @@ class _MyAddressState extends State<MyAddress> {
                   if (!snapshot.hasData || snapshot.data!.isEmpty) {
                     return const Center(child: Text('No addresses found.'));
                   }
-
                   final addresses = snapshot.data!;
                   return ListView.builder(
                     itemCount: addresses.length,
@@ -106,7 +109,6 @@ class _MyAddressState extends State<MyAddress> {
                       final address = addresses[index];
                       final isSelected =
                           _currentlySelectedAddress == address.id;
-
                       return GestureDetector(
                         onTap: () {
                           _currentlySelectedAddress.value =
@@ -115,6 +117,8 @@ class _MyAddressState extends State<MyAddress> {
                         child: ValueListenableBuilder<String?>(
                           valueListenable: _currentlySelectedAddress,
                           builder: (context, selectedId, _) {
+                            selected=selectedId;
+                            print(selectedId);
                             final isSelected = selectedId == address.id;
                             return Card(
                               margin: const EdgeInsets.symmetric(vertical: 8.0),
@@ -187,6 +191,7 @@ class _MyAddressState extends State<MyAddress> {
                           child: ElevatedButton(
                               onPressed: () {
                                 _onChoosePressed();
+                                print(selected);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.teal,
@@ -209,13 +214,16 @@ class _MyAddressState extends State<MyAddress> {
     );
   }
 
-  void _onChoosePressed() {
+  void _onChoosePressed() async {
+    AddressModel model=await fetchAddressById(selected!);
+    print(model.name);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: Colors.green,
         content: Text('Address Choose sucessfully!'),
       ),
     );
+    Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context)=>CheckoutScreen(userId: userid,addresscode: model,)));
   }
 
   Future<void> _deleteAddress(String addressId) async {
@@ -259,22 +267,16 @@ class _MyAddressState extends State<MyAddress> {
     }
   }
 
+   Future<AddressModel> fetchAddressById(String id) async {
+  final snapshot = await FirebaseFirestore.instance
+      .collection('address')
+      .doc(id)
+      .get();
 
-  
-  // void _deleteSelectedAddresses() async {
-  //   for (final id in _selectedAddresses.value) {
-  //     await AddressRepository().deleteAddress(id);
-  //   }
-
-  //   // setState(() {
-  //   //   _selectedAddresses.clear();
-  //   // });
-
-  //   ScaffoldMessenger.of(context).showSnackBar(
-  //     const SnackBar(
-  //       content: Text('Selected addresses deleted successfully.'),
-  //       backgroundColor: Colors.red,
-  //     ),
-  //   );
-  // }
+  if (snapshot.exists) {
+    return AddressModel.fromMap(snapshot.data()!,snapshot.id);
+  } else {
+    throw Exception('Address not found');
+  }
+}
 }

@@ -62,25 +62,23 @@ class ReviewItems {
   final double ratings;
   final String? comments;
   final DateTime reviewDate;
-  // final Map<String, dynamic>? productDetails;
+
 
   ReviewItems({
     required this.userReference,
     required this.ratings,
     this.comments,
-    // this.productDetails,
     required this.reviewDate,
-    // required this.id
+
   });
 
   factory ReviewItems.fromMap(Map<String, dynamic> map) {
     return ReviewItems(
-      userReference: map['userReference'] as String, // Corrected key
+      userReference: map['userReference'] as String, 
       ratings: (map['ratings'] as num).toDouble(),
       comments: map['comments'] as String?,
       reviewDate: DateTime.parse(map['reviewDate'] as String),
-      // id: map['id']as String
-      // productDetails: map['productDetails'] as Map<String, dynamic>?,
+
     );
   }
 

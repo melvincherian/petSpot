@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class PaymentModel {
   final String id;
   final String userReference;
@@ -45,7 +47,7 @@ class PaymentModel {
         paymentStatus: map['paymentStatus'] as String,
         // transactionId: map['transactionId'] as String,
         paymentmethod: map['paymentmethod'] as String,
-        createdAt: map['createdAt']as String,
+        createdAt: map['createdAt']?? Timestamp.now(),
         orderStatus: map['orderStatus']as String,
         totalAmount: (map['totalAmount'] as num?)?.toDouble() ?? 0.0,
         shippingFee: (map['shippingFee']as num?)?.toDouble() ?? 0.0,

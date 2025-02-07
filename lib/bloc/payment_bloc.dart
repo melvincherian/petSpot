@@ -19,6 +19,21 @@ class PaymentBloc extends Bloc<PaymentEvent, PaymentState> {
         emit(PaymentError(error.toString()));
       }
     });
+
+  on<FetchPaymentsEvent>((event, emit) async {
+  emit(PaymentLoading());
+  try {
+    final paymentsStream = repository.fetchPayments(event.userId);
+    await emit.forEach<List<PaymentModel>>(
+      paymentsStream,
+      onData: (payments) => PaymentLoaded(payments: payments),
+      onError: (error, stackTrace) => PaymentError("Failed to fetch payments: $error"),
+    );
+  } catch (e) {
+    emit(PaymentError("Failed to fetch payments: $e"));
+  }
+});
+
   }
 
 //   Future<void> _addPayments(AddPayment event, Emitter<PaymentState> emit) async {

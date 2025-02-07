@@ -16,6 +16,7 @@ class CategoriesScreen extends StatelessWidget {
           backgroundColor: Colors.teal,
           elevation: 0,
           centerTitle: true,
+          automaticallyImplyLeading: false,
           title: const Text(
             'Categories',
             style: TextStyle(

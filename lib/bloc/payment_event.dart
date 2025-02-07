@@ -8,4 +8,8 @@ class AddPayment extends PaymentEvent{
   AddPayment({required this.payment});
 }
 
-class FetchPaymentsEvent extends PaymentEvent{}
+class FetchPaymentsEvent extends PaymentEvent{
+  final String userId;
+
+  FetchPaymentsEvent(this.userId);
+}

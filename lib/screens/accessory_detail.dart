@@ -53,7 +53,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
     final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title:const Text(
           'Product Detail',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
@@ -67,7 +67,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
                     MaterialPageRoute(
                         builder: (context) => CartScreen(userId: userid)));
               },
-              icon: Icon(
+              icon:const Icon(
                 Icons.shopping_cart,
                 color: Colors.black,
               )),
@@ -139,7 +139,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
                             content: Text('added to Wishlist!'),
                           ));
                         },
-                        child: CircleAvatar(
+                        child:const CircleAvatar(
                           backgroundColor: Colors.white,
                           radius: 20,
                           child: Icon(
@@ -247,7 +247,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
             Divider(),
             Row(
               children: [
-                Text(
+              const  Text(
                   'Reviews',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
@@ -257,7 +257,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Reviewscreen()));
+                            builder: (context) => Reviewscreen(productReference: widget.id,)));
                   },
                   icon: Icon(Icons.arrow_forward_rounded),
                 )

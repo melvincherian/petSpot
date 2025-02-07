@@ -27,7 +27,7 @@ class RatingsBloc extends Bloc<RatingsEvent, RatingsState> {
         final userReview =
             event.review.copyWith(userReference: currentUser.uid);
 
-        await ratingsRepo.addReview(event.productReference, userReview);
+        await ratingsRepo.addReview(userReview.userReference,userReview);
         emit(RatingsSuccess('Review added successfully'));
       } catch (e) {
         emit(RatingsError('Failed to add review: $e'));

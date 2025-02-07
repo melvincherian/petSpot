@@ -1,13 +1,17 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/ratings_bloc.dart';
 import 'package:second_project/models/review_rating_model.dart';
 // import 'package:second_project/models/review_rating_model.dart';
 
+
+
 class Reviewaddingscreen extends StatefulWidget {
-  const Reviewaddingscreen({
-    super.key,
-  });
+  final ReviewRatingModel? model;
+  final String? productReference;
+  const Reviewaddingscreen({super.key, this.model, this.productReference});
+  
 
   @override
   State<Reviewaddingscreen> createState() => _ReviewaddingscreenState();
@@ -16,6 +20,7 @@ class Reviewaddingscreen extends StatefulWidget {
 class _ReviewaddingscreenState extends State<Reviewaddingscreen> {
   final ValueNotifier<int> _selectedRating = ValueNotifier<int>(0);
   final TextEditingController _reviewController = TextEditingController();
+  final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
   @override
   void dispose() {
@@ -23,6 +28,7 @@ class _ReviewaddingscreenState extends State<Reviewaddingscreen> {
     _reviewController.dispose();
     super.dispose();
   }
+  
 
   @override
   Widget build(BuildContext context) {
@@ -118,19 +124,16 @@ class _ReviewaddingscreenState extends State<Reviewaddingscreen> {
                   ElevatedButton(
                     onPressed: () {
                       final reviewItem = ReviewItems(
-                        
-                        userReference: '',
+                        userReference: userid,
                         ratings: _selectedRating.value.toDouble(),
                         comments: _reviewController.text,
                         reviewDate: DateTime.now(),
-                        
                       );
 
                       context.read<RatingsBloc>().add(
                             AddreviewEvent(
-                              productReference: 'someProductReference',
+                              productReference: widget.productReference ?? '',
                               review: reviewItem,
-                              
                             ),
                           );
                     },

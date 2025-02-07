@@ -40,7 +40,7 @@ class RatingsRepo {
     } else {
    
       final newReview = ReviewRatingModel(
-        id: '',
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         productReference: productReference,
         reviews: [review],
         overallRating: review.ratings,

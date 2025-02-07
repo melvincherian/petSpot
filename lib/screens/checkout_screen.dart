@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:second_project/bloc/payment_bloc.dart';
+import 'package:second_project/models/address_model.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/payment_model.dart';
 import 'package:second_project/screens/my_address.dart';
@@ -16,7 +17,8 @@ import 'package:second_project/services/stream_cart.dart';
 
 class CheckoutScreen extends StatefulWidget {
   final String userId;
-  const CheckoutScreen({super.key, required this.userId});
+  final AddressModel? addresscode;
+  const CheckoutScreen({super.key, required this.userId, this.addresscode});
 
   @override
   State<CheckoutScreen> createState() => _CheckoutScreenState();
@@ -24,36 +26,27 @@ class CheckoutScreen extends StatefulWidget {
 
 class _CheckoutScreenState extends State<CheckoutScreen> {
   final StreamCartService _cartService = StreamCartService();
-  
-final cartService = StreamCartService();
+  final cartService = StreamCartService();
 
-void onPaymentSuccess(String userId) async {
-  try {
-    
-    await cartService.clearCart(userId);
-    print('Cart cleared successfully!');
-  } catch (e) {
-    print('Error clearing cart: $e');
+  void onPaymentSuccess(String userId) async {
+    try {
+      await cartService.clearCart(userId);
+      print('Cart cleared successfully!');
+    } catch (e) {
+      print('Error clearing cart: $e');
+    }
   }
-}
-
-
-
 
   late Razorpay _razorpay;
 
-
-
   void handlePaymentSuccess(PaymentSuccessResponse response) async {
-    
     try {
       final userId = FirebaseAuth.instance.currentUser?.uid;
       if (userId == null) {
         print("User not logged in");
         return;
       }
-      // onPaymentSuccess(widget.userId);
-
+      onPaymentSuccess(widget.userId);
 
       final paymentDoc = FirebaseFirestore.instance
           .collection('users')
@@ -71,7 +64,7 @@ void onPaymentSuccess(String userId) async {
       // print('Payment success updated in Firestore.');
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) =>const PaymentSuccessScreen()),
+        MaterialPageRoute(builder: (context) => const PaymentSuccessScreen()),
       );
     } catch (e) {
       // print('Error updating payment status: $e');
@@ -127,7 +120,7 @@ void onPaymentSuccess(String userId) async {
     double shippingCharge = 5.00;
     double tax = 3.00;
     double Delivery = 20.00;
-    
+
     double grandTotal = totalAmount + shippingCharge + tax + Delivery;
     var options = {
       'key': 'rzp_test_x4yKuLEYJQuXwJ',
@@ -156,7 +149,6 @@ void onPaymentSuccess(String userId) async {
 
   @override
   Widget build(BuildContext context) {
-    
     final RemoveCartService cartService = RemoveCartService();
     return Scaffold(
       appBar: AppBar(
@@ -266,7 +258,7 @@ void onPaymentSuccess(String userId) async {
                                             context: context,
                                             userId: widget.userId,
                                             productReference:
-                                            item.productReference,
+                                                item.productReference,
                                             quantityChange: -1,
                                             price: item.price);
                                       },
@@ -287,7 +279,7 @@ void onPaymentSuccess(String userId) async {
                                             context: context,
                                             userId: widget.userId,
                                             productReference:
-                                            item.productReference,
+                                                item.productReference,
                                             quantityChange: 1,
                                             price: item.price);
                                       },
@@ -304,7 +296,6 @@ void onPaymentSuccess(String userId) async {
                                           userId: widget.userId,
                                           productReference:
                                               item.productReference);
-                            
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -316,7 +307,6 @@ void onPaymentSuccess(String userId) async {
                                   },
                                   child: const Text(
                                     'Remove',
-
                                     style: TextStyle(color: Colors.red),
                                   ),
                                 ),
@@ -405,15 +395,25 @@ void onPaymentSuccess(String userId) async {
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.bold)),
                             TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const MyAddress()));
-                                },
-                                child: const Text('Select Address'))
+                              onPressed: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            const MyAddress()));
+                              },
+                              child: const Text('Select address'),
+                            )
                           ],
+                        ),
+                        Text(
+                          widget.addresscode != null
+                              ? '${widget.addresscode!.name},${widget.addresscode!.phone}'
+                              : 'No address selected',
+                          style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.purple),
                         ),
                         const SizedBox(height: 8),
                         const Divider(color: Colors.grey),
@@ -447,8 +447,18 @@ void onPaymentSuccess(String userId) async {
                         print("User not logged in");
                         return;
                       }
+
+                      if (widget.addresscode == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text(
+                                "Please select an address before proceeding."),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
                       final orderId = OrderIdGenerator.generateOrderId();
-                      // final address=AddressRepository();
                       const shippingFee = 5.0;
                       const taxFee = 3.0;
                       const deliveryFee = 20.0;
@@ -466,8 +476,7 @@ void onPaymentSuccess(String userId) async {
                         shippingFee: shippingFee,
                         taxFee: taxFee,
                         delivery: deliveryFee,
-                        adrress: '',
-                        payment: cartItems.map((item) {
+                        adrress: widget.addresscode!.id,                    payment: cartItems.map((item) {
                           return PaymentItems(
                             productReference: item.productReference,
                             price: item.price,
@@ -480,7 +489,7 @@ void onPaymentSuccess(String userId) async {
                           .read<PaymentBloc>()
                           .add(AddPayment(payment: payment));
                       openCheckout(totalAmount);
-                      onPaymentSuccess(widget.userId);
+                      // onPaymentSuccess(widget.userId);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
@@ -502,23 +511,9 @@ void onPaymentSuccess(String userId) async {
               ],
             );
           }
+          
         },
       ),
     );
   }
-
-
-//   Future<AddressModel> fetchAddressById(String id) async {
-//   final snapshot = await FirebaseFirestore.instance
-//       .collection('addresses')
-//       .doc(id)
-//       .get();
-
-//   if (snapshot.exists) {
-//     return AddressModel.fromMap(snapshot.data()!,snapshot.id);
-//   } else {
-//     throw Exception('Address not found');
-//   }
-// }
-
 }

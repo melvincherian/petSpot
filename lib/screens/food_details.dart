@@ -315,7 +315,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => Reviewscreen()));
+                            builder: (context) => Reviewscreen(productReference: widget.id,)));
                   },
                   icon: Icon(Icons.arrow_forward_rounded),
                 )

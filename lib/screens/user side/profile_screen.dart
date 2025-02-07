@@ -95,6 +95,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         centerTitle: true,
         backgroundColor: Colors.teal,
         elevation: 0,
+        automaticallyImplyLeading: false,
       ),
       body: BlocListener<AuthenticationBloc, AuthenticationState>(
         listener: (context, state) {
@@ -289,63 +290,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       content: const Text('You have been logged out.'),
       duration: const Duration(seconds: 2),
     ),
-  );// Set login state to false
+  );
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const ScreenLogin()),
       (route) => false,
     );
   }
-
-//   Future<void> _showDeleteAccountDialog(BuildContext context) async {
-//   final authRepository = AuthRepository();
-
-//   showDialog<void>(
-//     context: context,
-//     barrierDismissible: true,
-//     builder: (BuildContext context) {
-//       return AlertDialog(
-//         title: const Text('Delete Account'),
-//         content: const Text(
-//             'Are you sure you want to delete your account? This action cannot be undone.'),
-//         actions: <Widget>[
-//           TextButton(
-//             child: const Text('Cancel'),
-//             onPressed: () {
-//               Navigator.of(context).pop(); // Close the dialog
-//             },
-//           ),
-//           ElevatedButton(
-//             style: ElevatedButton.styleFrom(
-//               backgroundColor: Colors.redAccent,
-//             ),
-//             child: const Text(
-//               'Delete',
-//               style: TextStyle(color: Colors.white),
-//             ),
-//             onPressed: () async {
-//               Navigator.of(context).pop(); // Close the dialog
-
-//               // Call deleteAccount and handle response
-//               String result = await authRepository.deleteAccount();
-//               if (result == "Account deleted successfully.") {
-//                 await logout(context); // Ensure user is logged out
-//               }
-
-//               // Show a SnackBar with the result
-//               ScaffoldMessenger.of(context).showSnackBar(
-//                 SnackBar(
-//                   content: Text(result),
-//                   backgroundColor:
-//                       result.contains("successfully") ? Colors.green : Colors.red,
-//                 ),
-//               );
-//             },
-//           ),
-//         ],
-//       );
-//     },
-//   );
-// }
-
 }
