@@ -271,7 +271,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 0.98,
             ),
-            itemCount: displayedItems.length, // Set to 4
+            itemCount: displayedItems.length, 
             itemBuilder: (context, index) {
               final item = displayedItems[index];
               return GestureDetector(
@@ -302,15 +302,14 @@ class _HomeScreenState extends State<HomeScreen> {
                             borderRadius: BorderRadius.circular(12),
                             child: item.imageUrls.isNotEmpty
                                 ? Image.network(
-                                    item.imageUrls[
-                                        0], // Display the first image
+                                    item.imageUrls[0],
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                     height: 110,
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
                                       if (loadingProgress == null) {
-                                        return child; // Image is fully loaded
+                                        return child;
                                       }
                                       return Container(
                                         width: double.infinity,
@@ -318,7 +317,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.grey[300],
                                         child: const Center(
                                           child:
-                                              CircularProgressIndicator(), // Loading indicator
+                                              CircularProgressIndicator(), 
                                         ),
                                       );
                                     },
@@ -771,7 +770,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
- 
+
   Future<List<AccessoryModel>> fetchAccessories() async {
     try {
       final querySnapshot =
@@ -792,7 +791,7 @@ class _HomeScreenState extends State<HomeScreen> {
           await FirebaseFirestore.instance.collection('breed').get();
 
       return querySnapshot.docs.map((doc) {
-        return BreedModel.fromMap(doc.data(),doc.id);
+        return BreedModel.fromMap(doc.data(), doc.id);
       }).toList();
     } catch (e) {
       print('Error fetching pets: $e');

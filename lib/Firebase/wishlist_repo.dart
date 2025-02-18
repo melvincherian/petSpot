@@ -60,7 +60,6 @@ Future<void> addtowishlist(WishlistModel wishlist) async {
   }
 }
 
-
 Future<void>removeWishlist(String id)async{
   try{
     await _firestore.collection('wishlist').doc(id).delete();
@@ -69,6 +68,24 @@ Future<void>removeWishlist(String id)async{
     print('Error removing wishlist$e');
   }
 }
+
+
+Future<List<WishlistModel>> getWishlist(String userId) async {
+  try {
+    final querySnapshot = await _firestore
+        .collection('wishlist')
+        .where('userReference', isEqualTo: userId)
+        .get();
+
+    return querySnapshot.docs
+        .map((doc) => WishlistModel.fromMap(doc.data() as Map<String, dynamic>,doc.id))
+        .toList();
+  } catch (e) {
+    print('Error fetching wishlist: $e');
+    return [];
+  }
+}
+
 
 
 

@@ -5,13 +5,10 @@ import 'package:second_project/bloc/ratings_bloc.dart';
 import 'package:second_project/models/review_rating_model.dart';
 // import 'package:second_project/models/review_rating_model.dart';
 
-
-
 class Reviewaddingscreen extends StatefulWidget {
-  final ReviewRatingModel? model;
+  // final ReviewRatingModel? model;
   final String? productReference;
-  const Reviewaddingscreen({super.key, this.model, this.productReference});
-  
+  const Reviewaddingscreen({super.key, this.productReference});
 
   @override
   State<Reviewaddingscreen> createState() => _ReviewaddingscreenState();
@@ -28,7 +25,6 @@ class _ReviewaddingscreenState extends State<Reviewaddingscreen> {
     _reviewController.dispose();
     super.dispose();
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -129,13 +125,14 @@ class _ReviewaddingscreenState extends State<Reviewaddingscreen> {
                         comments: _reviewController.text,
                         reviewDate: DateTime.now(),
                       );
-
                       context.read<RatingsBloc>().add(
                             AddreviewEvent(
                               productReference: widget.productReference ?? '',
                               review: reviewItem,
                             ),
                           );
+                      print('productReference is: ${widget.productReference}');
+                      print('User reference is: $userid');
                     },
                     style: ElevatedButton.styleFrom(
                       elevation: 5,

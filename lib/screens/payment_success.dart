@@ -31,7 +31,7 @@ class PaymentSuccessScreen extends StatelessWidget {
             const SizedBox(height: 40),
             ElevatedButton(
               onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ScreenHome()));
+                Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const  ScreenHome()));
                 // Navigator.of(context).pop();
               },
               style: ElevatedButton.styleFrom(

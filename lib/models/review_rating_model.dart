@@ -57,7 +57,7 @@ class ReviewRatingModel {
 
 
 class ReviewItems {
-  // final String id;
+
   final String userReference;
   final double ratings;
   final String? comments;
@@ -88,8 +88,6 @@ class ReviewItems {
       'ratings': ratings,
       'comments': comments,
       'reviewDate': reviewDate.toIso8601String(),
-      // 'id':id
-      // 'productDetails': productDetails,
     };
   }
 
@@ -99,17 +97,13 @@ class ReviewItems {
     double? ratings,
     String? comments,
     DateTime? reviewDate,
-    // String?id,
   
-    // Map<String, dynamic>? productDetails,
   }) {
     return ReviewItems(
       userReference: userReference ?? this.userReference,
       ratings: ratings ?? this.ratings,
       comments: comments ?? this.comments,
       reviewDate: reviewDate ?? this.reviewDate,
-      // id: id?? this.id
-      // productDetails: productDetails ?? this.productDetails,
     );
   }
 }

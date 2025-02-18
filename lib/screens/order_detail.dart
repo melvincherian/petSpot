@@ -6,6 +6,7 @@ import 'package:second_project/screens/review_screen.dart';
 class OrderDetail extends StatefulWidget {
   final PaymentModel payment;
 
+
   const OrderDetail({super.key, required this.payment});
 
   @override
@@ -13,6 +14,8 @@ class OrderDetail extends StatefulWidget {
 }
 
 class _OrderDetailState extends State<OrderDetail> {
+
+   
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final ValueNotifier<Map<String, String>> productImages = ValueNotifier({});
@@ -28,7 +31,10 @@ class _OrderDetailState extends State<OrderDetail> {
     super.initState();
     _fetchProductDetails();
     _fetchAddressDetails();
+ 
   }
+
+
 
   Future<void> _fetchAddressDetails() async {
     if (widget.payment.adrress.isNotEmpty) {
@@ -176,11 +182,13 @@ class _OrderDetailState extends State<OrderDetail> {
                       return ListView.builder(
                         itemCount: widget.payment.payment.length,
                         itemBuilder: (context, index) {
+                     
                           final item = widget.payment.payment[index];
                           final productImage =
                               images[item.productReference] ?? '';
                           final productName = names[item.productReference] ??
                               'Product Name Not Found';
+                         
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             child: ListTile(
@@ -201,6 +209,7 @@ class _OrderDetailState extends State<OrderDetail> {
                                            
                                     ),
                                   );
+                                 print('navigating product reference is ${item.productReference}');
                                 },
                                 child: const Text('Write a review'),
                               ),

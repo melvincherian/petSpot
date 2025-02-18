@@ -59,34 +59,44 @@ class MyOrders extends StatelessWidget {
                   );
                 },
                 child: Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  elevation: 3,
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                        vertical: 12, horizontal: 16),
-                    leading: const Icon(Icons.receipt_long_rounded,
-                        color: Colors.teal, size: 32),
-                    title: Text(
-                      'Order ID: ${payment.orderId}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    subtitle: Text(
-                      formattedDate,
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.black45,
+                    elevation: 3,
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
+                      leading: const Icon(Icons.receipt_long_rounded,
+                          color: Colors.teal, size: 32),
+                      title: Text(
+                        'Order ID: ${payment.orderId}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    trailing: const Icon(Icons.arrow_forward_ios_rounded,
-                        size: 20, color: Colors.grey),
-                  ),
-                ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            formattedDate,
+                            style: const TextStyle(
+                                fontSize: 14, color: Colors.black45),
+                          ),
+                          const SizedBox(height: 4),
+                          const Text(
+                            'Pending',
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.red),
+                          ),
+                        ],
+                      ),
+                      trailing: const Icon(Icons.arrow_forward_ios_rounded,
+                          size: 20, color: Colors.grey),
+                    )),
               );
             },
           );

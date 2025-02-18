@@ -8,6 +8,7 @@ import 'package:second_project/widgets/linear_indicator.dart';
 
 class Reviewscreen extends StatefulWidget {
   final String? productReference;
+
   const Reviewscreen({super.key, this.productReference});
 
   @override
@@ -16,6 +17,7 @@ class Reviewscreen extends StatefulWidget {
 
 class _ReviewscreenState extends State<Reviewscreen> {
   final RatingsRepo _ratingsRepo = RatingsRepo();
+
   @override
   Widget build(BuildContext context) {
     print("Received productReference: ${widget.productReference}");
@@ -31,9 +33,8 @@ class _ReviewscreenState extends State<Reviewscreen> {
       body: widget.productReference == null
           ? const Center(child: Text("No product reference provided"))
           : FutureBuilder<List<ReviewRatingModel>>(
-              future: fetchFoodProductByReference(widget.productReference!),
+              future: fetchReviews(widget.productReference!),
               builder: (context, snapshot) {
-                // print('hello$snapshot');
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
                 }
@@ -44,11 +45,16 @@ class _ReviewscreenState extends State<Reviewscreen> {
                 final productReviews = snapshot.data ?? [];
 
                 if (productReviews.isEmpty) {
-                  // print('fsghfsgghfh$productReviews');
                   return const Center(child: Text("No reviews yet."));
                 }
 
-                final overallRating = productReviews.first.overallRating;
+           
+                List<ReviewItems> reviewsList =
+                    productReviews.expand((model) => model.reviews).toList();
+                double overallRating = productReviews
+                        .map((e) => e.overallRating)
+                        .reduce((a, b) => a + b) /
+                    productReviews.length;
 
                 return SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
@@ -104,18 +110,21 @@ class _ReviewscreenState extends State<Reviewscreen> {
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
-                        itemCount: productReviews.first.reviews.length,
+                        itemCount: reviewsList.length,
                         itemBuilder: (context, index) {
-                          final review = productReviews.first.reviews[index];
+                          final review = reviewsList[index];
                           return Card(
                             margin: const EdgeInsets.symmetric(vertical: 8),
                             child: ListTile(
                               leading: CircleAvatar(
-                                  child: Text(
-                                      review.userReference[0].toUpperCase())),
-                              title: Text(review.userReference,
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                                child: Text(
+                                    review.userReference[0].toUpperCase()),
+                              ),
+                              title: Text(
+                                review.userReference,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
                               subtitle: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
@@ -138,29 +147,32 @@ class _ReviewscreenState extends State<Reviewscreen> {
     );
   }
 
-  Future<List<ReviewRatingModel>> fetchFoodProductByReference(
-      String productReference) async {
+  Future<List<ReviewRatingModel>> fetchReviews(String productReference) async {
     try {
+      print('Fetching reviews for productReference: $productReference');
+
       final querySnapshot = await FirebaseFirestore.instance
           .collection('ratings')
           .where('productReference', isEqualTo: productReference)
           .get();
-          
+
       if (querySnapshot.docs.isEmpty) {
         print('No reviews found for productReference: $productReference');
+        return [];
       }
 
       for (var doc in querySnapshot.docs) {
         print('Document ID: ${doc.id}');
-        print('Data: ${doc.data()}'); 
+        print('Data: ${doc.data()}');
       }
 
       return querySnapshot.docs.map((doc) {
-        return ReviewRatingModel.fromMap(doc.data(), doc.id);
+        final data = doc.data();
+        return ReviewRatingModel.fromMap(data, doc.id);
       }).toList();
     } catch (e) {
-      print('Error fetching food product by reference: $e');
-      return []; 
+      print('Error fetching reviews: $e');
+      return [];
     }
   }
 }

@@ -11,6 +11,7 @@ import 'package:second_project/screens/my_orders.dart';
 import 'package:second_project/screens/privacy_screen.dart';
 import 'package:second_project/screens/terms_service.dart';
 import 'package:second_project/screens/user%20side/user%20authentication/user_login.dart';
+import 'package:second_project/screens/video_detail.dart';
 import 'package:second_project/services/shared_pref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -241,6 +242,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           title: "Privacy Policy",
           onTap: () {
            Navigator.push(context, MaterialPageRoute(builder: (context)=>PrivacyScreen()));
+          },
+        ),
+          _buildOptionItem(
+          context,
+          icon: Icons.contact_support,
+          title: "Contact Us",
+          onTap: () {
+           Navigator.push(context, MaterialPageRoute(builder: (context)=>VideoDetail()));
           },
         ),
       ],

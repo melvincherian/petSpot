@@ -13,7 +13,7 @@ import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/product_details.dart';
 import 'package:second_project/screens/user%20side/cart_screen.dart';
 
-class BreedDetails extends StatelessWidget {
+class BreedDetails extends StatefulWidget {
   final String categoryId;
 
   const BreedDetails({
@@ -22,11 +22,16 @@ class BreedDetails extends StatelessWidget {
   });
 
   @override
+  State<BreedDetails> createState() => _BreedDetailsState();
+}
+
+class _BreedDetailsState extends State<BreedDetails> {
+  @override
   Widget build(BuildContext context) {
     final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     context
         .read<BreedsearchBloc>()
-        .add(FetchBreedsEvent(categoryid: categoryId));
+        .add(FetchBreedsEvent(categoryid: widget.categoryId));
 
     return Scaffold(
       appBar: AppBar(
@@ -34,7 +39,7 @@ class BreedDetails extends StatelessWidget {
           'Breed Details',
           style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
         ),
-        // centerTitle: true,
+
         backgroundColor: Colors.teal,
         actions: [
           Stack(
@@ -50,30 +55,6 @@ class BreedDetails extends StatelessWidget {
                     Icons.shopping_cart,
                     color: Colors.black,
                   )),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  padding: const EdgeInsets.all(2),
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  constraints: const BoxConstraints(
-                    minWidth: 16,
-                    minHeight: 16,
-                  ),
-                  child: const Text(
-                    '3',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
             ],
           ),
           IconButton(
@@ -280,43 +261,63 @@ class BreedDetails extends StatelessWidget {
                                   Positioned(
                                     top: 8,
                                     right: 8,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        breed.isLiked
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: breed.isLiked
-                                            ? Colors.red
-                                            : Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        final item = WishlistModel(
-                                            id: breed.id,
-                                            userReference: '',
-                                            items: [
-                                              WishlistItem(
-                                                productReference: breed.id,
-                                                productName: breed.name,
-                                              )
-                                            ]);
-                                        context
-                                            .read<WishlistBloc>()
-                                            .add(TaponWishlist(item));
+                                    child: BlocBuilder<WishlistBloc,
+                                        WishlistState>(
+                                      builder: (context, state) {
+                                        bool isInWishlist = false;
+                                        if (state is WishListLoaded) {
+                                          isInWishlist = state.wishlistitem.any(
+                                              (wishlist) => wishlist.items.any(
+                                                  (item) =>
+                                                      item.productReference ==
+                                                      breed.id));
+                                        }
 
-                                        final snackBar = SnackBar(
-                                          elevation: 0,
-                                          behavior: SnackBarBehavior.floating,
-                                          backgroundColor: Colors.transparent,
-                                          content: AwesomeSnackbarContent(
-                                            title: 'Added to Wishlist!',
-                                            message:
-                                                '${breed.name} has been added to your wishlist.',
-                                            contentType: ContentType.success,
+                                        return IconButton(
+                                          icon: Icon(
+                                            isInWishlist
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isInWishlist
+                                                ? Colors.red
+                                                : Colors.red,
                                           ),
-                                        );
+                                          onPressed: () {
+                                            final item = WishlistModel(
+                                              id: breed.id,
+                                              userReference: '',
+                                              items: [
+                                                WishlistItem(
+                                                  productReference: breed.id,
+                                                  productName: breed.name,
+                                                ),
+                                              ],
+                                            );
 
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(snackBar);
+                                            context
+                                                .read<WishlistBloc>()
+                                                .add(TaponWishlist(item));
+
+                                            final snackBar = SnackBar(
+                                              elevation: 0,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              content: AwesomeSnackbarContent(
+                                                title: 'Added to Wishlist!',
+                                                message:
+                                                    '${breed.name} has been added to your wishlist.',
+                                                contentType:
+                                                    ContentType.success,
+                                                    
+                                              ),
+                                            );
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                          },
+                                        );
                                       },
                                     ),
                                   ),
@@ -374,6 +375,7 @@ class BreedDetails extends StatelessWidget {
                                                   title: 'Added to Cart!',
                                                   message:
                                                       '${breed.name} has been added to your cart.',
+                                                      
                                                   contentType:
                                                       ContentType.success,
                                                 ),

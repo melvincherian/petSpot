@@ -7,53 +7,52 @@ class RatingsRepo {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> addReview(String productReference, ReviewItems review) async {
-  try {
-    final productReviewSnapshot = await _firestore
-        .collection('ratings')
-        .where('productReference', isEqualTo: productReference)
-        .limit(1)
-        .get();
+    try {
+      final productReviewSnapshot = await _firestore
+          .collection('ratings')
+          .where('productReference', isEqualTo: productReference)
+          .limit(1)
+          .get();
 
-    if (productReviewSnapshot.docs.isNotEmpty) {
-     
-      final existingReviewDoc = productReviewSnapshot.docs.first;
-      final existingReviewData = existingReviewDoc.data();
+      if (productReviewSnapshot.docs.isNotEmpty) {
+        final existingReviewDoc = productReviewSnapshot.docs.first;
+        final existingReviewData = existingReviewDoc.data();
 
-      final existingReviews = List<ReviewItems>.from(
-        (existingReviewData['reviews'] as List).map(
-          (item) => ReviewItems.fromMap(item as Map<String, dynamic>),
-        ),
-      );
+        final existingReviews = List<ReviewItems>.from(
+          (existingReviewData['reviews'] as List).map(
+            (item) => ReviewItems.fromMap(item as Map<String, dynamic>),
+          ),
+        );
 
-      existingReviews.add(review);
+        existingReviews.add(review);
 
-      
-      final newOverallRating = existingReviews
-          .map((r) => r.ratings)
-          .reduce((a, b) => a + b) /
-          existingReviews.length;
+        final newOverallRating =
+            existingReviews.map((r) => r.ratings).reduce((a, b) => a + b) /
+                existingReviews.length;
 
-      await _firestore.collection('ratings').doc(existingReviewDoc.id).update({
-        'reviews': existingReviews.map((r) => r.toMap()).toList(),
-        'overallRating': newOverallRating,
-      });
-    } else {
-   
-      final newReview = ReviewRatingModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        productReference: productReference,
-        reviews: [review],
-        overallRating: review.ratings,
-      );
+        await _firestore
+            .collection('ratings')
+            .doc(existingReviewDoc.id)
+            .update({
+          'reviews': existingReviews.map((r) => r.toMap()).toList(),
+          'overallRating': newOverallRating,
+        });
+      } else {
+        final newReview = ReviewRatingModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          productReference: productReference,
+          reviews: [review],
+          overallRating: review.ratings,
+        );
+        print('real productReference is :$productReference');
 
-      await _firestore.collection('ratings').add(newReview.toMap());
+        await _firestore.collection('ratings').add(newReview.toMap());
+      }
+    } catch (e) {
+      print('Error adding review: $e');
+      throw Exception('Failed to add review');
     }
-  } catch (e) {
-    print('Error adding review: $e');
-    throw Exception('Failed to add review');
   }
-}
-
 
   Stream<List<ReviewRatingModel>> fetchReviews() {
     try {
@@ -97,12 +96,12 @@ class RatingsRepo {
     }
   }
 
-  Future<void> deleteReview(String id) async {
-    try {
-      await _firestore.collection('ratings').doc(id).delete();
-      print('Review deleted successfully$id');
-    } catch (e) {
-      print('Failed to delete reviews $e');
-    }
-  }
+  // Future<void> deleteReview(String id) async {
+  //   try {
+  //     await _firestore.collection('ratings').doc(id).delete();
+  //     print('Review deleted successfully$id');
+  //   } catch (e) {
+  //     print('Failed to delete reviews $e');
+  //   }
+  // }
 }

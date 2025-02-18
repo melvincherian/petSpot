@@ -107,7 +107,7 @@ Future<void> addToCart(CartModel cart) async {
   
   Future<void> clearCart(String userId) async {
     try {
-      // Delete all cart items for a specific user
+
       final batch = _firestore.batch();
       final snapshot = await _firestore
           .collection('cart')

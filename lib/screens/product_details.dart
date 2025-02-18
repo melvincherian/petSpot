@@ -69,7 +69,8 @@ class _ProductDetailsState extends State<ProductDetails> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CartScreen(userId: userId)),
+                MaterialPageRoute(
+                    builder: (context) => CartScreen(userId: userId)),
               );
             },
             icon: const Icon(Icons.shopping_cart, color: Colors.white),
@@ -159,7 +160,7 @@ class _ProductDetailsState extends State<ProductDetails> {
               ),
             ),
             const Divider(thickness: 1, height: 30),
-              const Text(
+            const Text(
               'Description',
               style: TextStyle(
                 fontSize: 22,
@@ -174,7 +175,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 color: Colors.black54,
               ),
             ),
-             const Text(
+            const Text(
               'Gender',
               style: TextStyle(
                 fontSize: 22,
@@ -191,14 +192,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                 color: Colors.black54,
               ),
             ),
-            //  Text(
-            //   widget.gender ?? 'No description available.',
-            //   style: const TextStyle(
-            //     fontSize: 16,
-            //     color: Colors.black54,
-            //   ),
-            // ),
-              const Text(
+            const Text(
               'Stock',
               style: TextStyle(
                 fontSize: 22,
@@ -274,8 +268,14 @@ class _ProductDetailsState extends State<ProductDetails> {
                         ),
                       );
                     },
-                    icon: const Icon(Icons.shopping_cart,color: Colors.white,),
-                    label: const Text('Add to Cart',style: TextStyle(color: Colors.white),),
+                    icon: const Icon(
+                      Icons.shopping_cart,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      'Add to Cart',
+                      style: TextStyle(color: Colors.white),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.teal,
                       padding: const EdgeInsets.symmetric(vertical: 15),
@@ -296,7 +296,9 @@ class _ProductDetailsState extends State<ProductDetails> {
                           ),
                         ],
                       );
-                      context.read<WishlistBloc>().add(TaponWishlist(wishlistItem));
+                      context
+                          .read<WishlistBloc>()
+                          .add(TaponWishlist(wishlistItem));
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           backgroundColor: Colors.green,
@@ -314,16 +316,23 @@ class _ProductDetailsState extends State<ProductDetails> {
                 ),
               ],
             ),
-            Divider(),
+            const Divider(),
             Row(
               children: [
-                Text('Reviews',
-                style: TextStyle(fontSize: 24,fontWeight: FontWeight.bold),
+                const Text(
+                  'Reviews',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 235),
-                IconButton(onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>Reviewscreen(productReference:widget.id)));
-                }, icon: Icon(Icons.arrow_circle_right))
+                const SizedBox(width: 200),
+                IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  Reviewscreen(productReference: widget.id)));
+                    },
+                    icon: const Icon(Icons.arrow_circle_right))
               ],
             )
           ],
@@ -331,5 +340,4 @@ class _ProductDetailsState extends State<ProductDetails> {
       ),
     );
   }
-  
 }

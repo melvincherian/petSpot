@@ -27,9 +27,4 @@ class WishListSuccess extends WishlistState{
   WishListSuccess(this.message);
 }
 
-// class WishListUpdated extends WishlistState {
-//   final List<WishlistModel> wishlist;
-
-//   WishListUpdated(this.wishlist);
-// }
 
