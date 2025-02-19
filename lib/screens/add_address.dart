@@ -18,8 +18,6 @@ class AddAddress extends StatelessWidget {
     final buildingController = TextEditingController();
     final roadNameController = TextEditingController();
     final locationController = TextEditingController();
-    
-    
 
     final _formKey = GlobalKey<FormState>();
 
@@ -249,19 +247,19 @@ class AddAddress extends StatelessWidget {
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           final address = AddressModel(
-                              id: DateTime.now()
-                                  .millisecondsSinceEpoch
-                                  .toString(),
-                              name: nameController.text,
-                              phone: int.parse(phoneController.text),
-                              pincode: int.parse(pincodeController.text),
-                              state: stateController.text,
-                              city: cityController.text,
-                              buildingName: buildingController.text,
-                              roadName: roadNameController.text,
-                              location: locationController.text,
-                              userReference: '',
-                              );
+                            id: DateTime.now()
+                                .millisecondsSinceEpoch
+                                .toString(),
+                            name: nameController.text,
+                            phone: int.parse(phoneController.text),
+                            pincode: int.parse(pincodeController.text),
+                            state: stateController.text,
+                            city: cityController.text,
+                            buildingName: buildingController.text,
+                            roadName: roadNameController.text,
+                            location: locationController.text,
+                            userReference: '',
+                          );
 
                           nameController.clear();
                           phoneController.clear();

@@ -6,7 +6,7 @@ import 'package:second_project/screens/sub_category.dart';
 
 class CategoriesScreen extends StatelessWidget {
   const CategoriesScreen({super.key});
-
+  
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -58,7 +58,7 @@ class CategoriesScreen extends StatelessWidget {
               child: BlocBuilder<SearchcategoryBloc, SearchcategoryState>(
                 builder: (context, state) {
                   if (state is Searchcategoryloading) {
-                    // Shimmer effect during loading
+
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: GridView.builder(
@@ -224,7 +224,6 @@ class CategoriesScreen extends StatelessWidget {
                     );
                   }
                   return const Center(
-                    // child: Text('Unexpected State'),
                   );
                 },
               ),
