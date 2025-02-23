@@ -121,7 +121,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     double shippingCharge = 5.00;
     double tax = 3.00;
     double Delivery = 20.00;
-
+     
     double grandTotal = totalAmount + shippingCharge + tax + Delivery;
     var options = {
       'key': Apikey,

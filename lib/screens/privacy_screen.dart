@@ -57,7 +57,7 @@ class PrivacyScreen extends StatelessWidget {
               ),
               SizedBox(height: 16),
               Text(
-                '3. How We Use Your Information',
+                '3. How We Use Your Informations',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

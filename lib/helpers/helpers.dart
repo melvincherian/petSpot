@@ -16,4 +16,5 @@ class THelperFunctions {
   static double screenWidth(context) {
     return MediaQuery.of(context).size.width;
   }
+  
 }
