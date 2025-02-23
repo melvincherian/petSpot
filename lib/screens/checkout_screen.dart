@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:second_project/bloc/payment_bloc.dart';
+import 'package:second_project/core/api_key.dart';
 import 'package:second_project/models/address_model.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/payment_model.dart';
@@ -123,7 +124,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
     double grandTotal = totalAmount + shippingCharge + tax + Delivery;
     var options = {
-      'key': 'rzp_test_x4yKuLEYJQuXwJ',
+      'key': Apikey,
       'amount': (grandTotal * 100).toInt(),
       'name': 'PetSpot',
       'description': 'E-commerce application',

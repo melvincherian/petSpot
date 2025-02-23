@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages, unnecessary_string_interpolations, curly_braces_in_flow_control_structures, avoid_print, prefer_const_constructors
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -276,37 +277,66 @@ class FoodScreen extends StatelessWidget {
                                             color: Colors.grey,
                                           ),
                                   ),
-                                  Positioned(
+                                 Positioned(
                                     top: 8,
                                     right: 8,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        foods.isLiked
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: foods.isLiked
-                                            ? Colors.red
-                                            : Colors.red,
-                                      ),
-                                      onPressed: () {
-                                        final item = WishlistModel(
-                                            id: foods.id,
-                                            userReference: '',
-                                            items: [
-                                              WishlistItem(
-                                                productReference: foods.id,
-                                                productName: foods.foodname,
-                                              )
-                                            ]);
-                                        context
-                                            .read<WishlistBloc>()
-                                            .add(TaponWishlist(item));
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          backgroundColor: Colors.green,
-                                          content: Text(
-                                              '${foods.foodname} added to Wishlist!'),
-                                        ));
+                                    child: BlocBuilder<WishlistBloc,
+                                        WishlistState>(
+                                      builder: (context, state) {
+                                        bool isInWishlist = false;
+                                        if (state is WishListLoaded) {
+                                          isInWishlist = state.wishlistitem.any(
+                                              (wishlist) => wishlist.items.any(
+                                                  (item) =>
+                                                      item.productReference ==
+                                                      foods.id));
+                                        }
+
+                                        return IconButton(
+                                          icon: Icon(
+                                            isInWishlist
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isInWishlist
+                                                ? Colors.red
+                                                : Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            final item = WishlistModel(
+                                              id: foods.id,
+                                              userReference: '',
+                                              items: [
+                                                WishlistItem(
+                                                  productReference: foods.id,
+                                                  productName: foods.foodname,
+                                                ),
+                                              ],
+                                            );
+
+                                            context
+                                                .read<WishlistBloc>()
+                                                .add(TaponWishlist(item));
+
+                                            final snackBar = SnackBar(
+                                              elevation: 0,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              content: AwesomeSnackbarContent(
+                                                title: 'Added to Wishlist!',
+                                                message:
+                                                    '${foods.foodname} has been added to your wishlist.',
+                                                contentType:
+                                                    ContentType.success,
+                                                    
+                                              ),
+                                            );
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                          },
+                                        );
                                       },
                                     ),
                                   ),

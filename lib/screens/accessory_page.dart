@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,7 +13,6 @@ import 'package:second_project/models/wishlist_model.dart';
 import 'package:second_project/screens/accessory_detail.dart';
 import 'package:second_project/screens/user%20side/cart_screen.dart';
 
-
 class AccessoryPage extends StatefulWidget {
   final String categoryid;
   const AccessoryPage({super.key, required this.categoryid});
@@ -24,8 +24,7 @@ class AccessoryPage extends StatefulWidget {
 class _AccessoryPageState extends State<AccessoryPage> {
   @override
   Widget build(BuildContext context) {
-
-     final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
+    final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     context
         .read<AccesoriesearchBloc>()
         .add(FetchAccessories(categoryid: widget.categoryid));
@@ -39,9 +38,17 @@ class _AccessoryPageState extends State<AccessoryPage> {
         // centerTitle: true,
         backgroundColor: Colors.teal,
         actions: [
-           IconButton(onPressed: (){
-            Navigator.push(context, MaterialPageRoute(builder: (context)=>CartScreen(userId:userid )));
-          }, icon: Icon(Icons.shopping_cart,color: Colors.black,)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CartScreen(userId: userid)));
+              },
+              icon: Icon(
+                Icons.shopping_cart,
+                color: Colors.black,
+              )),
           IconButton(
             onPressed: () {
               showDialog(
@@ -52,7 +59,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        
                         ListTile(
                           title: const Text('filtered by:size'),
                           onTap: () {
@@ -80,7 +86,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                 .add(SortAccessories(ascending: false));
                           },
                         ),
-                        
                       ],
                     ),
                     actions: [
@@ -90,13 +95,12 @@ class _AccessoryPageState extends State<AccessoryPage> {
                           Navigator.of(context).pop(); // Close the dialog
                         },
                       ),
-                    
                     ],
                   );
                 },
               );
               // // Trigger filter event
-             // Example filter
+              // Example filter
             },
             icon: const Icon(
               Icons.filter_alt_outlined,
@@ -105,7 +109,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
           ),
           PopupMenuButton<String>(
             onSelected: (value) {
-    
               if (value == 'Ascending') {
                 context
                     .read<AccesoriesearchBloc>()
@@ -139,7 +142,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
             padding: const EdgeInsets.all(8),
             child: TextField(
               onChanged: (value) {
-            
                 context
                     .read<AccesoriesearchBloc>()
                     .add(SearchAccessories(query: value));
@@ -189,7 +191,19 @@ class _AccessoryPageState extends State<AccessoryPage> {
 
                       return GestureDetector(
                         onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>AccessoryDetail(name: accesory.accesoryname,description: accesory.descriptions.toString(),price: accesory.price.toInt(),size: accesory.size,imageUrls:accesory.imageUrls,stock: accesory.stock,id: accesory.id,)));
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => AccessoryDetail(
+                                        name: accesory.accesoryname,
+                                        description:
+                                            accesory.descriptions.toString(),
+                                        price: accesory.price.toInt(),
+                                        size: accesory.size,
+                                        imageUrls: accesory.imageUrls,
+                                        stock: accesory.stock,
+                                        id: accesory.id,
+                                      )));
                         },
                         child: Card(
                           elevation: 5,
@@ -221,36 +235,63 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                   Positioned(
                                     top: 8,
                                     right: 8,
-                                    child: IconButton(
-                                      icon: Icon(
-                                        accesory.isLiked
-                                            ? Icons.favorite
-                                            : Icons.favorite_border,
-                                        color: accesory.isLiked
-                                            ? Colors.red
-                                            : Colors.red,
-                                      ),
-                                      onPressed: () {
-                                     final item = WishlistModel(
-                                            id: accesory.id,
-                                            userReference: '',
-                                            
-                                            items: [
-                                              WishlistItem(
+                                    child: BlocBuilder<WishlistBloc,
+                                        WishlistState>(
+                                      builder: (context, state) {
+                                        bool isInWishlist = false;
+                                        if (state is WishListLoaded) {
+                                          isInWishlist = state.wishlistitem.any(
+                                              (wishlist) => wishlist.items.any(
+                                                  (item) =>
+                                                      item.productReference ==
+                                                      accesory.id));
+                                        }
+
+                                        return IconButton(
+                                          icon: Icon(
+                                            isInWishlist
+                                                ? Icons.favorite
+                                                : Icons.favorite_border,
+                                            color: isInWishlist
+                                                ? Colors.red
+                                                : Colors.red,
+                                          ),
+                                          onPressed: () {
+                                            final item = WishlistModel(
+                                              id: accesory.id,
+                                              userReference: '',
+                                              items: [
+                                                WishlistItem(
                                                   productReference: accesory.id,
-                                                  productName: accesory.accesoryname,
-                                                
-                                                  )
-                                            ]);
-                                        context
-                                            .read<WishlistBloc>()
-                                            .add(TaponWishlist(item));
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(SnackBar(
-                                          backgroundColor: Colors.green,
-                                          content: Text(
-                                              '${accesory.accesoryname} added to Wishlist!'),
-                                        ));
+                                                  productName:
+                                                      accesory.accesoryname,
+                                                ),
+                                              ],
+                                            );
+
+                                            context
+                                                .read<WishlistBloc>()
+                                                .add(TaponWishlist(item));
+
+                                            final snackBar = SnackBar(
+                                              elevation: 0,
+                                              behavior:
+                                                  SnackBarBehavior.floating,
+                                              backgroundColor:
+                                                  Colors.transparent,
+                                              content: AwesomeSnackbarContent(
+                                                title: 'Added to Wishlist!',
+                                                message:
+                                                    '${accesory.accesoryname} has been added to your wishlist.',
+                                                contentType:
+                                                    ContentType.success,
+                                              ),
+                                            );
+
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(snackBar);
+                                          },
+                                        );
                                       },
                                     ),
                                   ),
@@ -260,7 +301,8 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         mainAxisAlignment:
@@ -280,20 +322,19 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                           ),
                                           IconButton(
                                             onPressed: () {
-                                                final item = CartModel(
-                                                  id: accesory.id,
-                                                  userReference: '',
-                                                 
-                                                  items: [
-                                                    CartItem(
-                                                        productReference:
-                                                            accesory.id,
-                                                        price: accesory.price,
-                                                        quantity: 1,
-                                                        productName:accesory.accesoryname 
-                                                        )
-                                                  ],
-                                                 );
+                                              final item = CartModel(
+                                                id: accesory.id,
+                                                userReference: '',
+                                                items: [
+                                                  CartItem(
+                                                      productReference:
+                                                          accesory.id,
+                                                      price: accesory.price,
+                                                      quantity: 1,
+                                                      productName:
+                                                          accesory.accesoryname)
+                                                ],
+                                              );
 
                                               context
                                                   .read<CartBloc>()
@@ -346,7 +387,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                           color: Colors.red,
                                         ),
                                       ),
-                                      
                                       const SizedBox(height: 4),
                                       Row(
                                         children: [
@@ -364,7 +404,7 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                             ),
                                           ),
                                           SizedBox(width: 80),
-                                            Text(
+                                          Text(
                                             'Size: ${accesory.size}',
                                             style: const TextStyle(
                                               fontSize: 14,
@@ -381,7 +421,6 @@ class _AccessoryPageState extends State<AccessoryPage> {
                                           color: Colors.black54,
                                         ),
                                       ),
-                                      
                                     ],
                                   ),
                                 ),

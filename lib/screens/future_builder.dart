@@ -93,45 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget _buildImageCarousel() {
-  //   return CarouselSlider(
-  //     items: sliderImages.map((image) {
-  //       return Stack(
-  //         children: [
-  //           ClipRRect(
-  //             borderRadius: BorderRadius.circular(12),
-  //             child: Image.network(
-  //               image,
-  //               fit: BoxFit.cover,
-  //               width: double.infinity,
-  //             ),
-  //           ),
-  //           // Positioned(
-  //           //   bottom: 10,
-  //           //   left: 10,
-  //           //   child: Container(
-  //           //     padding:
-  //           //         const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-  //           //     color: Colors.black.withOpacity(0.5),
-  //           //     // child: Text(
-  //           //     //   "Special Offer!",
-  //           //     //   style: TextStyle(color: Colors.white, fontSize: 18),
-  //           //     // ),
-  //           //   ),
-  //           // ),
-  //         ],
-  //       );
-  //     }).toList(),
-  //     options: CarouselOptions(
-  //       height: 150,
-  //       autoPlay: true,
-  //       enlargeCenterPage: true,
-  //       viewportFraction: 0.9,
-  //       aspectRatio: 20 / 30,
-  //       autoPlayInterval: const Duration(seconds: 3),
-  //     ),
-  //   );
-  // }
+ 
 
   Widget _buildImageCarousel() {
     return Column(
@@ -200,7 +162,6 @@ class _HomeScreenState extends State<HomeScreen> {
       future: futureAccessories,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Shimmer effect during loading
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -210,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 0.98,
             ),
-            itemCount: 6, // Display shimmer placeholders
+            itemCount: 6,
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
@@ -260,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return const Center(child: Text('No accessories found'));
         } else {
           final items = snapshot.data!;
-          final displayedItems = items.take(4).toList(); // Limit to 4 items
+          final displayedItems = items.take(4).toList(); 
 
           return GridView.builder(
             shrinkWrap: true,
@@ -401,7 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 0.98,
             ),
-            itemCount: 6, // Placeholder shimmer items
+            itemCount: 6,
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
@@ -459,7 +420,6 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 0.98,
             ),
-            // Limit the item count to 4 or the length of the items list
             itemCount: items.length > 4 ? 4 : items.length,
             itemBuilder: (context, index) {
               final item = items[index];
@@ -494,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: item.imageUrls.isNotEmpty
                                 ? Image.network(
                                     item.imageUrls[
-                                        0], // Display the first image
+                                        0],
                                     fit: BoxFit.cover,
                                     width: double.infinity,
                                     height: 110,
@@ -553,7 +513,6 @@ class _HomeScreenState extends State<HomeScreen> {
       future: futureFoodProducts,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          // Shimmer effect for loading state
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -563,7 +522,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 0.98,
             ),
-            itemCount: 6, // Placeholder shimmer items
+            itemCount: 6,
             itemBuilder: (context, index) {
               return Shimmer.fromColors(
                 baseColor: Colors.grey[300]!,
@@ -609,7 +568,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return const Center(child: Text('No food products found'));
         } else {
           final items = snapshot.data!;
-          final displayedItems = items.take(4).toList(); // Limit to 4 items
+          final displayedItems = items.take(4).toList(); 
 
           return GridView.builder(
             shrinkWrap: true,
@@ -620,7 +579,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSpacing: 16,
               childAspectRatio: 0.98,
             ),
-            itemCount: displayedItems.length, // Only display 4 items
+            itemCount: displayedItems.length,
             itemBuilder: (context, index) {
               final item = displayedItems[index];
               return GestureDetector(
@@ -663,7 +622,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
                                       if (loadingProgress == null) {
-                                        return child; // Image is fully loaded
+                                        return child;
                                       }
                                       return Container(
                                         width: double.infinity,
@@ -671,7 +630,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         color: Colors.grey[300],
                                         child: const Center(
                                           child:
-                                              CircularProgressIndicator(), // Loading indicator
+                                              CircularProgressIndicator(), 
                                         ),
                                       );
                                     },
@@ -730,37 +689,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           const Spacer(),
                         ],
                       ),
-                    ),
-                    // You can implement the Add to Cart functionality here as needed
-                    // Positioned(
-                    //   bottom: 8,
-                    //   right: 8,
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       // Implement Add to Cart functionality
-                    //       print("Add to Cart for ${item.foodname}");
-                    //     },
-                    //     child: Container(
-                    //       decoration: BoxDecoration(
-                    //         shape: BoxShape.circle,
-                    //         color: Colors.teal,
-                    //         boxShadow: [
-                    //           BoxShadow(
-                    //             color: Colors.black.withOpacity(0.2),
-                    //             blurRadius: 5,
-                    //             offset: const Offset(0, 2),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //       padding: const EdgeInsets.all(8.0),
-                    //       child: const Icon(
-                    //         Icons.add,
-                    //         color: Colors.white,
-                    //         size: 24,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    )
                   ],
                 ),
               );
