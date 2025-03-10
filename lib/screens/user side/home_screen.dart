@@ -12,22 +12,23 @@ import 'package:second_project/screens/user%20side/favourite_screen.dart';
 import 'package:second_project/screens/user%20side/profile_screen.dart';
 
 class ScreenHome extends StatelessWidget {
-  
   const ScreenHome({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final bottomNavProvider = Provider.of<BottomNavprovider>(context);
     final userId = FirebaseAuth.instance.currentUser?.uid ?? '';
-     final userid = FirebaseAuth.instance.currentUser?.uid ?? ''; 
+    final userid = FirebaseAuth.instance.currentUser?.uid ?? '';
     final pages = [
       const HomeScreen(),
       const CategoriesScreen(),
-       CartScreen(userId: userId),
-      ScreenFavourite(userid: userid,),
+      CartScreen(userId: userId),
+      ScreenFavourite(
+        userid: userid,
+      ),
       const ProfileScreen(),
     ];
-     
+
     return Scaffold(
       body: pages[bottomNavProvider.currentIndex],
       bottomNavigationBar: CurvedNavigationBar(

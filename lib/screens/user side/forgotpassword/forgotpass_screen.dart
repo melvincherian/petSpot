@@ -29,7 +29,6 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Lock Icon
               const Icon(
                 Icons.lock_outline,
                 size: 100,
@@ -58,8 +57,6 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                 ),
               ),
               const SizedBox(height: 30),
-
-              // Email Input Field
               ForgotpassTextfiels(
                 labelText: 'Email',
                 hintText: 'Please Enter email',
@@ -104,7 +101,6 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
                         content: Text('Failed to send reset email $e')));
                       }
                     }
-                    // Your action here
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.deepPurple,
@@ -123,8 +119,6 @@ class _ScreenForgotpasswordState extends State<ScreenForgotpassword> {
               ),
 
               const SizedBox(height: 20),
-
-              // Go Back Button
               TextButton(
                 onPressed: () {
                   Navigator.pushReplacement(

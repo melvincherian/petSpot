@@ -4,7 +4,6 @@ import 'package:awesome_snackbar_content/awesome_snackbar_content.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:second_project/bloc/cart_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/wishlist_model.dart';
@@ -218,7 +217,7 @@ class ScreenFavourite extends StatelessWidget {
                                       color: Colors.red,
                                     ),
                                   ),
-                                  const SizedBox(width: 65),
+                                  const SizedBox(width: 40),
                                   ElevatedButton(
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.teal,

@@ -323,7 +323,7 @@ class _ProductDetailsState extends State<ProductDetails> {
                   'Reviews',
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
-                const SizedBox(width: 200),
+                const SizedBox(width: 170),
                 IconButton(
                     onPressed: () {
                       Navigator.push(

@@ -21,10 +21,9 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-   final StreamCartService _cartService=StreamCartService();
+  final StreamCartService _cartService = StreamCartService();
   @override
   Widget build(BuildContext context) {
-
     final RemoveCartService cartService = RemoveCartService();
     return Scaffold(
       appBar: AppBar(
@@ -167,14 +166,14 @@ class _CartScreenState extends State<CartScreen> {
                                   children: [
                                     IconButton(
                                       onPressed: () {
-                                        final cartservices=CartService();
+                                        final cartservices = CartService();
                                         cartservices.updateCartItemQuantity(
-                                          context: context, userId: widget.userId, 
-                                          productReference: item.productReference, 
-                                          quantityChange: -1, 
-                                          price: item.price
-                                          );
-                                       
+                                            context: context,
+                                            userId: widget.userId,
+                                            productReference:
+                                                item.productReference,
+                                            quantityChange: -1,
+                                            price: item.price);
                                       },
                                       icon: const Icon(Icons.remove_circle,
                                           size: 30, color: Colors.teal),
@@ -188,15 +187,14 @@ class _CartScreenState extends State<CartScreen> {
                                     ),
                                     IconButton(
                                       onPressed: () {
-                                        final cartservices=CartService();
+                                        final cartservices = CartService();
                                         cartservices.updateCartItemQuantity(
-                                          context: context, 
-                                          userId: widget.userId, 
-                                          productReference: item.productReference, 
-                                          quantityChange: 1, 
-                                          price: item.price
-                                          );
-                                       
+                                            context: context,
+                                            userId: widget.userId,
+                                            productReference:
+                                                item.productReference,
+                                            quantityChange: 1,
+                                            price: item.price);
                                       },
                                       icon: const Icon(Icons.add_circle,
                                           size: 30, color: Colors.teal),
@@ -207,9 +205,10 @@ class _CartScreenState extends State<CartScreen> {
                                   onPressed: () async {
                                     try {
                                       await cartService.removeCartItem(
-                                        context: context, userId: widget.userId, 
-                                        productReference: item.productReference);
-                                     
+                                          context: context,
+                                          userId: widget.userId,
+                                          productReference:
+                                              item.productReference);
                                     } catch (e) {
                                       ScaffoldMessenger.of(context)
                                           .showSnackBar(
@@ -243,7 +242,6 @@ class _CartScreenState extends State<CartScreen> {
                           MaterialPageRoute(
                               builder: (context) => CheckoutScreen(
                                     userId: widget.userId,
-                                   
                                   )));
                     },
                     style: ElevatedButton.styleFrom(
@@ -270,4 +268,5 @@ class _CartScreenState extends State<CartScreen> {
       ),
     );
   }
+  
 }

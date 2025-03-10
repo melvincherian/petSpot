@@ -161,15 +161,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder<List<AccessoryModel>>(
       future: futureAccessories,
       builder: (context, snapshot) {
+        double screenWidth = MediaQuery.of(context).size.width;
+      double screenHeight = MediaQuery.of(context).size.height;
+      int crossAxisCount = screenWidth > 600 ? 3 : 2; // Adjust grid count for larger screens
+      double childAspectRatio = screenWidth > 600 ? 1.1 : 0.98;
         if (snapshot.connectionState == ConnectionState.waiting) {
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
+              childAspectRatio: childAspectRatio,
             ),
             itemCount: 6,
             itemBuilder: (context, index) {
@@ -186,7 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Container(
                         width: double.infinity,
-                        height: 110,
+                       height: screenHeight * 0.15,
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(12),
@@ -196,16 +200,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          height: 16,
-                          width: 100,
+                          height: screenHeight * 0.06,
+                        width: screenWidth * 0.3,
                           color: Colors.grey[300],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Container(
-                          height: 16,
-                          width: 60,
+                          height: screenHeight * 0.02,
+                        width: screenWidth * 0.2,
                           color: Colors.grey[300],
                         ),
                       ),
@@ -230,7 +234,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
+              childAspectRatio: 0.80,
             ),
             itemCount: displayedItems.length, 
             itemBuilder: (context, index) {
@@ -249,96 +253,92 @@ class _HomeScreenState extends State<HomeScreen> {
                               id: displayedItems[index].id,
                               stock: displayedItems[index].stock)));
                 },
-                child: Stack(
-                  children: [
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: item.imageUrls.isNotEmpty
-                                ? Image.network(
-                                    item.imageUrls[0],
-                                    fit: BoxFit.cover,
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[0],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                  height: screenHeight * 0.14,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
+                                  return Container(
                                     width: double.infinity,
-                                    height: 110,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) {
-                                        return child;
-                                      }
-                                      return Container(
-                                        width: double.infinity,
-                                        height: 110,
-                                        color: Colors.grey[300],
-                                        child: const Center(
-                                          child:
-                                              CircularProgressIndicator(), 
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        width: double.infinity,
-                                        height: 110,
-                                        color: Colors.grey[300],
-                                        child: const Center(
-                                          child: Text(
-                                            'Image Error',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : Container(
-                                    height: 110,
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey[300],
-                                      borderRadius: BorderRadius.circular(12),
+                                    height: screenHeight * 0.18,
+                                    color: Colors.grey[300],
+                                    child: const Center(
+                                      child:
+                                          CircularProgressIndicator(), 
                                     ),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    width: double.infinity,
+                                    height: screenHeight * 0.15,
+                                    color: Colors.grey[300],
                                     child: const Center(
                                       child: Text(
-                                        'No Image',
-                                        style: TextStyle(color: Colors.grey),
+                                        'Image Error',
+                                        style: TextStyle(color: Colors.red),
                                       ),
                                     ),
+                                  );
+                                },
+                              )
+                            : Container(
+                                height: screenHeight * 0.18,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
                                   ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              item.accesoryname,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal[800],
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              '\$${item.price.toString()}',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                        ],
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.accesoryname,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toString()}',
+                          style: TextStyle(
+                            fontSize: screenWidth * 0.04,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               );
             },
@@ -352,15 +352,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder<List<BreedModel>>(
       future: futureProducts,
       builder: (context, snapshot) {
+         double screenWidth = MediaQuery.of(context).size.width;
+      double screenHeight = MediaQuery.of(context).size.height;
+      int crossAxisCount = screenWidth > 600 ? 3 : 2; // Adjust grid count for larger screens
+      double childAspectRatio = screenWidth > 600 ? 1.1 : 0.98;
         if (snapshot.connectionState == ConnectionState.waiting) {
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
+              childAspectRatio:childAspectRatio,
             ),
             itemCount: 6,
             itemBuilder: (context, index) {
@@ -379,23 +383,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         borderRadius: BorderRadius.circular(12),
                         child: Container(
                           width: double.infinity,
-                          height: 110,
+                          height: screenHeight * 0.15,
                           color: Colors.grey[300],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          width: 100,
-                          height: 16,
+                          height: screenHeight * 0.02, // Adjust height
+                        width: screenWidth * 0.3, // Adjust width
                           color: Colors.grey[300],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Container(
-                          width: 60,
-                          height: 16,
+                         height: screenHeight * 0.02,
+                        width: screenWidth * 0.2,
                           color: Colors.grey[300],
                         ),
                       ),
@@ -418,7 +422,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
+              childAspectRatio: 0.80,
             ),
             itemCount: items.length > 4 ? 4 : items.length,
             itemBuilder: (context, index) {
@@ -439,65 +443,61 @@ class _HomeScreenState extends State<HomeScreen> {
                               year: items[index].year,
                               id: items[index].id)));
                 },
-                child: Stack(
-                  children: [
-                    Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(
+                child: Card(
+                  elevation: 5,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: item.imageUrls.isNotEmpty
-                                ? Image.network(
-                                    item.imageUrls[
-                                        0],
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: 110,
-                                  )
-                                : const SizedBox(
-                                    height: 110,
-                                    child: Center(
-                                      child: Text(
-                                        'No Image',
-                                        style: TextStyle(color: Colors.grey),
-                                      ),
-                                    ),
+                        child: item.imageUrls.isNotEmpty
+                            ? Image.network(
+                                item.imageUrls[
+                                    0],
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: screenHeight * 0.15,
+                              )
+                            : const SizedBox(
+                                height: 110,
+                                child: Center(
+                                  child: Text(
+                                    'No Image',
+                                    style: TextStyle(color: Colors.grey),
                                   ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              item.name,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.teal[800],
+                                ),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 8.0),
-                            child: Text(
-                              '\$${item.price.toString()}',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                          const Spacer(),
-                        ],
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          item.name,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.teal[800],
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          '\$${item.price.toString()}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                      const Spacer(),
+                    ],
+                  ),
                 ),
               );
             },
@@ -512,15 +512,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return FutureBuilder<List<FoodProductModel>>(
       future: futureFoodProducts,
       builder: (context, snapshot) {
+          double screenWidth = MediaQuery.of(context).size.width;
+      double screenHeight = MediaQuery.of(context).size.height;
+      int crossAxisCount = screenWidth > 600 ? 3 : 2; // Adjust grid count for larger screens
+      double childAspectRatio = screenWidth > 600 ? 1.1 : 0.98;
         if (snapshot.connectionState == ConnectionState.waiting) {
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
+            gridDelegate:  SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: crossAxisCount,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
+              childAspectRatio: childAspectRatio,
             ),
             itemCount: 6,
             itemBuilder: (context, index) {
@@ -537,22 +541,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Container(
                         width: double.infinity,
-                        height: 110,
+                        height: screenHeight * 0.15,
                         color: Colors.grey[300],
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Container(
-                          width: 100,
-                          height: 16,
+                          height: screenHeight * 0.02, // Adjust height
+                        width: screenWidth * 0.3,
                           color: Colors.grey[300],
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 8.0),
                         child: Container(
-                          width: 60,
-                          height: 16,
+                          height: screenHeight * 0.02,
+                        width: screenWidth * 0.2,
                           color: Colors.grey[300],
                         ),
                       ),
@@ -577,7 +581,7 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisCount: 2,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
-              childAspectRatio: 0.98,
+              childAspectRatio: 0.80,
             ),
             itemCount: displayedItems.length,
             itemBuilder: (context, index) {
@@ -618,7 +622,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         0], // Display the first image
                                     fit: BoxFit.cover,
                                     width: double.infinity,
-                                    height: 110,
+                                     height: screenHeight * 0.15,
                                     loadingBuilder:
                                         (context, child, loadingProgress) {
                                       if (loadingProgress == null) {
@@ -637,7 +641,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     errorBuilder: (context, error, stackTrace) {
                                       return Container(
                                         width: double.infinity,
-                                        height: 110,
+                                       height: screenHeight * 0.15,
                                         color: Colors.grey[300],
                                         child: const Center(
                                           child: Text(
@@ -667,7 +671,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Text(
                               item.foodname,
                               style: TextStyle(
-                                fontSize: 16,
+                                fontSize: screenWidth * 0.04,
                                 fontWeight: FontWeight.bold,
                                 color: Colors.teal[800],
                               ),
@@ -680,7 +684,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Text(
                               '\$${item.price.toStringAsFixed(2)}',
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: screenWidth * 0.045,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.black,
                               ),

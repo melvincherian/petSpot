@@ -251,7 +251,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
                   'Reviews',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 260),
+                SizedBox(width: 180),
                 IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -303,7 +303,7 @@ class _AccessoryDetailState extends State<AccessoryDetail> {
                     child: Icon(Icons.add),
                   ),
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 30),
                 ElevatedButton(
                     onPressed: () {
                       final items = CartModel(

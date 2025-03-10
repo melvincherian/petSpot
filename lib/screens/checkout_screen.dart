@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 import 'package:second_project/bloc/payment_bloc.dart';
-import 'package:second_project/core/api_key.dart';
 import 'package:second_project/models/address_model.dart';
 import 'package:second_project/models/cart_model.dart';
 import 'package:second_project/models/payment_model.dart';
@@ -124,7 +123,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
      
     double grandTotal = totalAmount + shippingCharge + tax + Delivery;
     var options = {
-      'key': Apikey,
+      'key': 'rzp_test_x4yKuLEYJQuXwJ',
       'amount': (grandTotal * 100).toInt(),
       'name': 'PetSpot',
       'description': 'E-commerce application',
@@ -170,14 +169,6 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                // children: [
-                //   Icon(Icons.shopping_cart, size: 100, color: Colors.teal),
-                //   SizedBox(height: 16),
-                //   Text(
-                //     'Your Cart is Empty',
-                //     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                //   ),
-                // ],
               ),
             );
           } else {

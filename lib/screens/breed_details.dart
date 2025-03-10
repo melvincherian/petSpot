@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:second_project/bloc/breedsearch_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:second_project/bloc/cart_bloc.dart';
 import 'package:second_project/bloc/wishlist_bloc.dart';
 import 'package:second_project/models/cart_model.dart';
@@ -191,11 +190,11 @@ class _BreedDetailsState extends State<BreedDetails> {
                       final breed = breeds[index];
                       final double offerPercentage = ((50) / 100) * 100;
 
-                      final arrivalDate = DateTime.now().add(
-                        Duration(days: breed.arrivalDays),
-                      );
-                      final formattedArrivalDate =
-                          DateFormat('dd MMM yyyy').format(arrivalDate);
+                      // final arrivalDate = DateTime.now().add(
+                      //   Duration(days: breed.arrivalDays),
+                      // );
+                      // final formattedArrivalDate =
+                      //     DateFormat('dd MMM yyyy').format(arrivalDate);
 
                       return GestureDetector(
                         onTap: () {
@@ -405,16 +404,6 @@ class _BreedDetailsState extends State<BreedDetails> {
                                               color: Colors.teal,
                                             ),
                                           ),
-
-                                          // Text(
-                                          //   '₹${breed.originalPrice.toStringAsFixed(2)}',
-                                          //   style: const TextStyle(
-                                          //     fontSize: 14,
-                                          //     decoration:
-                                          //         TextDecoration.lineThrough,
-                                          //     color: Colors.grey,
-                                          //   ),
-                                          // ),
                                           Text(
                                             '${breed.month} Months old',
                                             style: const TextStyle(
@@ -422,14 +411,6 @@ class _BreedDetailsState extends State<BreedDetails> {
                                               color: Colors.grey,
                                             ),
                                           ),
-                                          //   Text(
-                                          //   '${breed.year}year old',
-                                          //   style: const TextStyle(
-                                          //     fontSize: 14,
-
-                                          //     color: Colors.grey,
-                                          //   ),
-                                          // ),
                                         ],
                                       ),
                                       const SizedBox(height: 4),
@@ -459,13 +440,13 @@ class _BreedDetailsState extends State<BreedDetails> {
                                         ],
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(
-                                        'Arrival: $formattedArrivalDate',
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black54,
-                                        ),
-                                      ),
+                                      // Text(
+                                      //   'Arrival: $formattedArrivalDate',
+                                      //   style: const TextStyle(
+                                      //     fontSize: 14,
+                                      //     color: Colors.black54,
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                 ),

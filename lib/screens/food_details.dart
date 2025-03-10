@@ -309,7 +309,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                   'Reviews',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(width: 260),
+                SizedBox(width: 185),
                 IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -361,7 +361,7 @@ class _FoodDetailsState extends State<FoodDetails> {
                     child: Icon(Icons.add),
                   ),
                 ),
-                SizedBox(width: 50),
+                SizedBox(width: 30),
                 ElevatedButton(
                     onPressed: () {
                         final items = CartModel(
